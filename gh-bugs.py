@@ -52,31 +52,31 @@ def get_git_config_val(key):
     return subprocess.check_output(["git", "config", key]).strip()
 
 
-def list_bugs():
+def list_bugs(github, args):
     pass
 
 
-def search_bugs():
+def search_bugs(github, args):
     pass
 
 
-def show_bugs():
+def show_bugs(github, args):
     pass
 
 
-def open_bug():
+def open_bug(github, args):
     pass
 
 
-def comment_bugs():
+def comment_bugs(github, args):
     pass
 
 
-def close_bugs():
+def close_bugs(github, args):
     pass
 
 
-def label_bugs():
+def label_bugs(github, args):
     pass
 
 def process_command_line():
@@ -161,6 +161,8 @@ def main():
     cache_dir = os.path.join(xdg_cache_dir, "gh-bugs")
 
     github = Github(username=user, api_token=token, cache=cache_dir)
+
+    args.func(github, args)
 
 if __name__ == '__main__':
     sys.exit(main())
