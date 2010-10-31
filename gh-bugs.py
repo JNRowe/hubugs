@@ -82,7 +82,27 @@ def search_bugs(github, args):
 
 
 def show_bugs(github, args):
-    pass
+    bugs = [github.issues.show(args.repository, i) for i in args.bugs]
+    for bug in bugs:
+        print "      Id: %d" % bug.number
+        print "   Title: %s" % bug.title
+        print "  Labels: %s" % ", ".join(bug.labels)
+        print " Created: %s by %s" % (bug.created_at, bug.user)
+        print " Updated: %s" % bug.updated_at
+        print "   State: %s%s" % (bug.state,
+                                 " at %s" % bug.closed_at if bug.closed_at else "")
+        print "Comments: %d" % bug.comments
+        print "   Votes: %d" % bug.votes
+        print
+        print bug.body
+        if args.full and bug.comments > 0:
+            comments = github.issues.comments(args.repository, bug.number)
+            for comment in comments:
+                print
+                print " Created: %s by %s" % (comment.created_at, comment.user)
+                print " Updated: %s" % comment.updated_at
+                print
+                print comment.body
 
 
 def open_bug(github, args):
