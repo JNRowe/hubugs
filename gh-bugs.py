@@ -41,6 +41,7 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import argparse
+import operator
 import os
 import subprocess
 import sys
@@ -52,9 +53,29 @@ def get_git_config_val(key):
     return subprocess.check_output(["git", "config", key]).strip()
 
 
-def list_bugs(github, args):
-    pass
+def get_term_size():
+    return map(int, subprocess.check_output(["stty", "size"]).split())
 
+
+def display_bugs(bugs):
+    columns = get_term_size()[1]
+
+    max_id = max(i.number for i in bugs)
+    id_len = len(str(max_id))
+
+    print "Id %sTitle" % (" " * (id_len - 2))
+    fmt_str = "%%%ds %%s" % id_len
+    for bug in sorted(bugs, key=operator.attrgetter("number")):
+        # Keep title within a single row
+        if len(bug.title) > columns - id_len - 2:
+            title = "%s…" % bug.title[:columns - id_len - 2]
+        else:
+            title = bug.title
+        print fmt_str % (bug.number, title)
+
+def list_bugs(github, args):
+    bugs = github.issues.list(args.repository, args.state)
+    display_bugs(bugs)
 
 def search_bugs(github, args):
     pass
