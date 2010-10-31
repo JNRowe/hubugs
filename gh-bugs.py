@@ -41,9 +41,15 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import argparse
+import os
+import subprocess
 import sys
 
 from github2.client import Github
+
+
+def get_git_config_val(key):
+    return subprocess.check_output(["git", "config", key]).strip()
 
 
 def list_bugs():
@@ -146,6 +152,15 @@ def process_command_line():
 
 def main():
     args = process_command_line()
+
+    user = get_git_config_val("github.user")
+    token = get_git_config_val("github.token")
+
+    xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
+                              os.path.join(os.getenv("HOME", "/"), ".cache"))
+    cache_dir = os.path.join(xdg_cache_dir, "gh-bugs")
+
+    github = Github(username=user, api_token=token, cache=cache_dir)
 
 if __name__ == '__main__':
     sys.exit(main())
