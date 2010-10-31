@@ -78,7 +78,8 @@ def list_bugs(github, args):
     display_bugs(bugs)
 
 def search_bugs(github, args):
-    pass
+    bugs = github.issues.search(args.repository, args.term, args.state)
+    display_bugs(bugs)
 
 
 def show_bugs(github, args):
