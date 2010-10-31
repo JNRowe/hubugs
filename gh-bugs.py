@@ -46,6 +46,33 @@ import sys
 from github2.client import Github
 
 
+def list_bugs():
+    pass
+
+
+def search_bugs():
+    pass
+
+
+def show_bugs():
+    pass
+
+
+def open_bug():
+    pass
+
+
+def comment_bugs():
+    pass
+
+
+def close_bugs():
+    pass
+
+
+def label_bugs():
+    pass
+
 def process_command_line():
     """Process command line options
 
@@ -56,6 +83,62 @@ def process_command_line():
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', action='version',
                         version='%%(prog)s %s' % __version__)
+
+    parser.add_argument("-r", "--repository",
+                        help="GitHub repository to operate on",
+                        metavar="repo")
+
+    subparsers = parser.add_subparsers()
+
+    list_parser = subparsers.add_parser("list", help="Listing bugs")
+    list_parser.add_argument("-s", "--state", default="open",
+                             choices=["open", "closed"],
+                             help="state of bugs to list")
+    list_parser.add_argument("-l", "--label",
+                             help="list bugs with specified label",
+                             metavar="label")
+    list_parser.set_defaults(func=list_bugs)
+
+    search_parser = subparsers.add_parser("search", help="Searching bugs")
+    search_parser.add_argument("-s", "--state", default="open",
+                               choices=["open", "closed"],
+                               help="state of bugs to search")
+    search_parser.add_argument("term", help="term to search bugs for")
+    search_parser.set_defaults(func=search_bugs)
+
+    show_parser = subparsers.add_parser("show", help="Displaying bugs")
+    show_parser.add_argument("-f", "--full", action="store_true",
+                             help="show bug including comments")
+    show_parser.add_argument("bug", nargs="+",
+                             help="bug number(s) to operate on")
+    show_parser.set_defaults(func=show_bugs)
+
+    open_parser = subparsers.add_parser("open", help="Opening new bugs")
+    open_parser.add_argument("title", help="title for the new bug")
+    open_parser.add_argument("body", help="body for the new bug", nargs='?')
+    open_parser.set_defaults(func=open_bug)
+
+    comment_parser = subparsers.add_parser("comment",
+                                           help="Commenting on bugs")
+    comment_parser.add_argument("message", help="comment text")
+    comment_parser.add_argument("bug", nargs="+",
+                                help="bug number(s) to operate on")
+    comment_parser.set_defaults(func=comment_bugs)
+
+    close_parser = subparsers.add_parser("close", help="Closing bugs")
+    close_parser.add_argument("message", help="comment text")
+    close_parser.add_argument("bug", nargs="+",
+                              help="bug number(s) to operate on")
+    close_parser.set_defaults(func=close_bugs)
+
+    label_parser = subparsers.add_parser("label", help="Labelling bugs")
+    label_parser.add_argument("-a", "--add", help="add label to issue",
+                              metavar="label")
+    label_parser.add_argument("-r", "--remove", help="remove label from issue",
+                              metavar="label")
+    label_parser.add_argument("bug", nargs="+",
+                              help="bug number(s) to operate on")
+    label_parser.set_defaults(func=label_bugs)
 
     args = parser.parse_args()
     return args
