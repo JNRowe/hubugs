@@ -6,6 +6,9 @@ Introduction
 
 ``gh-bugs`` is a very simple client for working `GitHub's issue tracker`_.
 
+*WARNING: DO NOT USE THIS PACKAGE AS IT IS, IT REQUIRES UNRELEASED
+VERSIONS OF ITS DEPENDENCIES AND IS IN A MASSIVE STATE OF FLUX*
+
 Requirements
 ------------
 
