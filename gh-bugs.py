@@ -123,7 +123,12 @@ def close_bugs(github, args):
 
 
 def label_bugs(github, args):
-    pass
+    for bug in args.bugs:
+        if args.add:
+            github.issues.add_label(args.repository, bug.number, args.add)
+        if args.remove:
+            github.issues.remove_label(args.repository, bug.number, args.remove)
+
 
 def process_command_line():
     """Process command line options
