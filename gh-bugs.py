@@ -111,7 +111,8 @@ def open_bug(github, args):
     print "Bug %d opened" % bug.number
 
 def comment_bugs(github, args):
-    pass
+    for bug in args.bugs:
+        github.issues.comment(args.repository, bug.number, args.message)
 
 
 def close_bugs(github, args):
