@@ -107,8 +107,8 @@ def show_bugs(github, args):
 
 
 def open_bug(github, args):
-    pass
-
+    bug = github.issues.open(args.repository, args.title, args.body)
+    print "Bug %d opened" % bug.number
 
 def comment_bugs(github, args):
     pass
