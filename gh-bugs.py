@@ -116,7 +116,10 @@ def comment_bugs(github, args):
 
 
 def close_bugs(github, args):
-    pass
+    for bug in args.bugs:
+        if args.message:
+            github.issues.comment(args.repository, bug.number, args.message)
+        github.issues.close(args.repository, bug.number)
 
 
 def label_bugs(github, args):
