@@ -12,8 +12,8 @@ VERSIONS OF ITS DEPENDENCIES AND IS IN A MASSIVE STATE OF FLUX*
 Requirements
 ------------
 
-``gh-bugs`` requires Python_ v2.6 or above. ``gh-bugs``'s mandatory
-dependencies outside of the standard library are github2_ and termstyle_.
+``gh-bugs`` requires Python_ v2.6 or above. ``gh-bugs``'s only mandatory
+dependency outside of the standard library is github2_.
 
 Configuration
 -------------
@@ -76,7 +76,6 @@ I can reproduce the problem, or even better a patch!
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _Python: http://www.python.org/
 .. _github2: http://pypi.python.org/pypi/github2/0.2.0
-.. _termstyle: http://github.com/gfxmonk/termstyle
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _mail: jnrowe@gmail.com
