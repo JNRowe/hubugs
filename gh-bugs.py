@@ -74,6 +74,9 @@ def get_term_size():
 
 
 def display_bugs(bugs):
+    if not bugs:
+        print "No bugs found!"
+        return
     columns = get_term_size()[1]
 
     max_id = max(i.number for i in bugs)
