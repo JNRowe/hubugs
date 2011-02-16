@@ -130,22 +130,22 @@ def open_bug(github, args):
 
 def comment_bugs(github, args):
     for bug in args.bugs:
-        github.issues.comment(args.repository, bug.number, args.message)
+        github.issues.comment(args.repository, bug, args.message)
 
 
 def close_bugs(github, args):
     for bug in args.bugs:
         if args.message:
-            github.issues.comment(args.repository, bug.number, args.message)
-        github.issues.close(args.repository, bug.number)
+            github.issues.comment(args.repository, bug, args.message)
+        github.issues.close(args.repository, bug)
 
 
 def label_bugs(github, args):
     for bug in args.bugs:
         if args.add:
-            github.issues.add_label(args.repository, bug.number, args.add)
+            github.issues.add_label(args.repository, bug, args.add)
         if args.remove:
-            github.issues.remove_label(args.repository, bug.number, args.remove)
+            github.issues.remove_label(args.repository, bug, args.remove)
 
 
 def process_command_line():
