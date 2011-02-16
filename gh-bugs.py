@@ -43,15 +43,31 @@ __doc__ += """.
 import argparse
 import operator
 import os
+import re
 import subprocess
 import sys
 
 from github2.client import Github
 
 
-def get_git_config_val(key):
-    return subprocess.check_output(["git", "config", key]).strip()
+def get_git_config_val(key, allow_fail=False):
+    try:
+        output = subprocess.check_output(["git", "config", key]).strip()
+    except subprocess.CalledProcessError:
+        if allow_fail:
+            pass
+        else:
+            raise
+    return output
 
+
+def get_repo():
+    data = get_git_config_val("remote.origin.url", True)
+    match = re.search(r"github.com[:/](.*).git", data)
+    if match:
+        return match.groups()[0]
+    else:
+        raise ValueError("Unknown repository")
 
 def get_term_size():
     return map(int, subprocess.check_output(["stty", "size"]).split())
@@ -212,6 +228,9 @@ def main():
     cache_dir = os.path.join(xdg_cache_dir, "gh-bugs")
 
     github = Github(username=user, api_token=token, cache=cache_dir)
+
+    if not args.repository:
+        args.repository = get_repo()
 
     args.func(github, args)
 
