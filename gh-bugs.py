@@ -234,6 +234,9 @@ def main():
 
     if not args.repository:
         args.repository = get_repo()
+    elif not "/" in args.repository:
+        args.repository = "%s/%s" % (get_git_config_val("github.user"),
+                                     args.repository)
 
     args.func(github, args)
 
