@@ -63,6 +63,14 @@ TEMPLATES = {
 
 
 def edit_text(edit_type="default"):
+    """Edit data with external editor
+
+    :type edit_type: ``str``
+    :param edit_type: Template to use in editor
+    :rtype: ``str``
+    :return: User supplied text
+    :raise ValueError: No message given
+    """
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
         temp.write(TEMPLATES[edit_type])
         temp.flush()
@@ -80,6 +88,15 @@ def edit_text(edit_type="default"):
 
 
 def get_git_config_val(key, allow_fail=False):
+    """Fetch a git configuration value
+
+    :type key: ``str``
+    :param key: Configuration value to fetch
+    :type allow_fail: ``bool``
+    :param allow_fail: Ignore errors
+    :raise subprocess.CalledProcessError: If ``allow_fail`` is False, and
+        command returns non-zero exit code
+    """
     try:
         output = subprocess.check_output(["git", "config", key]).strip()
     except subprocess.CalledProcessError:
@@ -91,6 +108,12 @@ def get_git_config_val(key, allow_fail=False):
 
 
 def get_editor():
+    """Choose a suitable editor
+
+    This follows the method defined in :manpage:`git-var(1)`
+
+    :rtype: ``str``
+    :return: Users chosen editor, or ``vi`` if not set"""
     # Match git for editor preferences
     editor = os.getenv("GIT_EDITOR")
     if not editor:
@@ -101,6 +124,12 @@ def get_editor():
 
 
 def get_repo():
+    """Identify the current GitHub repository
+
+    :rtype: ``str``
+    :return: GitHub repository user and name
+    :raise ValueError: If GitHub repository can't be ascertained
+    """
     data = get_git_config_val("remote.origin.url", True)
     match = re.search(r"github.com[:/](.*).git", data)
     if match:
@@ -110,10 +139,20 @@ def get_repo():
 
 
 def get_term_size():
+    """Fetch the current terminal size
+
+    :rtype: ``list`` of ``int``
+    :return: Number of columns and lines in current terminal
+    """
     return map(int, subprocess.check_output(["stty", "size"]).split())
 
 
 def display_bugs(bugs):
+    """Display bugs tousers
+
+    :type bugs: ``list` of ``github2.issues.Issue``
+    :param bugs: Bugs to display
+    """
     if not bugs:
         print "No bugs found!"
         return
@@ -134,16 +173,40 @@ def display_bugs(bugs):
 
 
 def list_bugs(github, args):
+    """Command function to list bugs
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository`` and ``state``
+        are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     bugs = github.issues.list(args.repository, args.state)
     display_bugs(bugs)
 
 
 def search_bugs(github, args):
+    """Command function to search bugs
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``term`` and
+        ``state`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     bugs = github.issues.search(args.repository, args.term, args.state)
     display_bugs(bugs)
 
 
 def show_bugs(github, args):
+    """Command function to show bug(s) in detail
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``bugs`` and
+        ``full`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     bugs = [github.issues.show(args.repository, i) for i in args.bugs]
     for bug in bugs:
         print "      Id: %d" % bug.number
@@ -168,6 +231,14 @@ def show_bugs(github, args):
 
 
 def open_bug(github, args):
+    """Command function to open a bug
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``title`` and
+        ``body`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     if not args.title:
         text = edit_text("open").splitlines()
         title = text[0]
@@ -180,6 +251,14 @@ def open_bug(github, args):
 
 
 def comment_bugs(github, args):
+    """Command function to comment on bug(s)
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``message``
+        and ``bugs`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     if not args.message:
         message = edit_text()
     else:
@@ -189,6 +268,14 @@ def comment_bugs(github, args):
 
 
 def close_bugs(github, args):
+    """Command function to close bug(s)
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``message``
+        and ``bugs`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     if not args.message:
         try:
             message = edit_text()
@@ -204,6 +291,14 @@ def close_bugs(github, args):
 
 
 def label_bugs(github, args):
+    """Command function to list bugs
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options. ``repository``, ``bugs``,
+        ``add`` and ``remove`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
     for bug in args.bugs:
         if args.add:
             github.issues.add_label(args.repository, bug, args.add)
@@ -282,6 +377,11 @@ def process_command_line():
 
 
 def main():
+    """Main script
+
+    :rtype: ``int``
+    :return: Exit code
+    """
     args = process_command_line()
 
     user = get_git_config_val("github.user")
