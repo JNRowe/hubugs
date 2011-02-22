@@ -45,8 +45,38 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 
 from github2.client import Github
+
+
+TEMPLATES = {
+    "default": """
+# Please enter your message.  Lines beginning with '#' will be ignored
+""",
+    "open": """
+
+# Please enter the content for your new bug, the first line will be used for
+# the title.  Lines beginning with '#' will be ignored
+""",
+}
+
+
+def edit_text(edit_type="default"):
+    with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
+        temp.write(TEMPLATES[edit_type])
+        temp.flush()
+
+        subprocess.check_call([get_editor(), temp.name])
+
+        temp.seek(0)
+        text = "".join(filter(lambda s: not s.startswith("#"),
+                              temp.readlines())).strip()
+
+    if not text:
+        raise ValueError("No message given")
+
+    return text.strip()
 
 
 def get_git_config_val(key, allow_fail=False):
@@ -58,6 +88,16 @@ def get_git_config_val(key, allow_fail=False):
         else:
             raise
     return output
+
+
+def get_editor():
+    # Match git for editor preferences
+    editor = os.getenv("GIT_EDITOR")
+    if not editor:
+        editor = get_git_config_val("core.editor", allow_fail=True)
+        if not editor:
+            editor = os.getenv("VISUAL", os.getenv("EDITOR", "vi"))
+    return editor
 
 
 def get_repo():
@@ -128,19 +168,38 @@ def show_bugs(github, args):
 
 
 def open_bug(github, args):
-    bug = github.issues.open(args.repository, args.title, args.body)
+    if not args.title:
+        text = edit_text("open").splitlines()
+        title = text[0]
+        body = "\n".join(text[1:])
+    else:
+        title = args.title
+        body = args.body
+    bug = github.issues.open(args.repository, title, body)
     print "Bug %d opened" % bug.number
 
 
 def comment_bugs(github, args):
+    if not args.message:
+        message = edit_text()
+    else:
+        message = args.message
     for bug in args.bugs:
-        github.issues.comment(args.repository, bug, args.message)
+        github.issues.comment(args.repository, bug, message)
 
 
 def close_bugs(github, args):
+    if not args.message:
+        try:
+            message = edit_text()
+        except ValueError:
+            # Message isn't required for closing, but it is good practice
+            message = None
+    else:
+        message = args.message
     for bug in args.bugs:
-        if args.message:
-            github.issues.comment(args.repository, bug, args.message)
+        if message:
+            github.issues.comment(args.repository, bug, message)
         github.issues.close(args.repository, bug)
 
 
@@ -193,19 +252,19 @@ def process_command_line():
     show_parser.set_defaults(func=show_bugs)
 
     open_parser = subparsers.add_parser("open", help="Opening new bugs")
-    open_parser.add_argument("title", help="title for the new bug")
-    open_parser.add_argument("body", help="body for the new bug", nargs='?')
+    open_parser.add_argument("title", help="title for the new bug", nargs="?")
+    open_parser.add_argument("body", help="body for the new bug", nargs="?")
     open_parser.set_defaults(func=open_bug)
 
     comment_parser = subparsers.add_parser("comment",
                                            help="Commenting on bugs")
-    comment_parser.add_argument("message", help="comment text")
+    comment_parser.add_argument("--message", help="comment text")
     comment_parser.add_argument("bugs", nargs="+",
                                 help="bug number(s) to operate on")
     comment_parser.set_defaults(func=comment_bugs)
 
     close_parser = subparsers.add_parser("close", help="Closing bugs")
-    close_parser.add_argument("message", help="comment text")
+    close_parser.add_argument("-m", "--message", help="comment text")
     close_parser.add_argument("bugs", nargs="+",
                               help="bug number(s) to operate on")
     close_parser.set_defaults(func=close_bugs)
