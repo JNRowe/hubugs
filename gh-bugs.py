@@ -54,7 +54,7 @@ def get_git_config_val(key, allow_fail=False):
         output = subprocess.check_output(["git", "config", key]).strip()
     except subprocess.CalledProcessError:
         if allow_fail:
-            pass
+            output = None
         else:
             raise
     return output
