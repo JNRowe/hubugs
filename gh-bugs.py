@@ -68,6 +68,7 @@ def get_repo():
     else:
         raise ValueError("Unknown repository")
 
+
 def get_term_size():
     return map(int, subprocess.check_output(["stty", "size"]).split())
 
@@ -91,9 +92,11 @@ def display_bugs(bugs):
             title = bug.title
         print fmt_str % (bug.number, title)
 
+
 def list_bugs(github, args):
     bugs = github.issues.list(args.repository, args.state)
     display_bugs(bugs)
+
 
 def search_bugs(github, args):
     bugs = github.issues.search(args.repository, args.term, args.state)
@@ -108,8 +111,8 @@ def show_bugs(github, args):
         print "  Labels: %s" % ", ".join(bug.labels)
         print " Created: %s by %s" % (bug.created_at, bug.user)
         print " Updated: %s" % bug.updated_at
-        print "   State: %s%s" % (bug.state,
-                                 " at %s" % bug.closed_at if bug.closed_at else "")
+        print "   State: %s%s" \
+              % (bug.state, " at %s" % bug.closed_at if bug.closed_at else "")
         print "Comments: %d" % bug.comments
         print "   Votes: %d" % bug.votes
         print
@@ -127,6 +130,7 @@ def show_bugs(github, args):
 def open_bug(github, args):
     bug = github.issues.open(args.repository, args.title, args.body)
     print "Bug %d opened" % bug.number
+
 
 def comment_bugs(github, args):
     for bug in args.bugs:
@@ -215,8 +219,7 @@ def process_command_line():
                               help="bug number(s) to operate on")
     label_parser.set_defaults(func=label_bugs)
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def main():
