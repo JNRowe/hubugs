@@ -399,7 +399,7 @@ def main():
         args.repository = "%s/%s" % (get_git_config_val("github.user"),
                                      args.repository)
 
-    args.func(github, args)
+    return args.func(github, args)
 
 if __name__ == '__main__':
     sys.exit(main())
