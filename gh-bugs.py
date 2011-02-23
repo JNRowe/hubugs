@@ -178,7 +178,10 @@ def list_bugs(github, args):
     :type github: ``github2.client.Github``
     :param github: Authenticated GitHub client instance
     """
-    bugs = github.issues.list(args.repository, args.state)
+    states = ["open", "closed"] if args.state == "all" else [args.state, ]
+    bugs = []
+    for state in states:
+        bugs.extend(github.issues.list(args.repository, state))
     display_bugs(bugs)
 
 
@@ -191,7 +194,10 @@ def search_bugs(github, args):
     :type github: ``github2.client.Github``
     :param github: Authenticated GitHub client instance
     """
-    bugs = github.issues.search(args.repository, args.term, args.state)
+    states = ["open", "closed"] if args.state == "all" else [args.state, ]
+    bugs = []
+    for state in states:
+        bugs.extend(github.issues.search(args.repository, args.term, state))
     display_bugs(bugs)
 
 
@@ -322,7 +328,7 @@ def process_command_line():
 
     list_parser = subparsers.add_parser("list", help="Listing bugs")
     list_parser.add_argument("-s", "--state", default="open",
-                             choices=["open", "closed"],
+                             choices=["open", "closed", "all"],
                              help="state of bugs to list")
     list_parser.add_argument("-l", "--label",
                              help="list bugs with specified label",
@@ -331,7 +337,7 @@ def process_command_line():
 
     search_parser = subparsers.add_parser("search", help="Searching bugs")
     search_parser.add_argument("-s", "--state", default="open",
-                               choices=["open", "closed"],
+                               choices=["open", "closed", "all"],
                                help="state of bugs to search")
     search_parser.add_argument("term", help="term to search bugs for")
     search_parser.set_defaults(func=search_bugs)
