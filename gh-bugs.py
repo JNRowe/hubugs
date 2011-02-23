@@ -25,10 +25,7 @@ __license__ = "GNU General Public License Version 3"
 __credits__ = ""
 __history__ = "See git repository"
 
-try:
-    from email.utils import parseaddr
-except ImportError:  # Python 2.4
-    from email.Utils import parseaddr
+from email.utils import parseaddr
 
 __doc__ += """.
 
