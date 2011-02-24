@@ -37,6 +37,7 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import argparse
+import datetime
 import operator
 import os
 import re
@@ -57,6 +58,19 @@ TEMPLATES = {
 # the title.  Lines beginning with '#' will be ignored
 """,
 }
+
+
+class UTC(datetime.tzinfo):
+    """UTC"""
+
+    def utcoffset(self, timestamp):
+        return datetime.timedelta(0)
+
+    def tzname(self, timestamp):
+        return "UTC"
+
+    def dst(self, timestamp):
+        return datetime.timedelta(0)
 
 
 def edit_text(edit_type="default"):
@@ -144,6 +158,52 @@ def get_term_size():
     return map(int, subprocess.check_output(["stty", "size"]).split())
 
 
+def relative_time(timestamp):
+    """Format a relative time
+
+    Taken from bleeter_.  Duplication is evil, I know.
+
+    :type timestamp: ``datetime.datetime``
+    :param timestamp: Event to generate relative timestamp against
+    :rtype: ``str``
+    :return: Human readable date and time offset
+
+    .. _bleeter: http://jnrowe.github.com/bleeter/
+    """
+
+    numstr = ". a two three four five six seven eight nine ten".split()
+
+    matches = [
+        60 * 60 * 24 * 365,
+        60 * 60 * 24 * 28,
+        60 * 60 * 24 * 7,
+        60 * 60 * 24,
+        60 * 60,
+        60,
+        1,
+    ]
+    match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
+
+    delta = datetime.datetime.now(UTC()) - timestamp
+    seconds = delta.days * 86400 + delta.seconds
+    for scale in matches:
+        i = seconds // scale
+        if i:
+            name = match_names[matches.index(scale)]
+            break
+
+    if i == 1 and name in ("year", "month", "week"):
+        result = "last %s" % name
+    elif i == 1 and name == "day":
+        result = "yesterday"
+    elif i == 1 and name == "hour":
+        result = "about an hour ago"
+    else:
+        result = "about %s %s%s ago" % (i if i > 10 else numstr[i], name,
+                                        "s" if i > 1 else "")
+    return result
+
+
 def display_bugs(bugs):
     """Display bugs tousers
 
@@ -215,8 +275,8 @@ def show_bugs(github, args):
         print "      Id: %d" % bug.number
         print "   Title: %s" % bug.title
         print "  Labels: %s" % ", ".join(bug.labels)
-        print " Created: %s by %s" % (bug.created_at, bug.user)
-        print " Updated: %s" % bug.updated_at
+        print " Created: %s by %s" % (relative_time(bug.created_at), bug.user)
+        print " Updated: %s" % relative_time(bug.updated_at)
         print "   State: %s%s" \
               % (bug.state, " at %s" % bug.closed_at if bug.closed_at else "")
         print "Comments: %d" % bug.comments
@@ -227,8 +287,9 @@ def show_bugs(github, args):
             comments = github.issues.comments(args.repository, bug.number)
             for comment in comments:
                 print
-                print " Created: %s by %s" % (comment.created_at, comment.user)
-                print " Updated: %s" % comment.updated_at
+                print " Created: %s by %s" % (relative_time(comment.created_at),
+                                              comment.user)
+                print " Updated: %s" % relative_time(comment.updated_at)
                 print
                 print comment.body
 
