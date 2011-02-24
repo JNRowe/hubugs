@@ -356,7 +356,7 @@ def process_command_line():
 
     comment_parser = subparsers.add_parser("comment",
                                            help="Commenting on bugs")
-    comment_parser.add_argument("--message", help="comment text")
+    comment_parser.add_argument("-m", "--message", help="comment text")
     comment_parser.add_argument("bugs", nargs="+",
                                 help="bug number(s) to operate on")
     comment_parser.set_defaults(func=comment_bugs)
