@@ -224,7 +224,7 @@ def display_bugs(bugs):
     :param bugs: Bugs to display
     """
     if not bugs:
-        print "No bugs found!"
+        print fail("No bugs found!")
         return
     columns = get_term_size()[1]
 
@@ -307,7 +307,7 @@ def open_bug(github, args):
         title = args.title
         body = args.body
     bug = github.issues.open(args.repository, title, body)
-    print "Bug %d opened" % bug.number
+    print success("Bug %d opened" % bug.number)
 
 
 def comment_bugs(github, args):
