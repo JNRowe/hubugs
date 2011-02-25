@@ -32,7 +32,7 @@ from email.utils import parseaddr
 
 __doc__ += """.
 
-``gh_bugs`` is a very simple client for working `GitHub's issue tracker`_.
+``gh_bugs`` is a very simple client for working with `GitHub's issue tracker`_.
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 
