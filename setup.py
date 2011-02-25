@@ -14,7 +14,7 @@ setup(
     ],
     packages=['gh_bugs', ],
     include_package_data=True,
-    package_data={'': ['templates/*/*.mkd', ], },
+    package_data={'': ['templates/*/*.mkd', "templates/*/*.txt"], },
     entry_points={'console_scripts': ['gh_bugs = gh_bugs:main', ]},
     zip_safe=False,
     install_requires = ['github2', 'Jinja2>=2'],
