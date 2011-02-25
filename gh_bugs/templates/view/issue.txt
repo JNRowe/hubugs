@@ -12,6 +12,7 @@
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
+{{ " Comment" | colourise("green") }}: {{ loop.index }}
 {{ " Created" | colourise("green") }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise("yellow") }}
 {{ " Updated" | colourise("green") }}: {{ comment.updated_at | relative_time }}
 
