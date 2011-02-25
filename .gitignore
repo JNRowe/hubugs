@@ -1,3 +1,9 @@
+*.egg-info/
 .ropeproject/
+dist/
 
+*.html
 *.py[co]
+
+.noseids
+
