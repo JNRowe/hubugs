@@ -41,6 +41,7 @@ __doc__ += """.
 
 import argparse
 import datetime
+import errno
 import operator
 import os
 import re
@@ -306,10 +307,16 @@ def show_bugs(github, args):
     :type github: ``github2.client.Github``
     :param github: Authenticated GitHub client instance
     """
-    bugs = [github.issues.show(args.repository, i) for i in args.bugs]
-
     template = ENV.get_template("view/issue.txt")
-    for bug in bugs:
+    for bug_no in args.bugs:
+        try:
+            bug = github.issues.show(args.repository, bug_no)
+        except RuntimeError as e:
+            if "Issue #%s not found" % bug_no in e.args[0]:
+                print fail("Issue %r not found" % bug_no)
+            else:
+                raise
+
         if args.full:
             comments = github.issues.comments(args.repository, bug.number)
         else:
@@ -351,7 +358,13 @@ def comment_bugs(github, args):
     else:
         message = args.message
     for bug in args.bugs:
-        github.issues.comment(args.repository, bug, message)
+        try:
+            github.issues.comment(args.repository, bug, message)
+        except RuntimeError as e:
+            if "Issue #%s not found" % bug in e.args[0]:
+                print fail("Issue %r not found" % bug)
+            else:
+                raise
 
 
 def close_bugs(github, args):
@@ -372,9 +385,15 @@ def close_bugs(github, args):
     else:
         message = args.message
     for bug in args.bugs:
-        if message:
-            github.issues.comment(args.repository, bug, message)
-        github.issues.close(args.repository, bug)
+        try:
+            if message:
+                github.issues.comment(args.repository, bug, message)
+            github.issues.close(args.repository, bug)
+        except RuntimeError as e:
+            if "Issue #%s not found" % bug in e.args[0]:
+                print fail("Issue %r not found" % bug)
+            else:
+                raise
 
 
 def label_bugs(github, args):
@@ -387,11 +406,16 @@ def label_bugs(github, args):
     :param github: Authenticated GitHub client instance
     """
     for bug in args.bugs:
-        if args.add:
-            github.issues.add_label(args.repository, bug, args.add)
-        if args.remove:
-            github.issues.remove_label(args.repository, bug, args.remove)
-
+        try:
+            if args.add:
+                github.issues.add_label(args.repository, bug, args.add)
+            if args.remove:
+                github.issues.remove_label(args.repository, bug, args.remove)
+        except RuntimeError as e:
+            if "Issue #%s not found" % bug in e.args[0]:
+                print fail("Issue %r not found" % bug)
+            else:
+                raise
 
 def process_command_line():
     """Process command line options
@@ -497,8 +521,15 @@ def main():
     elif not "/" in args.repository:
         args.repository = "%s/%s" % (get_git_config_val("github.user"),
                                      args.repository)
-
-    return args.func(github, args)
+    try:
+        retval = args.func(github, args)
+    except RuntimeError as e:
+        if "Repository not found" in e.args[0]:
+            print fail("Repository %r not found" % args.repository)
+            retval = errno.EBADR
+        else:
+            raise
+    return retval
 
 if __name__ == '__main__':
     sys.exit(main())
