@@ -1,0 +1,2 @@
+include *.rst
+include gh_bugs/templates/*/*
