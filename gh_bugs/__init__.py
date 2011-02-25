@@ -79,7 +79,6 @@ for directory in SYSTEM_DATA_DIR:
 ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
     [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
 ENV.loader.loaders.append(jinja2.PackageLoader("gh_bugs", "templates"))
-ENV.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
 if colored and sys.stdout.isatty():
     ENV.filters["colourise"] = colored
 else:
@@ -229,6 +228,7 @@ def relative_time(timestamp):
         result = "about %s %s%s ago" % (i if i > 10 else numstr[i], name,
                                         "s" if i > 1 else "")
     return result
+ENV.filters["relative_time"] = relative_time
 
 
 def display_bugs(bugs, order):
