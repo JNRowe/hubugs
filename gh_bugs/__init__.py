@@ -67,8 +67,18 @@ else:  # pragma: no cover
     success = fail = warn = str
 # pylint: enable-msg=C0103
 
+USER_DATA_DIR = os.environ.get("XDG_DATA_HOME",
+                               os.path.join(os.environ.get("HOME", "/"),
+                                            ".local"))
+SYSTEM_DATA_DIR = os.environ.get("XDG_DATA_DIRS",
+                                 "/usr/local/share/:/usr/share/").split(":")
+PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, "gh_bugs", "templates"), ]
+for directory in SYSTEM_DATA_DIR:
+    PKG_DATA_DIRS.append(os.path.join(directory, "gh_bugs", "templates"))
 
-ENV = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs", "templates/"))
+ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
+    [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
+ENV.loader.loaders.append(jinja2.PackageLoader("gh_bugs", "templates"))
 ENV.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
 if colored and sys.stdout.isatty():
     ENV.filters["colourise"] = colored
