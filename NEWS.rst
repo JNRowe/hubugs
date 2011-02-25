@@ -1,5 +1,5 @@
- User-visible changes
-======================
+User-visible changes
+====================
 
 .. contents::
 
