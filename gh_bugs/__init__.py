@@ -70,6 +70,7 @@ else:  # pragma: no cover
 
 ENV = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs", "templates/"))
 ENV.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
+ENV.filters["colourise"] = colored if colored else lambda string, colour: string
 
 
 class UTC(datetime.tzinfo):
