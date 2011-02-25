@@ -1,2 +1,2 @@
-include *.rst
+include COPYING *.rst
 include gh_bugs/templates/*/*
