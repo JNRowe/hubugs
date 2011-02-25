@@ -7,7 +7,7 @@
 Comments: {{ bug.comments }}
    Votes: {{ bug.votes }}
 
-{{ bug.body }}
+{{ bug.body | wordwrap }}
 
 {% if full and bug.comments > 0 %}
 {% for comment in comments %}
@@ -15,6 +15,6 @@ Comments: {{ bug.comments }}
  Created: {{ comment.created_at | relative_time }} by {{ comment.user }}
  Updated: {{ comment.updated_at | relative_time }}
 
-{{ comment.body }}
+{{ comment.body | wordwrap }}
 {% endfor %}
 {% endif %}
