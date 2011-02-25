@@ -9,12 +9,12 @@ Comments: {{ bug.comments }}
 
 {{ bug.body | wordwrap }}
 
-{% if full and bug.comments > 0 %}
+{%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
  Created: {{ comment.created_at | relative_time }} by {{ comment.user }}
  Updated: {{ comment.updated_at | relative_time }}
 
 {{ comment.body | wordwrap }}
-{% endfor %}
-{% endif %}
+{%- endfor %}
+{%- endif -%}
