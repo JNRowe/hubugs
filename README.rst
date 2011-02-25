@@ -81,7 +81,7 @@ I can reproduce the problem, or even better a patch!
 .. _Python: http://www.python.org/
 .. _argparse: http://code.google.com/p/argparse/
 .. _termcolor: http://pypi.python.org/pypi/termcolor/
-.. _github2: http://pypi.python.org/pypi/github2/0.2.0
+.. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
