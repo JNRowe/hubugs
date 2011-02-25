@@ -1,19 +1,19 @@
-      Id: {{ bug.number }}
-   Title: {{ bug.title }}
-  Labels: {{ bug.labels | join(", ") }}
- Created: {{ bug.created_at | relative_time }} by {{ bug.user }}
- Updated: {{ bug.updated_at | relative_time }}
-   State: {{ bug.state }} {% if bug.closed_at %} at {{ bug.closed_at | relative_time }}{% endif %}
-Comments: {{ bug.comments }}
-   Votes: {{ bug.votes }}
+{{ "      Id" | colourise("green") }}: {{ bug.number }}
+{{ "   Title" | colourise("green") }}: {{ bug.title }}
+{{ "  Labels" | colourise("green") }}: {{ bug.labels | join(", ") }}
+{{ " Created" | colourise("green") }}: {{ bug.created_at | relative_time }} by {{ bug.user | colourise("yellow") }}
+{{ " Updated" | colourise("green") }}: {{ bug.updated_at | relative_time }}
+{{ "   State" | colourise("green") }}: {{ bug.state }} {% if bug.closed_at %} at {{ bug.closed_at | relative_time }}{% endif %}
+{{ "Comments" | colourise("green") }}: {{ bug.comments }}
+{{ "   Votes" | colourise("green") }}: {{ bug.votes }}
 
 {{ bug.body | wordwrap }}
 
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
- Created: {{ comment.created_at | relative_time }} by {{ comment.user }}
- Updated: {{ comment.updated_at | relative_time }}
+{{ " Created" | colourise("green") }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise("yellow") }}
+{{ " Updated" | colourise("green") }}: {{ comment.updated_at | relative_time }}
 
 {{ comment.body | wordwrap }}
 {%- endfor %}
