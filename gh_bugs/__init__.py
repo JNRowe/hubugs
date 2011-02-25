@@ -404,7 +404,7 @@ def process_command_line():
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    list_parser = subparsers.add_parser("list", help="Listing bugs")
+    list_parser = subparsers.add_parser("list", help="listing bugs")
     list_parser.add_argument("-s", "--state", default="open",
                              choices=["open", "closed", "all"],
                              help="state of bugs to list")
@@ -417,7 +417,7 @@ def process_command_line():
                              help="Sort order for listing bugs")
     list_parser.set_defaults(func=list_bugs)
 
-    search_parser = subparsers.add_parser("search", help="Searching bugs")
+    search_parser = subparsers.add_parser("search", help="searching bugs")
     search_parser.add_argument("-s", "--state", default="open",
                                choices=["open", "closed", "all"],
                                help="state of bugs to search")
@@ -428,32 +428,32 @@ def process_command_line():
     search_parser.add_argument("term", help="term to search bugs for")
     search_parser.set_defaults(func=search_bugs)
 
-    show_parser = subparsers.add_parser("show", help="Displaying bugs")
+    show_parser = subparsers.add_parser("show", help="displaying bugs")
     show_parser.add_argument("-f", "--full", action="store_true",
                              help="show bug including comments")
     show_parser.add_argument("bugs", nargs="+",
                              help="bug number(s) to operate on")
     show_parser.set_defaults(func=show_bugs)
 
-    open_parser = subparsers.add_parser("open", help="Opening new bugs")
+    open_parser = subparsers.add_parser("open", help="opening new bugs")
     open_parser.add_argument("title", help="title for the new bug", nargs="?")
     open_parser.add_argument("body", help="body for the new bug", nargs="?")
     open_parser.set_defaults(func=open_bug)
 
     comment_parser = subparsers.add_parser("comment",
-                                           help="Commenting on bugs")
+                                           help="commenting on bugs")
     comment_parser.add_argument("-m", "--message", help="comment text")
     comment_parser.add_argument("bugs", nargs="+",
                                 help="bug number(s) to operate on")
     comment_parser.set_defaults(func=comment_bugs)
 
-    close_parser = subparsers.add_parser("close", help="Closing bugs")
+    close_parser = subparsers.add_parser("close", help="closing bugs")
     close_parser.add_argument("-m", "--message", help="comment text")
     close_parser.add_argument("bugs", nargs="+",
                               help="bug number(s) to operate on")
     close_parser.set_defaults(func=close_bugs)
 
-    label_parser = subparsers.add_parser("label", help="Labelling bugs")
+    label_parser = subparsers.add_parser("label", help="labelling bugs")
     label_parser.add_argument("-a", "--add", help="add label to issue",
                               metavar="label")
     label_parser.add_argument("-r", "--remove", help="remove label from issue",
