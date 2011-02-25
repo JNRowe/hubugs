@@ -211,18 +211,16 @@ def display_bugs(bugs):
         return
     columns = get_term_size()[1]
 
+    env = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs",
+                                                         "templates/"))
+    template = env.get_template("view/list.txt")
+
     max_id = max(i.number for i in bugs)
     id_len = len(str(max_id))
+    spacer = " " * (id_len - 2)
 
-    print "Id %sTitle" % (" " * (id_len - 2))
-    fmt_str = "%%%ds %%s" % id_len
-    for bug in sorted(bugs, key=operator.attrgetter("number")):
-        # Keep title within a single row
-        if len(bug.title) > columns - id_len - 2:
-            title = "%s…" % bug.title[:columns - id_len - 2]
-        else:
-            title = bug.title
-        print fmt_str % (bug.number, title)
+    print template.render(bugs=bugs, spacer=spacer, id_len=id_len,
+                          max_title=columns - id_len - 2)
 
 
 def list_bugs(github, args):
