@@ -9,7 +9,7 @@ from gh_bugs import __version__
 setup(
     name='gh_bugs',
     version=__version__,
-    url="https://github.com/JNRowe/gh-bugs",
+    url="https://github.com/JNRowe/gh_bugs",
     author="James Rowe",
     author_email="jnrowe@gmail.com",
     classifiers=[

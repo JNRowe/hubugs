@@ -1,5 +1,5 @@
 #! /usr/bin/python -tt
-"""gh-bugs - Simple client for GitHub issues"""
+"""gh_bugs - Simple client for GitHub issues"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

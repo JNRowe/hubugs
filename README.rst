@@ -1,10 +1,10 @@
-gh-bugs - Simple client for GitHub issues
+gh_bugs - Simple client for GitHub issues
 =========================================
 
 Introduction
 ------------
 
-``gh-bugs`` is a very simple client for working `GitHub's issue tracker`_.
+``gh_bugs`` is a very simple client for working `GitHub's issue tracker`_.
 
 *WARNING: DO NOT USE THIS PACKAGE AS IT IS, IT REQUIRES UNRELEASED
 VERSIONS OF ITS DEPENDENCIES AND IS IN A MASSIVE STATE OF FLUX*
@@ -12,7 +12,7 @@ VERSIONS OF ITS DEPENDENCIES AND IS IN A MASSIVE STATE OF FLUX*
 Requirements
 ------------
 
-``gh-bugs`` requires Python_ v2.6 or above. ``gh-bugs``'s only mandatory
+``gh_bugs`` requires Python_ v2.6 or above. ``gh_bugs``'s only mandatory
 dependency outside of the standard library is github2_.  If you're still using
 Python v2.6 then you need argparse_, newer Python versions have it included in
 the standard library.
@@ -26,7 +26,7 @@ Contributors
 ------------
 
 I'd like to thank the following people who have contributed to
-``gh-bugs``.
+``gh_bugs``.
 
 Patches
 '''''''
@@ -82,4 +82,4 @@ I can reproduce the problem, or even better a patch!
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _mail: jnrowe@gmail.com
-.. _issue: http://github.com/JNRowe/gh-bugs/issues
+.. _issue: http://github.com/JNRowe/gh_bugs/issues

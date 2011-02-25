@@ -1,6 +1,6 @@
 #! /usr/bin/python -tt
 # coding=utf-8
-"""gh-bugs - Simple client for GitHub issues"""
+"""gh_bugs - Simple client for GitHub issues"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ from email.utils import parseaddr
 
 __doc__ += """.
 
-``gh-bugs`` is a very simple client for working `GitHub's issue tracker`_.
+``gh_bugs`` is a very simple client for working `GitHub's issue tracker`_.
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 
@@ -434,7 +434,7 @@ def main():
 
     xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
                               os.path.join(os.getenv("HOME", "/"), ".cache"))
-    cache_dir = os.path.join(xdg_cache_dir, "gh-bugs")
+    cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
 
     github = Github(username=user, api_token=token, cache=cache_dir)
 
