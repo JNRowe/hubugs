@@ -82,7 +82,7 @@ ENV.loader.loaders.append(jinja2.PackageLoader("gh_bugs", "templates"))
 if colored and sys.stdout.isatty():
     ENV.filters["colourise"] = colored
 else:
-    ENV.filters["colourise"] = lambda string, colour: string
+    ENV.filters["colourise"] = lambda string, *args, **kwargs: string
 
 
 class UTC(datetime.tzinfo):
