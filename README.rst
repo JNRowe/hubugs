@@ -17,6 +17,8 @@ dependency outside of the standard library is github2_.  If you're still using
 Python v2.6 then you need argparse_, newer Python versions have it included in
 the standard library.
 
+If you would like coloured terminal output, then you will need termcolor_.
+
 Configuration
 -------------
 
@@ -78,6 +80,7 @@ I can reproduce the problem, or even better a patch!
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _Python: http://www.python.org/
 .. _argparse: http://code.google.com/p/argparse/
+.. _termcolor: http://pypi.python.org/pypi/termcolor/
 .. _github2: http://pypi.python.org/pypi/github2/0.2.0
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html

@@ -52,6 +52,21 @@ import jinja2
 
 from github2.client import Github
 
+try:
+    from termcolor import colored
+except ImportError:  # pragma: no cover
+    colored = None  # pylint: disable-msg=C0103
+
+# Select colours if terminal is a tty
+# pylint: disable-msg=C0103
+if colored and sys.stdout.isatty():
+    success = lambda s: colored(s, "green")
+    fail = lambda s: colored(s, "red")
+    warn = lambda s: colored(s, "yellow")
+else:  # pragma: no cover
+    success = fail = warn = str
+# pylint: enable-msg=C0103
+
 
 ENV = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs", "templates/"))
 ENV.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
