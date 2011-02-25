@@ -407,10 +407,10 @@ def label_bugs(github, args):
     """
     for bug in args.bugs:
         try:
-            if args.add:
-                github.issues.add_label(args.repository, bug, args.add)
-            if args.remove:
-                github.issues.remove_label(args.repository, bug, args.remove)
+            for label in args.add:
+                github.issues.add_label(args.repository, bug, label)
+            for label in args.remove:
+                github.issues.remove_label(args.repository, bug, label)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -488,10 +488,10 @@ def process_command_line():
     close_parser.set_defaults(func=close_bugs)
 
     label_parser = subparsers.add_parser("label", help="labelling bugs")
-    label_parser.add_argument("-a", "--add", help="add label to issue",
-                              metavar="label")
-    label_parser.add_argument("-r", "--remove", help="remove label from issue",
-                              metavar="label")
+    label_parser.add_argument("-a", "--add", action="append", default=[],
+                              help="add label to issue",metavar="label")
+    label_parser.add_argument("-r", "--remove", action="append", default=[],
+                              help="remove label from issue", metavar="label")
     label_parser.add_argument("bugs", nargs="+", type=int,
                               help="bug number(s) to operate on")
     label_parser.set_defaults(func=label_bugs)
