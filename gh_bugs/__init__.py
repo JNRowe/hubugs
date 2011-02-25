@@ -431,7 +431,7 @@ def process_command_line():
     show_parser = subparsers.add_parser("show", help="displaying bugs")
     show_parser.add_argument("-f", "--full", action="store_true",
                              help="show bug including comments")
-    show_parser.add_argument("bugs", nargs="+",
+    show_parser.add_argument("bugs", nargs="+", type=int,
                              help="bug number(s) to operate on")
     show_parser.set_defaults(func=show_bugs)
 
@@ -443,13 +443,13 @@ def process_command_line():
     comment_parser = subparsers.add_parser("comment",
                                            help="commenting on bugs")
     comment_parser.add_argument("-m", "--message", help="comment text")
-    comment_parser.add_argument("bugs", nargs="+",
+    comment_parser.add_argument("bugs", nargs="+", type=int,
                                 help="bug number(s) to operate on")
     comment_parser.set_defaults(func=comment_bugs)
 
     close_parser = subparsers.add_parser("close", help="closing bugs")
     close_parser.add_argument("-m", "--message", help="comment text")
-    close_parser.add_argument("bugs", nargs="+",
+    close_parser.add_argument("bugs", nargs="+", type=int,
                               help="bug number(s) to operate on")
     close_parser.set_defaults(func=close_bugs)
 
@@ -458,7 +458,7 @@ def process_command_line():
                               metavar="label")
     label_parser.add_argument("-r", "--remove", help="remove label from issue",
                               metavar="label")
-    label_parser.add_argument("bugs", nargs="+",
+    label_parser.add_argument("bugs", nargs="+", type=int,
                               help="bug number(s) to operate on")
     label_parser.set_defaults(func=label_bugs)
 
