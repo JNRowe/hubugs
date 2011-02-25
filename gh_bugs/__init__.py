@@ -221,15 +221,28 @@ def relative_time(timestamp):
     return result
 
 
-def display_bugs(bugs):
+def display_bugs(bugs, order):
     """Display bugs to users
 
     :type bugs: ``list` of ``github2.issues.Issue``
     :param bugs: Bugs to display
+    :type order: ``str``
+    :param order: Sorting order for displaying bugs
     """
     if not bugs:
         print fail("No bugs found!")
         return
+
+    # Match ordering method to bug attribute
+    if order == "priority":
+        attr = "position"
+    elif order == "updated":
+        attr = "updated_at"
+    else:
+        attr = order
+
+    bugs = sorted(bugs, key=operator.attrgetter(attr))
+
     columns = get_term_size()[1]
 
     template = ENV.get_template("view/list.txt")
@@ -246,8 +259,8 @@ def list_bugs(github, args):
     """Command function to list bugs
 
     :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository`` and ``state``
-        are used
+    :param args: Processed command line options.  ``repository``, ``state``
+        and ``order`` are used
     :type github: ``github2.client.Github``
     :param github: Authenticated GitHub client instance
     """
@@ -255,15 +268,15 @@ def list_bugs(github, args):
     bugs = []
     for state in states:
         bugs.extend(github.issues.list(args.repository, state))
-    display_bugs(bugs)
+    display_bugs(bugs, args.order)
 
 
 def search_bugs(github, args):
     """Command function to search bugs
 
     :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``term`` and
-        ``state`` are used
+    :param args: Processed command line options.  ``repository``, ``term``,
+        ``state`` and ``order`` are used
     :type github: ``github2.client.Github``
     :param github: Authenticated GitHub client instance
     """
@@ -271,7 +284,7 @@ def search_bugs(github, args):
     bugs = []
     for state in states:
         bugs.extend(github.issues.search(args.repository, args.term, state))
-    display_bugs(bugs)
+    display_bugs(bugs, args.order)
 
 
 def show_bugs(github, args):
@@ -394,12 +407,20 @@ def process_command_line():
     list_parser.add_argument("-l", "--label",
                              help="list bugs with specified label",
                              metavar="label")
+    list_parser.add_argument("-o", "--order", default="number",
+                             choices=["number", "priority", "updated",
+                                      "votes"],
+                             help="Sort order for listing bugs")
     list_parser.set_defaults(func=list_bugs)
 
     search_parser = subparsers.add_parser("search", help="Searching bugs")
     search_parser.add_argument("-s", "--state", default="open",
                                choices=["open", "closed", "all"],
                                help="state of bugs to search")
+    search_parser.add_argument("-o", "--order", default="number",
+                               choices=["number", "priority", "updated",
+                                        "votes"],
+                               help="Sort order for listing bugs")
     search_parser.add_argument("term", help="term to search bugs for")
     search_parser.set_defaults(func=search_bugs)
 
