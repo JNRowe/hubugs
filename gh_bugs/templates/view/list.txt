@@ -1,4 +1,8 @@
-{% set id_format = "%%%dd" | format(id_len - 1) -%}
+{%- if id_len == 1 -%}
+{% set id_format = "%2d" %}
+{%- else -%}
+{% set id_format = "%%%dd" | format(id_len - 1) %}
+{%- endif -%}
 Id {{ spacer }}Title
 {%- for bug in bugs %}
 {{ id_format | format(bug.number) }} {{ bug.title | truncate(max_title, True) }}
