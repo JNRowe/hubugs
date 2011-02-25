@@ -208,7 +208,7 @@ def relative_time(timestamp):
 
 
 def display_bugs(bugs):
-    """Display bugs tousers
+    """Display bugs to users
 
     :type bugs: ``list` of ``github2.issues.Issue``
     :param bugs: Bugs to display
