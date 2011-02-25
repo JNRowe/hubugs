@@ -1,0 +1,20 @@
+      Id: {{ bug.number }}
+   Title: {{ bug.title }}
+  Labels: {{ bug.labels | join(", ") }}
+ Created: {{ bug.created_at | relative_time }} by {{ bug.user }}
+ Updated: {{ bug.updated_at | relative_time }}
+   State: {{ bug.state }} {% if bug.closed_at %} at {{ bug.closed_at | relative_time }}{% endif %}
+Comments: {{ bug.comments }}
+   Votes: {{ bug.votes }}
+
+{{ bug.body }}
+
+{% if full and bug.comments > 0 %}
+{% for comment in comments %}
+
+ Created: {{ comment.created_at | relative_time }} by {{ comment.user }}
+ Updated: {{ comment.updated_at | relative_time }}
+
+{{ comment.body }}
+{% endfor %}
+{% endif %}

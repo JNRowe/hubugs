@@ -267,27 +267,17 @@ def show_bugs(github, args):
     :param github: Authenticated GitHub client instance
     """
     bugs = [github.issues.show(args.repository, i) for i in args.bugs]
+
+    env = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs",
+                                                         "templates/"))
+    env.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
+    template = env.get_template("view/issue.txt")
     for bug in bugs:
-        print "      Id: %d" % bug.number
-        print "   Title: %s" % bug.title
-        print "  Labels: %s" % ", ".join(bug.labels)
-        print " Created: %s by %s" % (relative_time(bug.created_at), bug.user)
-        print " Updated: %s" % relative_time(bug.updated_at)
-        print "   State: %s%s" \
-              % (bug.state, " at %s" % bug.closed_at if bug.closed_at else "")
-        print "Comments: %d" % bug.comments
-        print "   Votes: %d" % bug.votes
-        print
-        print bug.body
-        if args.full and bug.comments > 0:
+        if args.full:
             comments = github.issues.comments(args.repository, bug.number)
-            for comment in comments:
-                print
-                print " Created: %s by %s" % (relative_time(comment.created_at),
-                                              comment.user)
-                print " Updated: %s" % relative_time(comment.updated_at)
-                print
-                print comment.body
+        else:
+            comments = []
+        print template.render(bug=bug, comments=comments, full=True)
 
 
 def open_bug(github, args):
