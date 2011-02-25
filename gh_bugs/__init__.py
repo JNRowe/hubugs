@@ -390,7 +390,11 @@ def process_command_line():
     :return: Parsed options and arguments
     """
 
-    parser = argparse.ArgumentParser()
+    epilog = "Please report bugs to the JNRowe/gh_bugs repository or by " \
+             "to %s" % __author__
+
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0],
+                                     epilog=epilog)
     parser.add_argument('--version', action='version',
                         version='%%(prog)s %s' % __version__)
 
@@ -398,7 +402,7 @@ def process_command_line():
                         help="GitHub repository to operate on",
                         metavar="repo")
 
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(title="subcommands")
 
     list_parser = subparsers.add_parser("list", help="Listing bugs")
     list_parser.add_argument("-s", "--state", default="open",
