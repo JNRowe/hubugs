@@ -53,6 +53,10 @@ import jinja2
 from github2.client import Github
 
 
+ENV = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs", "templates/"))
+ENV.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
+
+
 class UTC(datetime.tzinfo):
     """UTC"""
 
@@ -75,9 +79,7 @@ def edit_text(edit_type="default"):
     :return: User supplied text
     :raise ValueError: No message given
     """
-    env = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs",
-                                                         "templates/"))
-    template = env.get_template("edit/%s.mkd" % edit_type)
+    template = ENV.get_template("edit/%s.mkd" % edit_type)
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
         temp.write(template.render())
         temp.flush()
@@ -211,9 +213,7 @@ def display_bugs(bugs):
         return
     columns = get_term_size()[1]
 
-    env = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs",
-                                                         "templates/"))
-    template = env.get_template("view/list.txt")
+    template = ENV.get_template("view/list.txt")
 
     max_id = max(i.number for i in bugs)
     id_len = len(str(max_id))
@@ -266,10 +266,7 @@ def show_bugs(github, args):
     """
     bugs = [github.issues.show(args.repository, i) for i in args.bugs]
 
-    env = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs",
-                                                         "templates/"))
-    env.filters["relative_time"] = lambda timestamp: relative_time(timestamp)
-    template = env.get_template("view/issue.txt")
+    template = ENV.get_template("view/issue.txt")
     for bug in bugs:
         if args.full:
             comments = github.issues.comments(args.repository, bug.number)
