@@ -13,7 +13,9 @@ setup(
         'Programming Language :: Python',
     ],
     packages=['gh_bugs', ],
+    include_package_data=True,
+    package_data={'': ['templates/*/*.mkd', ], },
     entry_points={'console_scripts': ['gh_bugs = gh_bugs:main', ]},
     zip_safe=False,
-    install_requires = ['github2', ],
+    install_requires = ['github2', 'Jinja2>=2'],
 )

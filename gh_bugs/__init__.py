@@ -48,19 +48,9 @@ import subprocess
 import sys
 import tempfile
 
+import jinja2
+
 from github2.client import Github
-
-
-TEMPLATES = {
-    "default": """
-# Please enter your message.  Lines beginning with '#' will be ignored
-""",
-    "open": """
-
-# Please enter the content for your new bug, the first line will be used for
-# the title.  Lines beginning with '#' will be ignored
-""",
-}
 
 
 class UTC(datetime.tzinfo):
@@ -85,8 +75,11 @@ def edit_text(edit_type="default"):
     :return: User supplied text
     :raise ValueError: No message given
     """
+    env = jinja2.Environment(loader=jinja2.PackageLoader("gh_bugs",
+                                                         "templates/"))
+    template = env.get_template("edit/%s.mkd" % edit_type)
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
-        temp.write(TEMPLATES[edit_type])
+        temp.write(template.render())
         temp.flush()
 
         subprocess.check_call([get_editor(), temp.name])
