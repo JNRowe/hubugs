@@ -6,9 +6,9 @@
 {{ "   State" | colourise("green") }}: {{ bug.state }} {% if bug.closed_at %} at {{ bug.closed_at | relative_time }}{% endif %}
 {{ "Comments" | colourise("green") }}: {{ bug.comments }}
 {{ "   Votes" | colourise("green") }}: {{ bug.votes }}
-
+{%- if bug.body %}
 {{ bug.body | term_markdown | wordwrap }}
-
+{%- endif -%}
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
