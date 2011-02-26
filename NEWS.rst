@@ -3,6 +3,11 @@ User-visible changes
 
 .. contents::
 
+0.4.0 - 2011-02-26
+------------------
+
+    * Format Markdown output using terminal escapes
+
 0.3.0 - 2011-02-26
 ------------------
 
