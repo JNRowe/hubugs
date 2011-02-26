@@ -242,7 +242,7 @@ def term_markdown(text):
     :rtype: ``str``
     :return: Rendered text with terminal control sequences
     """
-    if sys.stdout.isatty():
+    if colored and sys.stdout.isatty():
         text = re.sub(r"^#+ +(.*)$",
                       lambda s: colored(s.groups()[0], attrs=["underline"]),
                       text, flags=re.MULTILINE)
