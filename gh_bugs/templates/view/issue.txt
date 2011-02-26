@@ -7,7 +7,7 @@
 {{ "Comments" | colourise("green") }}: {{ bug.comments }}
 {{ "   Votes" | colourise("green") }}: {{ bug.votes }}
 
-{{ bug.body | wordwrap }}
+{{ bug.body | term_markdown | wordwrap }}
 
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
@@ -16,6 +16,6 @@
 {{ " Created" | colourise("green") }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise("yellow") }}
 {{ " Updated" | colourise("green") }}: {{ comment.updated_at | relative_time }}
 
-{{ comment.body | wordwrap }}
+{{ comment.body | term_markdown | wordwrap }}
 {%- endfor %}
 {%- endif -%}
