@@ -242,16 +242,18 @@ def term_markdown(text):
     :rtype: ``str``
     :return: Rendered text with terminal control sequences
     """
-    text = re.sub(r"^#+ +(.*)$",
-                  lambda s: colored(s.groups()[0], attrs=["underline"]),
-                  text, flags=re.MULTILINE)
-    text = re.sub(r"^(([*-] *){3,})\r$", lambda s: colored(s.groups()[0], "green"),
-                  text, flags=re.MULTILINE)
-    text = re.sub(r'([\*_]{2})([^ \*]+)\1',
-                  lambda s: colored(s.groups()[1], attrs=["underline"]),
-                  text)
-    text = re.sub(r'([\*_])([^ \*]+)\1',
-                  lambda s: colored(s.groups()[1], attrs=["bold"]), text)
+    if sys.stdout.isatty():
+        text = re.sub(r"^#+ +(.*)$",
+                      lambda s: colored(s.groups()[0], attrs=["underline"]),
+                      text, flags=re.MULTILINE)
+        text = re.sub(r"^(([*-] *){3,})\r$",
+                      lambda s: colored(s.groups()[0], "green"),
+                      text, flags=re.MULTILINE)
+        text = re.sub(r'([\*_]{2})([^ \*]+)\1',
+                      lambda s: colored(s.groups()[1], attrs=["underline"]),
+                      text)
+        text = re.sub(r'([\*_])([^ \*]+)\1',
+                      lambda s: colored(s.groups()[1], attrs=["bold"]), text)
 
     return text
 ENV.filters["term_markdown"] = term_markdown
