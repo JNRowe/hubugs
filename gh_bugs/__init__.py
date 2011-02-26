@@ -243,10 +243,12 @@ def term_markdown(text):
     :return: Rendered text with terminal control sequences
     """
     if colored and sys.stdout.isatty():
+        # For uniform line ending split and rejoin, this saves having to handle \r and \r\n
+        text = "\n".join(text.splitlines())
         text = re.sub(r"^#+ +(.*)$",
                       lambda s: colored(s.groups()[0], attrs=["underline"]),
                       text, flags=re.MULTILINE)
-        text = re.sub(r"^(([*-] *){3,})\r$",
+        text = re.sub(r"^(([*-] *){3,})$",
                       lambda s: colored(s.groups()[0], "green"),
                       text, flags=re.MULTILINE)
         if sys.stdout.encoding == "UTF-8":
