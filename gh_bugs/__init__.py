@@ -251,14 +251,14 @@ def term_markdown(text):
         text = re.sub(r"^(([*-] *){3,})$",
                       lambda s: colored(s.groups()[0], "green"),
                       text, flags=re.MULTILINE)
-        if sys.stdout.encoding == "UTF-8":
-            text = re.sub(r"^( {0,4})[*+-] ", u"\\1• ", text,
-                          flags=re.MULTILINE)
         text = re.sub(r'([\*_]{2})([^ \*]+)\1',
                       lambda s: colored(s.groups()[1], attrs=["underline"]),
                       text)
         text = re.sub(r'([\*_])([^ \*]+)\1',
                       lambda s: colored(s.groups()[1], attrs=["bold"]), text)
+        if sys.stdout.encoding == "UTF-8":
+            text = re.sub(r"^( {0,4})[*+-] ", u"\\1• ", text,
+                          flags=re.MULTILINE)
 
     return text
 ENV.filters["term_markdown"] = term_markdown
