@@ -5,5 +5,10 @@
 {%- endif -%}
 {{ "Id" | colourise("green") }} {{ spacer }}{{ "Title" | colourise("green") }}
 {%- for bug in bugs %}
-{{ id_format | format(bug.number) | colourise("yellow") }} {{ bug.title | truncate(max_title, True) }}
+{%- if bug.labels %}
+{%- set formatted_labels = " [" + bug.labels | join(", ") | colourise(on_color="on_blue") + "]" %}
+{% else %}
+{%- set formatted_labels = "" %}
+{% endif -%}
+{{ id_format | format(bug.number) | colourise("yellow") }} {{ bug.title + formatted_labels | truncate(max_title, True) }}
 {%- endfor %}
