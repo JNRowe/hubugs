@@ -21,7 +21,7 @@ from . import _version
 
 
 __version__ = _version.dotted
-__date__ = "2010-10-31"
+__date__ = _version.date
 __author__ = "James Rowe <jnrowe@gmail.com>"
 __copyright__ = "Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>"
 __license__ = "GNU General Public License Version 3"
