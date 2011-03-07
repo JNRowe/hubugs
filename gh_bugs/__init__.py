@@ -540,8 +540,8 @@ def main():
     """
     args = process_command_line()
 
-    user = get_git_config_val("github.user")
-    token = get_git_config_val("github.token")
+    user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
+    token = os.getenv("GITHUB_TOKEN", get_git_config_val("github.token"))
 
     if "cache" in inspect.getargspec(Github.__init__).args:
         xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
