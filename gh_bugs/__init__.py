@@ -466,6 +466,35 @@ def close_bugs(github, args):
                 raise
 
 
+def reopen_bugs(github, args):
+    """Command function to reopen closed bug(s)
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``message``
+        and ``bugs`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
+    if not args.message:
+        try:
+            message = edit_text()
+        except ValueError:
+            # Message isn't required for closing, but it is good practice
+            message = None
+    else:
+        message = args.message
+    for bug in args.bugs:
+        try:
+            if message:
+                github.issues.comment(args.repository, bug, message)
+            github.issues.reopen(args.repository, bug)
+        except RuntimeError as e:
+            if "Issue #%s not found" % bug in e.args[0]:
+                print fail("Issue %r not found" % bug)
+            else:
+                raise
+
+
 def label_bugs(github, args):
     """Command function to list bugs
 
@@ -563,6 +592,13 @@ def process_command_line():
     close_parser.add_argument("bugs", nargs="+", type=int,
                               help="bug number(s) to operate on")
     close_parser.set_defaults(func=close_bugs)
+
+    reopen_parser = subparsers.add_parser("reopen", help="reopening closed bugs")
+    reopen_parser.add_argument("-m", "--message", help="comment text")
+    reopen_parser.add_argument("bugs", nargs="+", type=int,
+                              help="bug number(s) to operate on")
+    reopen_parser.set_defaults(func=reopen_bugs)
+
 
     label_parser = subparsers.add_parser("label", help="labelling bugs")
     label_parser.add_argument("-a", "--add", action="append", default=[],
