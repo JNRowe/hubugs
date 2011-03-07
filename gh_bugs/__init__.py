@@ -100,18 +100,20 @@ class UTC(datetime.tzinfo):
         return datetime.timedelta(0)
 
 
-def edit_text(edit_type="default"):
+def edit_text(edit_type="default", data=None):
     """Edit data with external editor
 
     :type edit_type: ``str``
     :param edit_type: Template to use in editor
+    :type data: ``dict``
+    :param data: Information to pass to template
     :rtype: ``str``
     :return: User supplied text
     :raise ValueError: No message given
     """
     template = ENV.get_template("edit/%s.mkd" % edit_type)
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
-        temp.write(template.render())
+        temp.write(template.render(data if data else {}))
         temp.flush()
 
         subprocess.check_call([get_editor(), temp.name])
@@ -400,6 +402,41 @@ def comment_bugs(github, args):
                 raise
 
 
+def edit_bugs(github, args):
+    """Command function to edit existing bug(s)
+
+    :type args: ``argparse.Namespace``
+    :param args: Processed command line options.  ``repository``, ``title``,
+        ``body`` and ``bugs`` are used
+    :type github: ``github2.client.Github``
+    :param github: Authenticated GitHub client instance
+    """
+    for bug in args.bugs:
+        if not args.title:
+            try:
+                current = github.issues.show(args.repository, bug)
+            except RuntimeError as e:
+                if "Issue #%s not found" % bug in e.args[0]:
+                    print fail("Issue %r not found" % bug)
+                else:
+                    raise
+            current_data = {"title": current.title, "body": current.body}
+            text = edit_text("open", current_data).splitlines()
+            title = text[0]
+            body = "\n".join(text[1:])
+        else:
+            title = args.title
+            body = args.body
+
+        try:
+            github.issues.edit(args.repository, bug, title, body)
+        except RuntimeError as e:
+            if "Issue #%s not found" % bug in e.args[0]:
+                print fail("Issue %r not found" % bug)
+            else:
+                raise
+
+
 def close_bugs(github, args):
     """Command function to close bug(s)
 
@@ -513,6 +550,13 @@ def process_command_line():
     comment_parser.add_argument("bugs", nargs="+", type=int,
                                 help="bug number(s) to operate on")
     comment_parser.set_defaults(func=comment_bugs)
+
+    edit_parser = subparsers.add_parser("edit", help="editing bugs")
+    edit_parser.add_argument("title", help="title for the new bug", nargs="?")
+    edit_parser.add_argument("body", help="body for the new bug", nargs="?")
+    edit_parser.add_argument("bugs", nargs="+", type=int,
+                             help="bug number(s) to operate on")
+    edit_parser.set_defaults(func=edit_bugs)
 
     close_parser = subparsers.add_parser("close", help="closing bugs")
     close_parser.add_argument("-m", "--message", help="comment text")

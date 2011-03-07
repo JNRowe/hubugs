@@ -1,5 +1,5 @@
-
-
+{{ title }}
+{{ body }}
 # Please enter the content for your new bug, the first line will be used for
 # the title.  Lines beginning with '#' will be ignored
 
