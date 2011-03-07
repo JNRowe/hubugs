@@ -42,6 +42,7 @@ __doc__ += """.
 import argparse
 import datetime
 import errno
+import inspect
 import operator
 import os
 import re
@@ -542,11 +543,14 @@ def main():
     user = get_git_config_val("github.user")
     token = get_git_config_val("github.token")
 
-    xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
-                              os.path.join(os.getenv("HOME", "/"), ".cache"))
-    cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
-
-    github = Github(username=user, api_token=token, cache=cache_dir)
+    if "cache" in inspect.getargspec(Github.__init__).args:
+        xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
+                                  os.path.join(os.getenv("HOME", "/"), ".cache"))
+        cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
+        kwargs = {"cache": cache_dir}
+    else:
+        kwargs = {}
+    github = Github(username=user, api_token=token, **kwargs)
 
     if not args.repository:
         args.repository = get_repo()
