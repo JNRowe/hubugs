@@ -479,7 +479,7 @@ def reopen_bugs(github, args):
         try:
             message = edit_text()
         except ValueError:
-            # Message isn't required for closing, but it is good practice
+            # Message isn't required for reopening, but it is good practice
             message = None
     else:
         message = args.message
