@@ -276,7 +276,7 @@ def display_bugs(bugs, order):
     :param order: Sorting order for displaying bugs
     """
     if not bugs:
-        print fail("No bugs found!")
+        print success("No bugs found!")
         return
 
     # Match ordering method to bug attribute
