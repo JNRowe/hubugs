@@ -496,7 +496,7 @@ def reopen_bugs(github, args):
 
 
 def label_bugs(github, args):
-    """Command function to list bugs
+    """Command function to label bug(s)
 
     :type args: ``argparse.Namespace``
     :param args: Processed command line options. ``repository``, ``bugs``,
