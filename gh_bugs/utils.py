@@ -76,7 +76,7 @@ class RepoAction(argh.utils.argparse.Action):
                 raise parser.error(fail("Repository %r not found" % repository))
             else:
                 raise
-        except httplib2.ServerNotFoundError as e:
+        except httplib2.ServerNotFoundError:
             raise parser.error(fail("Repository lookup failed.  Network or "
                                     "GitHub down?"))
         except EnvironmentError as e:
