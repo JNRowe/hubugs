@@ -1,4 +1,4 @@
-#! /usr/bin/python -tt
+#
 # coding=utf-8
 """gh_bugs - Simple client for GitHub issues"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
