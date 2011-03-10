@@ -99,6 +99,15 @@ class UTC(datetime.tzinfo):
         return datetime.timedelta(0)
 
 
+class RepoAction(argh.utils.argparse.Action):
+    """argparse action class for setting repository"""
+    def __call__(self, parser, namespace, repository, option_string=None):
+        "Set fully qualified GitHub repository name"
+        if not "/" in repository:
+            repository = "%s/%s" % (get_git_config_val("github.user"), repository)
+        namespace.repository = repository
+
+
 def edit_text(edit_type="default", data=None):
     """Edit data with external editor
 
@@ -182,25 +191,14 @@ def get_editor():
     return editor
 
 
-def get_repo(repository=None):
-    """Identify the current GitHub repository
-
-    :type repository: ``str``
-    :param repository: User supplied GitHub repository name
-    :rtype: ``str``
-    :return: Fully qualified GitHub repository name
-    :raise ValueError: If GitHub repository can't be ascertained
-    """
-    if not repository:
-        data = get_git_config_val("remote.origin.url", True)
-        match = re.search(r"github.com[:/](.*).git", data)
-        if match:
-            repository = match.groups()[0]
-        else:
-            raise ValueError("Unknown repository")
-    elif not "/" in repository:
-        repository = "%s/%s" % (get_git_config_val("github.user"), repository)
-    return repository
+def get_repo():
+    "Extract GitHub repository name from config"
+    data = get_git_config_val("remote.origin.url", True)
+    match = re.search(r"github.com[:/](.*).git", data)
+    if match:
+        return match.groups()[0]
+    else:
+        raise ValueError("Unknown repository")
 
 
 def get_term_size():
@@ -339,7 +337,7 @@ def list_bugs(args):
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        bugs.extend(github.issues.list(get_repo(args.repository), state))
+        bugs.extend(github.issues.list(args.repository, state))
     display_bugs(bugs, args.order)
 
 
@@ -355,8 +353,7 @@ def search(args):
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        bugs.extend(github.issues.search(get_repo(args.repository), args.term,
-                                         state))
+        bugs.extend(github.issues.search(args.repository, args.term, state))
     display_bugs(bugs, args.order)
 
 
@@ -368,7 +365,7 @@ def show(args):
     template = ENV.get_template("view/issue.txt")
     for bug_no in args.bugs:
         try:
-            bug = github.issues.show(get_repo(args.repository), bug_no)
+            bug = github.issues.show(args.repository, bug_no)
         except RuntimeError as e:
             if "Issue #%s not found" % bug_no in e.args[0]:
                 print fail("Issue %r not found" % bug_no)
@@ -395,7 +392,7 @@ def open_bug(args):
     else:
         title = args.title
         body = args.body
-    bug = github.issues.open(get_repo(args.repository), title, body)
+    bug = github.issues.open(args.repository, title, body)
     print success("Bug %d opened" % bug.number)
 
 
@@ -410,7 +407,7 @@ def comment(args):
         message = args.message
     for bug in args.bugs:
         try:
-            github.issues.comment(get_repo(args.repository), bug, message)
+            github.issues.comment(args.repository, bug, message)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -427,7 +424,7 @@ def edit(args):
     for bug in args.bugs:
         if not args.title:
             try:
-                current = github.issues.show(get_repo(args.repository), bug)
+                current = github.issues.show(args.repository, bug)
             except RuntimeError as e:
                 if "Issue #%s not found" % bug in e.args[0]:
                     print fail("Issue %r not found" % bug)
@@ -442,7 +439,7 @@ def edit(args):
             body = args.body
 
         try:
-            github.issues.edit(get_repo(args.repository), bug, title, body)
+            github.issues.edit(args.repository, bug, title, body)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -466,8 +463,8 @@ def close(args):
     for bug in args.bugs:
         try:
             if message:
-                github.issues.comment(get_repo(args.repository), bug, message)
-            github.issues.close(get_repo(args.repository), bug)
+                github.issues.comment(args.repository, bug, message)
+            github.issues.close(args.repository, bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -491,8 +488,8 @@ def reopen(args):
     for bug in args.bugs:
         try:
             if message:
-                github.issues.comment(get_repo(args.repository), bug, message)
-            github.issues.reopen(get_repo(args.repository), bug)
+                github.issues.comment(args.repository, bug, message)
+            github.issues.reopen(args.repository, bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -511,10 +508,9 @@ def label(args):
     for bug in args.bugs:
         try:
             for label in args.add:
-                github.issues.add_label(get_repo(args.repository), bug, label)
+                github.issues.add_label(args.repository, bug, label)
             for label in args.remove:
-                github.issues.remove_label(get_repo(args.repository), bug,
-                                           label)
+                github.issues.remove_label(args.repository, bug, label)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -528,7 +524,8 @@ def main():
                              epilog="Please report bugs to the JNRowe/gh_bugs" \
                                     " repository or by email to %s" % __author__,
                              version="%%(prog)s %s" % __version__)
-    parser.add_argument("-r", "--repository",
+    parser.add_argument("-r", "--repository", action=RepoAction,
+                        default=get_repo(),
                         help="GitHub repository to operate on",
                         metavar="repo")
     parser.add_commands([list_bugs, search, show, open_bug, comment, edit,
