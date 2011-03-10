@@ -3,7 +3,7 @@
 {{ "  Labels" | colourise("green") }}: {{ bug.labels | join(", ") }}
 {{ " Created" | colourise("green") }}: {{ bug.created_at | relative_time }} by {{ bug.user | colourise("yellow") }}
 {{ " Updated" | colourise("green") }}: {{ bug.updated_at | relative_time }}
-{{ "   State" | colourise("green") }}: {{ bug.state }} {% if bug.closed_at %} at {{ bug.closed_at | relative_time }}{% endif %}
+{{ "   State" | colourise("green") }}: {{ bug.state }}{% if bug.closed_at %} {{ bug.closed_at | relative_time }}{% endif %}
 {{ "Comments" | colourise("green") }}: {{ bug.comments }}
 {{ "   Votes" | colourise("green") }}: {{ bug.votes }}
 {%- if bug.body %}
