@@ -103,6 +103,7 @@ def show(args):
 @argh.alias("open")
 @argh.arg("title", help="title for the new bug", nargs="?")
 @argh.arg("body", help="body for the new bug", nargs="?")
+@argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
     github = utils.get_github_api()
@@ -119,6 +120,7 @@ def open_bug(args):
 
 @argh.arg("-m", "--message", help="comment text")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
     "commenting on bugs"
     github = utils.get_github_api()
@@ -139,6 +141,7 @@ def comment(args):
 @argh.arg("title", help="title for the new bug", nargs="?")
 @argh.arg("body", help="body for the new bug", nargs="?")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
     "editing bugs"
     github = utils.get_github_api()
@@ -177,7 +180,7 @@ def close(args):
     if not args.message:
         try:
             message = template.edit_text()
-        except ValueError:
+        except template.EmptyMessageError:
             # Message isn't required for closing, but it is good practice
             message = None
     else:
@@ -202,7 +205,7 @@ def reopen(args):
     if not args.message:
         try:
             message = template.edit_text()
-        except ValueError:
+        except template.EmptyMessageError:
             # Message isn't required for reopening, but it is good practice
             message = None
     else:

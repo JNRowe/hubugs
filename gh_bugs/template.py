@@ -48,6 +48,10 @@ else:
     ENV.filters["colourise"] = lambda string, *args, **kwargs: string
 
 
+class EmptyMessageError(ValueError):
+     pass
+
+
 def relative_time(timestamp):
     """Format a relative time
 
@@ -168,7 +172,7 @@ def edit_text(edit_type="default", data=None):
     :param data: Information to pass to template
     :rtype: ``str``
     :return: User supplied text
-    :raise ValueError: No message given
+    :raise EmptyMessageError: No message given
     """
     template = ENV.get_template("edit/%s.mkd" % edit_type)
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
@@ -182,6 +186,6 @@ def edit_text(edit_type="default", data=None):
                               temp.readlines())).strip()
 
     if not text:
-        raise ValueError("No message given")
+        raise EmptyMessageError("No message given")
 
     return text.strip()
