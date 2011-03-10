@@ -75,6 +75,7 @@ def relative_time(timestamp):
     match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
 
     delta = datetime.datetime.now(utils.UTC()) - timestamp
+    # Switch to delta.total_seconds, if 2.6 support is dropped
     seconds = delta.days * 86400 + delta.seconds
     for scale in matches:
         i = seconds // scale
