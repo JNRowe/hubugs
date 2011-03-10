@@ -105,6 +105,17 @@ class RepoAction(argh.utils.argparse.Action):
         "Set fully qualified GitHub repository name"
         if not "/" in repository:
             repository = "%s/%s" % (get_git_config_val("github.user"), repository)
+
+        try:
+            # Check for repo validity early on.  This check is normally less
+            # than a 500 bytes transfer
+            get_github_api().repos.show(repository)
+        except RuntimeError as e:
+            if "Repository not found" in e.args[0]:
+                raise parser.error(fail("Repository %r not found" % repository))
+            else:
+                raise
+
         namespace.repository = repository
 
 
@@ -530,13 +541,7 @@ def main():
                         metavar="repo")
     parser.add_commands([list_bugs, search, show, open_bug, comment, edit,
                          close, reopen, label])
-    try:
-        parser.dispatch()
-    except RuntimeError as e:
-        if "Repository not found" in e.args[0]:
-            print fail("Repository %r not found" % get_repo())
-        else:
-            raise
+    parser.dispatch()
 
 if __name__ == '__main__':
     main()
