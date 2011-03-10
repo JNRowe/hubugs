@@ -52,6 +52,15 @@ class EmptyMessageError(ValueError):
      pass
 
 
+def jinja_filter(func):
+    "Simple decorator to add function to Jinja filters"
+    ENV.filters[func.__name__] = func
+    def decorator(*args):
+        return func(*args)
+    return decorator
+
+
+@jinja_filter
 def relative_time(timestamp):
     """Format a relative time
 
@@ -97,9 +106,9 @@ def relative_time(timestamp):
         result = "about %s %s%s ago" % (i if i > 10 else numstr[i], name,
                                         "s" if i > 1 else "")
     return result
-ENV.filters["relative_time"] = relative_time
 
 
+@jinja_filter
 def term_markdown(text):
     """Basic Markdown text-based renderer
 
@@ -129,7 +138,6 @@ def term_markdown(text):
                           flags=re.MULTILINE)
 
     return text
-ENV.filters["term_markdown"] = term_markdown
 
 def display_bugs(bugs, order):
     """Display bugs to users
