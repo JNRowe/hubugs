@@ -106,23 +106,16 @@ def get_github_api():
     return Github(username=user, api_token=token, **kwargs)
 
 
-def get_git_config_val(key, allow_fail=False):
+def get_git_config_val(key):
     """Fetch a git configuration value
 
     :type key: ``str``
     :param key: Configuration value to fetch
-    :type allow_fail: ``bool``
-    :param allow_fail: Ignore errors
-    :raise subprocess.CalledProcessError: If ``allow_fail`` is False, and
-        command returns non-zero exit code
     """
     try:
         output = subprocess.check_output(["git", "config", key]).strip()
     except subprocess.CalledProcessError:
-        if allow_fail:
-            output = None
-        else:
-            raise
+        output = None
     return output
 
 
@@ -136,7 +129,7 @@ def get_editor():
     # Match git for editor preferences
     editor = os.getenv("GIT_EDITOR")
     if not editor:
-        editor = get_git_config_val("core.editor", allow_fail=True)
+        editor = get_git_config_val("core.editor")
         if not editor:
             editor = os.getenv("VISUAL", os.getenv("EDITOR", "vi"))
     return editor
@@ -144,7 +137,7 @@ def get_editor():
 
 def get_repo():
     "Extract GitHub repository name from config"
-    data = get_git_config_val("remote.origin.url", True)
+    data = get_git_config_val("remote.origin.url")
     match = re.search(r"github.com[:/](.*).git", data)
     if match:
         return match.groups()[0]
