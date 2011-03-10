@@ -3,6 +3,18 @@ User-visible changes
 
 .. contents::
 
+0.5.0 - 2011-03-10
+------------------
+
+    * Support for editing an existing bug's title and/or summary
+    * Support for re-opening closed bugs
+    * GitHub authentication values can be read from the environment using
+      ``GITHUB_USER`` and ``GITHUB_TOKEN``
+    * Labels are now included in list output
+    * argh_ is now required
+
+.. _argh: http://pypi.python.org/pypi/argh/
+
 0.4.0 - 2011-02-26
 ------------------
 
