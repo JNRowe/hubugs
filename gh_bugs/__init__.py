@@ -47,8 +47,10 @@ from . import (template, utils)
 @argh.alias("list")
 @argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
           help="state of bugs to list")
-@argh.arg("-l", "--label", help="list bugs with specified label",
-          metavar="label")
+# Currently not supported in python-github2, see
+# https://github.com/ask/python-github2/pull/32
+#@argh.arg("-l", "--label", help="list bugs with specified label",
+#          metavar="label")
 @argh.arg("-o", "--order", default="number",
           choices=["number", "priority", "updated", "votes"],
           help="Sort order for listing bugs")
