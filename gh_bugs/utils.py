@@ -63,8 +63,10 @@ class RepoAction(argh.utils.argparse.Action):
     def __call__(self, parser, namespace, repository, option_string=None):
         "Set fully qualified GitHub repository name"
         if not "/" in repository:
-            repository = "%s/%s" % (get_git_config_val("github.user"), repository)
-
+            user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
+            if not user:
+                raise parser.error("No GitHub user setting!")
+            repository = "%s/%s" % (user, repository)
         try:
             # Check for repo validity early on.  This check is normally less
             # than a 500 bytes transfer
@@ -77,6 +79,8 @@ class RepoAction(argh.utils.argparse.Action):
         except httplib2.ServerNotFoundError as e:
             raise parser.error(fail("Repository lookup failed.  Network or "
                                     "GitHub down?"))
+        except EnvironmentError as e:
+            raise parser.error(e.args[0])
 
         namespace.repository = repository
 
@@ -89,6 +93,8 @@ def get_github_api():
     """
     user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
     token = os.getenv("GITHUB_TOKEN", get_git_config_val("github.token"))
+    if not user or not token:
+        raise EnvironmentError("No GitHub authentication settings found!")
 
     if "cache" in inspect.getargspec(Github.__init__).args:
         xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
