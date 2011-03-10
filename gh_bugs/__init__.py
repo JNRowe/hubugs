@@ -39,9 +39,7 @@ __doc__ += """.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
-import argparse
 import datetime
-import errno
 import inspect
 import operator
 import os
@@ -50,6 +48,7 @@ import subprocess
 import sys
 import tempfile
 
+import argh
 import jinja2
 
 from github2.client import Github
@@ -128,6 +127,25 @@ def edit_text(edit_type="default", data=None):
     return text.strip()
 
 
+def get_github_api():
+    """Create a GitHub API instance
+
+    :rtype: ``Github``
+    :return: Authenticated GitHub API instance
+    """
+    user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
+    token = os.getenv("GITHUB_TOKEN", get_git_config_val("github.token"))
+
+    if "cache" in inspect.getargspec(Github.__init__).args:
+        xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
+                                  os.path.join(os.getenv("HOME", "/"), ".cache"))
+        cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
+        kwargs = {"cache": cache_dir}
+    else:
+        kwargs = {}
+    return Github(username=user, api_token=token, **kwargs)
+
+
 def get_git_config_val(key, allow_fail=False):
     """Fetch a git configuration value
 
@@ -164,19 +182,25 @@ def get_editor():
     return editor
 
 
-def get_repo():
+def get_repo(repository=None):
     """Identify the current GitHub repository
 
+    :type repository: ``str``
+    :param repository: User supplied GitHub repository name
     :rtype: ``str``
-    :return: GitHub repository user and name
+    :return: Fully qualified GitHub repository name
     :raise ValueError: If GitHub repository can't be ascertained
     """
-    data = get_git_config_val("remote.origin.url", True)
-    match = re.search(r"github.com[:/](.*).git", data)
-    if match:
-        return match.groups()[0]
-    else:
-        raise ValueError("Unknown repository")
+    if not repository:
+        data = get_git_config_val("remote.origin.url", True)
+        match = re.search(r"github.com[:/](.*).git", data)
+        if match:
+            repository = match.groups()[0]
+        else:
+            raise ValueError("Unknown repository")
+    elif not "/" in repository:
+        repository = "%s/%s" % (get_git_config_val("github.user"), repository)
+    return repository
 
 
 def get_term_size():
@@ -301,51 +325,50 @@ def display_bugs(bugs, order):
                           max_title=columns - id_len - 2)
 
 
-def list_bugs(github, args):
-    """Command function to list bugs
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``state``
-        and ``order`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.alias("list")
+@argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
+          help="state of bugs to list")
+@argh.arg("-l", "--label", help="list bugs with specified label",
+          metavar="label")
+@argh.arg("-o", "--order", default="number",
+          choices=["number", "priority", "updated", "votes"],
+          help="Sort order for listing bugs")
+def list_bugs(args):
+    "listing bugs"
+    github = get_github_api()
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        bugs.extend(github.issues.list(args.repository, state))
+        bugs.extend(github.issues.list(get_repo(args.repository), state))
     display_bugs(bugs, args.order)
 
 
-def search_bugs(github, args):
-    """Command function to search bugs
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``term``,
-        ``state`` and ``order`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
+          help="state of bugs to search")
+@argh.arg("-o", "--order", default="number",
+          choices=["number", "priority", "updated", "votes"],
+          help="Sort order for listing bugs")
+@argh.arg("term", help="term to search bugs for")
+def search(args):
+    "searching bugs"
+    github = get_github_api()
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        bugs.extend(github.issues.search(args.repository, args.term, state))
+        bugs.extend(github.issues.search(get_repo(args.repository), args.term,
+                                         state))
     display_bugs(bugs, args.order)
 
 
-def show_bugs(github, args):
-    """Command function to show bug(s) in detail
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``bugs`` and
-        ``full`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("-f", "--full", default=False, help="show bug including comments")
+@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+def show(args):
+    "displaying bugs"
+    github = get_github_api()
     template = ENV.get_template("view/issue.txt")
     for bug_no in args.bugs:
         try:
-            bug = github.issues.show(args.repository, bug_no)
+            bug = github.issues.show(get_repo(args.repository), bug_no)
         except RuntimeError as e:
             if "Issue #%s not found" % bug_no in e.args[0]:
                 print fail("Issue %r not found" % bug_no)
@@ -359,15 +382,12 @@ def show_bugs(github, args):
         print template.render(bug=bug, comments=comments, full=True)
 
 
-def open_bug(github, args):
-    """Command function to open a bug
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``title`` and
-        ``body`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.alias("open")
+@argh.arg("title", help="title for the new bug", nargs="?")
+@argh.arg("body", help="body for the new bug", nargs="?")
+def open_bug(args):
+    "opening new bugs"
+    github = get_github_api()
     if not args.title:
         text = edit_text("open").splitlines()
         title = text[0]
@@ -375,26 +395,22 @@ def open_bug(github, args):
     else:
         title = args.title
         body = args.body
-    bug = github.issues.open(args.repository, title, body)
+    bug = github.issues.open(get_repo(args.repository), title, body)
     print success("Bug %d opened" % bug.number)
 
 
-def comment_bugs(github, args):
-    """Command function to comment on bug(s)
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``message``
-        and ``bugs`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("-m", "--message", help="comment text")
+@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+def comment(args):
+    "commenting on bugs"
+    github = get_github_api()
     if not args.message:
         message = edit_text()
     else:
         message = args.message
     for bug in args.bugs:
         try:
-            github.issues.comment(args.repository, bug, message)
+            github.issues.comment(get_repo(args.repository), bug, message)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -402,19 +418,16 @@ def comment_bugs(github, args):
                 raise
 
 
-def edit_bugs(github, args):
-    """Command function to edit existing bug(s)
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``title``,
-        ``body`` and ``bugs`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("title", help="title for the new bug", nargs="?")
+@argh.arg("body", help="body for the new bug", nargs="?")
+@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+def edit(args):
+    "editing bugs"
+    github = get_github_api()
     for bug in args.bugs:
         if not args.title:
             try:
-                current = github.issues.show(args.repository, bug)
+                current = github.issues.show(get_repo(args.repository), bug)
             except RuntimeError as e:
                 if "Issue #%s not found" % bug in e.args[0]:
                     print fail("Issue %r not found" % bug)
@@ -429,7 +442,7 @@ def edit_bugs(github, args):
             body = args.body
 
         try:
-            github.issues.edit(args.repository, bug, title, body)
+            github.issues.edit(get_repo(args.repository), bug, title, body)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -437,15 +450,11 @@ def edit_bugs(github, args):
                 raise
 
 
-def close_bugs(github, args):
-    """Command function to close bug(s)
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``message``
-        and ``bugs`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("-m", "--message", help="comment text")
+@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+def close(args):
+    "closing bugs"
+    github = get_github_api()
     if not args.message:
         try:
             message = edit_text()
@@ -457,8 +466,8 @@ def close_bugs(github, args):
     for bug in args.bugs:
         try:
             if message:
-                github.issues.comment(args.repository, bug, message)
-            github.issues.close(args.repository, bug)
+                github.issues.comment(get_repo(args.repository), bug, message)
+            github.issues.close(get_repo(args.repository), bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -466,15 +475,11 @@ def close_bugs(github, args):
                 raise
 
 
-def reopen_bugs(github, args):
-    """Command function to reopen closed bug(s)
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options.  ``repository``, ``message``
-        and ``bugs`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("-m", "--message", help="comment text")
+@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+def reopen(args):
+    "reopening closed bugs"
+    github = get_github_api()
     if not args.message:
         try:
             message = edit_text()
@@ -486,8 +491,8 @@ def reopen_bugs(github, args):
     for bug in args.bugs:
         try:
             if message:
-                github.issues.comment(args.repository, bug, message)
-            github.issues.reopen(args.repository, bug)
+                github.issues.comment(get_repo(args.repository), bug, message)
+            github.issues.reopen(get_repo(args.repository), bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
@@ -495,157 +500,46 @@ def reopen_bugs(github, args):
                 raise
 
 
-def label_bugs(github, args):
-    """Command function to label bug(s)
-
-    :type args: ``argparse.Namespace``
-    :param args: Processed command line options. ``repository``, ``bugs``,
-        ``add`` and ``remove`` are used
-    :type github: ``github2.client.Github``
-    :param github: Authenticated GitHub client instance
-    """
+@argh.arg("-a", "--add", action="append", default=[],
+          help="add label to issue", metavar="label")
+@argh.arg("-r", "--remove", action="append", default=[],
+          help="remove label from issue", metavar="label")
+@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+def label(args):
+    "labelling bugs"
+    github = get_github_api()
     for bug in args.bugs:
         try:
             for label in args.add:
-                github.issues.add_label(args.repository, bug, label)
+                github.issues.add_label(get_repo(args.repository), bug, label)
             for label in args.remove:
-                github.issues.remove_label(args.repository, bug, label)
+                github.issues.remove_label(get_repo(args.repository), bug,
+                                           label)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 print fail("Issue %r not found" % bug)
             else:
                 raise
 
-def process_command_line():
-    """Process command line options
 
-    :rtype: ``'argparse.Namespace'``
-    :return: Parsed options and arguments
-    """
-
-    epilog = "Please report bugs to the JNRowe/gh_bugs repository or by " \
-             "to %s" % __author__
-
-    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0],
-                                     epilog=epilog)
-    parser.add_argument('--version', action='version',
-                        version='%%(prog)s %s' % __version__)
-
+def main():
+    """Main script"""
+    parser = argh.ArghParser(description=__doc__.splitlines()[0],
+                             epilog="Please report bugs to the JNRowe/gh_bugs" \
+                                    " repository or by email to %s" % __author__,
+                             version="%%(prog)s %s" % __version__)
     parser.add_argument("-r", "--repository",
                         help="GitHub repository to operate on",
                         metavar="repo")
-
-    subparsers = parser.add_subparsers(title="subcommands")
-
-    list_parser = subparsers.add_parser("list", help="listing bugs")
-    list_parser.add_argument("-s", "--state", default="open",
-                             choices=["open", "closed", "all"],
-                             help="state of bugs to list")
-    list_parser.add_argument("-l", "--label",
-                             help="list bugs with specified label",
-                             metavar="label")
-    list_parser.add_argument("-o", "--order", default="number",
-                             choices=["number", "priority", "updated",
-                                      "votes"],
-                             help="Sort order for listing bugs")
-    list_parser.set_defaults(func=list_bugs)
-
-    search_parser = subparsers.add_parser("search", help="searching bugs")
-    search_parser.add_argument("-s", "--state", default="open",
-                               choices=["open", "closed", "all"],
-                               help="state of bugs to search")
-    search_parser.add_argument("-o", "--order", default="number",
-                               choices=["number", "priority", "updated",
-                                        "votes"],
-                               help="Sort order for listing bugs")
-    search_parser.add_argument("term", help="term to search bugs for")
-    search_parser.set_defaults(func=search_bugs)
-
-    show_parser = subparsers.add_parser("show", help="displaying bugs")
-    show_parser.add_argument("-f", "--full", action="store_true",
-                             help="show bug including comments")
-    show_parser.add_argument("bugs", nargs="+", type=int,
-                             help="bug number(s) to operate on")
-    show_parser.set_defaults(func=show_bugs)
-
-    open_parser = subparsers.add_parser("open", help="opening new bugs")
-    open_parser.add_argument("title", help="title for the new bug", nargs="?")
-    open_parser.add_argument("body", help="body for the new bug", nargs="?")
-    open_parser.set_defaults(func=open_bug)
-
-    comment_parser = subparsers.add_parser("comment",
-                                           help="commenting on bugs")
-    comment_parser.add_argument("-m", "--message", help="comment text")
-    comment_parser.add_argument("bugs", nargs="+", type=int,
-                                help="bug number(s) to operate on")
-    comment_parser.set_defaults(func=comment_bugs)
-
-    edit_parser = subparsers.add_parser("edit", help="editing bugs")
-    edit_parser.add_argument("title", help="title for the new bug", nargs="?")
-    edit_parser.add_argument("body", help="body for the new bug", nargs="?")
-    edit_parser.add_argument("bugs", nargs="+", type=int,
-                             help="bug number(s) to operate on")
-    edit_parser.set_defaults(func=edit_bugs)
-
-    close_parser = subparsers.add_parser("close", help="closing bugs")
-    close_parser.add_argument("-m", "--message", help="comment text")
-    close_parser.add_argument("bugs", nargs="+", type=int,
-                              help="bug number(s) to operate on")
-    close_parser.set_defaults(func=close_bugs)
-
-    reopen_parser = subparsers.add_parser("reopen", help="reopening closed bugs")
-    reopen_parser.add_argument("-m", "--message", help="comment text")
-    reopen_parser.add_argument("bugs", nargs="+", type=int,
-                              help="bug number(s) to operate on")
-    reopen_parser.set_defaults(func=reopen_bugs)
-
-
-    label_parser = subparsers.add_parser("label", help="labelling bugs")
-    label_parser.add_argument("-a", "--add", action="append", default=[],
-                              help="add label to issue",metavar="label")
-    label_parser.add_argument("-r", "--remove", action="append", default=[],
-                              help="remove label from issue", metavar="label")
-    label_parser.add_argument("bugs", nargs="+", type=int,
-                              help="bug number(s) to operate on")
-    label_parser.set_defaults(func=label_bugs)
-
-    return parser.parse_args()
-
-
-def main():
-    """Main script
-
-    :rtype: ``int``
-    :return: Exit code
-    """
-    args = process_command_line()
-
-    user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
-    token = os.getenv("GITHUB_TOKEN", get_git_config_val("github.token"))
-
-    if "cache" in inspect.getargspec(Github.__init__).args:
-        xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
-                                  os.path.join(os.getenv("HOME", "/"), ".cache"))
-        cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
-        kwargs = {"cache": cache_dir}
-    else:
-        kwargs = {}
-    github = Github(username=user, api_token=token, **kwargs)
-
-    if not args.repository:
-        args.repository = get_repo()
-    elif not "/" in args.repository:
-        args.repository = "%s/%s" % (get_git_config_val("github.user"),
-                                     args.repository)
+    parser.add_commands([list_bugs, search, show, open_bug, comment, edit,
+                         close, reopen, label])
     try:
-        retval = args.func(github, args)
+        parser.dispatch()
     except RuntimeError as e:
         if "Repository not found" in e.args[0]:
-            print fail("Repository %r not found" % args.repository)
-            retval = errno.EBADR
+            print fail("Repository %r not found" % get_repo())
         else:
             raise
-    return retval
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

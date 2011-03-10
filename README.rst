@@ -13,9 +13,7 @@ Requirements
 ------------
 
 ``gh_bugs`` requires Python_ v2.6 or above. ``gh_bugs``'s only mandatory
-dependencies outside of the standard library are github2_ and Jinja_.  If you're
-still using Python v2.6 then you need argparse_, newer Python versions have it
-included in the standard library.
+dependencies outside of the standard library are argh_, github2_ and Jinja_.
 
 If you would like coloured terminal output, then you will need termcolor_.
 
@@ -82,7 +80,7 @@ I can reproduce the problem, or even better a patch!
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _Python: http://www.python.org/
-.. _argparse: http://code.google.com/p/argparse/
+.. _argh: http://pypi.python.org/pypi/argh/
 .. _termcolor: http://pypi.python.org/pypi/termcolor/
 .. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
