@@ -49,6 +49,7 @@ import sys
 import tempfile
 
 import argh
+import httplib2
 import jinja2
 
 from github2.client import Github
@@ -115,6 +116,9 @@ class RepoAction(argh.utils.argparse.Action):
                 raise parser.error(fail("Repository %r not found" % repository))
             else:
                 raise
+        except httplib2.ServerNotFoundError as e:
+            raise parser.error(fail("Repository lookup failed.  Network or "
+                                    "GitHub down?"))
 
         namespace.repository = repository
 
