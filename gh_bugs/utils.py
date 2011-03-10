@@ -153,3 +153,14 @@ def get_term_size():
     :return: Number of columns and lines in current terminal
     """
     return map(int, subprocess.check_output(["stty", "size"]).split())
+
+def set_api(args):
+    """Add authenticated issues API object to args namespace
+
+    :type args: argparse.Namespace
+    :param args: argparse namespace to operate on
+    """
+    issues = get_github_api().issues
+    def api_method(method, *opts, **kwargs):
+        return getattr(issues, method)(args.repository, *opts, **kwargs)
+    args.api = api_method

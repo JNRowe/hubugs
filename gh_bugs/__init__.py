@@ -56,11 +56,10 @@ from . import (template, utils)
           help="Sort order for listing bugs")
 def list_bugs(args):
     "listing bugs"
-    github = utils.get_github_api()
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        bugs.extend(github.issues.list(args.repository, state))
+        bugs.extend(args.api("list", state))
     return template.display_bugs(bugs, args.order)
 
 
@@ -72,11 +71,10 @@ def list_bugs(args):
 @argh.arg("term", help="term to search bugs for")
 def search(args):
     "searching bugs"
-    github = utils.get_github_api()
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        bugs.extend(github.issues.search(args.repository, args.term, state))
+        bugs.extend(args.api("search", args.term, state))
     return template.display_bugs(bugs, args.order)
 
 
@@ -84,11 +82,10 @@ def search(args):
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def show(args):
     "displaying bugs"
-    github = utils.get_github_api()
     tmpl = template.ENV.get_template("view/issue.txt")
     for bug_no in args.bugs:
         try:
-            bug = github.issues.show(args.repository, bug_no)
+            bug = args.api("show", bug_no)
         except RuntimeError as e:
             if "Issue #%s not found" % bug_no in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
@@ -96,7 +93,7 @@ def show(args):
                 raise
 
         if args.full:
-            comments = github.issues.comments(args.repository, bug.number)
+            comments = args.api("comments", bug.number)
         else:
             comments = []
         yield tmpl.render(bug=bug, comments=comments, full=True)
@@ -108,7 +105,6 @@ def show(args):
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
-    github = utils.get_github_api()
     if not args.title:
         text = template.edit_text("open").splitlines()
         title = text[0]
@@ -116,7 +112,7 @@ def open_bug(args):
     else:
         title = args.title
         body = args.body
-    bug = github.issues.open(args.repository, title, body)
+    bug = args.api("open", title, body)
     return utils.success("Bug %d opened" % bug.number)
 
 
@@ -125,14 +121,13 @@ def open_bug(args):
 @argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
     "commenting on bugs"
-    github = utils.get_github_api()
     if not args.message:
         message = template.edit_text()
     else:
         message = args.message
     for bug in args.bugs:
         try:
-            github.issues.comment(args.repository, bug, message)
+            args.api("comment", bug, message)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -146,11 +141,10 @@ def comment(args):
 @argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
     "editing bugs"
-    github = utils.get_github_api()
     for bug in args.bugs:
         if not args.title:
             try:
-                current = github.issues.show(args.repository, bug)
+                current = args.api("show", bug)
             except RuntimeError as e:
                 if "Issue #%s not found" % bug in e.args[0]:
                     yield utils.fail("Issue %r not found" % bug)
@@ -166,7 +160,7 @@ def edit(args):
             body = args.body
 
         try:
-            github.issues.edit(args.repository, bug, title, body)
+            args.api("edit", bug, title, body)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -178,7 +172,6 @@ def edit(args):
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def close(args):
     "closing bugs"
-    github = utils.get_github_api()
     if not args.message:
         try:
             message = template.edit_text()
@@ -190,8 +183,8 @@ def close(args):
     for bug in args.bugs:
         try:
             if message:
-                github.issues.comment(args.repository, bug, message)
-            github.issues.close(args.repository, bug)
+                args.api("comment", bug, message)
+            args.api("close", bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -203,7 +196,6 @@ def close(args):
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def reopen(args):
     "reopening closed bugs"
-    github = utils.get_github_api()
     if not args.message:
         try:
             message = template.edit_text()
@@ -215,8 +207,8 @@ def reopen(args):
     for bug in args.bugs:
         try:
             if message:
-                github.issues.comment(args.repository, bug, message)
-            github.issues.reopen(args.repository, bug)
+                args.api("comment", bug, message)
+            args.api("reopen", bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -231,13 +223,12 @@ def reopen(args):
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def label(args):
     "labelling bugs"
-    github = utils.get_github_api()
     for bug in args.bugs:
         try:
             for label in args.add:
-                github.issues.add_label(args.repository, bug, label)
+                args.api("add_label", bug, label)
             for label in args.remove:
-                github.issues.remove_label(args.repository, bug, label)
+                args.api("remove_label", bug, label)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -257,7 +248,7 @@ def main():
                         metavar="repo")
     parser.add_commands([list_bugs, search, show, open_bug, comment, edit,
                          close, reopen, label])
-    parser.dispatch()
+    parser.dispatch(pre_call=utils.set_api)
 
 if __name__ == '__main__':
     main()
