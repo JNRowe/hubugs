@@ -298,8 +298,7 @@ def display_bugs(bugs, order):
     :param order: Sorting order for displaying bugs
     """
     if not bugs:
-        print success("No bugs found!")
-        return
+        return success("No bugs found!")
 
     # Match ordering method to bug attribute
     if order == "priority":
@@ -319,8 +318,8 @@ def display_bugs(bugs, order):
     id_len = len(str(max_id))
     spacer = " " * (id_len - 2)
 
-    print template.render(bugs=bugs, spacer=spacer, id_len=id_len,
-                          max_title=columns - id_len - 2)
+    return template.render(bugs=bugs, spacer=spacer, id_len=id_len,
+                           max_title=columns - id_len - 2)
 
 
 @argh.alias("list")
@@ -338,7 +337,7 @@ def list_bugs(args):
     bugs = []
     for state in states:
         bugs.extend(github.issues.list(args.repository, state))
-    display_bugs(bugs, args.order)
+    return display_bugs(bugs, args.order)
 
 
 @argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
@@ -354,7 +353,7 @@ def search(args):
     bugs = []
     for state in states:
         bugs.extend(github.issues.search(args.repository, args.term, state))
-    display_bugs(bugs, args.order)
+    return display_bugs(bugs, args.order)
 
 
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
@@ -368,7 +367,7 @@ def show(args):
             bug = github.issues.show(args.repository, bug_no)
         except RuntimeError as e:
             if "Issue #%s not found" % bug_no in e.args[0]:
-                print fail("Issue %r not found" % bug_no)
+                yield fail("Issue %r not found" % bug_no)
             else:
                 raise
 
@@ -376,7 +375,7 @@ def show(args):
             comments = github.issues.comments(args.repository, bug.number)
         else:
             comments = []
-        print template.render(bug=bug, comments=comments, full=True)
+        yield template.render(bug=bug, comments=comments, full=True)
 
 
 @argh.alias("open")
@@ -393,7 +392,7 @@ def open_bug(args):
         title = args.title
         body = args.body
     bug = github.issues.open(args.repository, title, body)
-    print success("Bug %d opened" % bug.number)
+    return success("Bug %d opened" % bug.number)
 
 
 @argh.arg("-m", "--message", help="comment text")
@@ -410,7 +409,7 @@ def comment(args):
             github.issues.comment(args.repository, bug, message)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
-                print fail("Issue %r not found" % bug)
+                yield fail("Issue %r not found" % bug)
             else:
                 raise
 
@@ -427,7 +426,8 @@ def edit(args):
                 current = github.issues.show(args.repository, bug)
             except RuntimeError as e:
                 if "Issue #%s not found" % bug in e.args[0]:
-                    print fail("Issue %r not found" % bug)
+                    yield fail("Issue %r not found" % bug)
+                    continue
                 else:
                     raise
             current_data = {"title": current.title, "body": current.body}
@@ -442,7 +442,7 @@ def edit(args):
             github.issues.edit(args.repository, bug, title, body)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
-                print fail("Issue %r not found" % bug)
+                yield fail("Issue %r not found" % bug)
             else:
                 raise
 
@@ -467,7 +467,7 @@ def close(args):
             github.issues.close(args.repository, bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
-                print fail("Issue %r not found" % bug)
+                yield fail("Issue %r not found" % bug)
             else:
                 raise
 
@@ -492,7 +492,7 @@ def reopen(args):
             github.issues.reopen(args.repository, bug)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
-                print fail("Issue %r not found" % bug)
+                yield fail("Issue %r not found" % bug)
             else:
                 raise
 
@@ -513,7 +513,7 @@ def label(args):
                 github.issues.remove_label(args.repository, bug, label)
         except RuntimeError as e:
             if "Issue #%s not found" % bug in e.args[0]:
-                print fail("Issue %r not found" % bug)
+                yield fail("Issue %r not found" % bug)
             else:
                 raise
 
