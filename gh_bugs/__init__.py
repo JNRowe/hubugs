@@ -39,11 +39,25 @@ __doc__ += """.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
+import functools
+
 import argh
 
 from . import (template, utils)
 
 
+COMMANDS = []
+
+
+def command(func):
+    "Simple decorator to add function to Jinja filters"
+    COMMANDS.append(func)
+    def decorator(*args, **kwargs):
+        return func(*args, **kwargs)
+    return functools.update_wrapper(decorator, func)
+
+
+@command
 @argh.alias("list")
 @argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
           help="state of bugs to list")
@@ -63,6 +77,7 @@ def list_bugs(args):
     return template.display_bugs(bugs, args.order)
 
 
+@command
 @argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
           help="state of bugs to search")
 @argh.arg("-o", "--order", default="number",
@@ -78,6 +93,7 @@ def search(args):
     return template.display_bugs(bugs, args.order)
 
 
+@command
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def show(args):
@@ -99,6 +115,7 @@ def show(args):
         yield tmpl.render(bug=bug, comments=comments, full=True)
 
 
+@command
 @argh.alias("open")
 @argh.arg("title", help="title for the new bug", nargs="?")
 @argh.arg("body", help="body for the new bug", nargs="?")
@@ -116,6 +133,7 @@ def open_bug(args):
     return utils.success("Bug %d opened" % bug.number)
 
 
+@command
 @argh.arg("-m", "--message", help="comment text")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 @argh.wrap_errors(template.EmptyMessageError)
@@ -135,6 +153,7 @@ def comment(args):
                 raise
 
 
+@command
 @argh.arg("title", help="title for the new bug", nargs="?")
 @argh.arg("body", help="body for the new bug", nargs="?")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
@@ -168,6 +187,7 @@ def edit(args):
                 raise
 
 
+@command
 @argh.arg("-m", "--message", help="comment text")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def close(args):
@@ -192,6 +212,7 @@ def close(args):
                 raise
 
 
+@command
 @argh.arg("-m", "--message", help="comment text")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def reopen(args):
@@ -216,6 +237,7 @@ def reopen(args):
                 raise
 
 
+@command
 @argh.arg("-a", "--add", action="append", default=[],
           help="add label to issue", metavar="label")
 @argh.arg("-r", "--remove", action="append", default=[],
@@ -246,8 +268,7 @@ def main():
                         default=utils.get_repo(),
                         help="GitHub repository to operate on",
                         metavar="repo")
-    parser.add_commands([list_bugs, search, show, open_bug, comment, edit,
-                         close, reopen, label])
+    parser.add_commands(COMMANDS)
     parser.dispatch(pre_call=utils.set_api)
 
 if __name__ == '__main__':
