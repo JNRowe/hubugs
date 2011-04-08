@@ -45,8 +45,11 @@ ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
 ENV.loader.loaders.append(jinja2.PackageLoader("gh_bugs", "templates"))
 if utils.colored and sys.stdout.isatty():
     ENV.filters["colourise"] = utils.colored
+    # American spelling, just for Brandon Cady ;)
+    ENV.filters["colorize"] = ENV.filters["colourise"]
 else:
     ENV.filters["colourise"] = lambda string, *args, **kwargs: string
+    ENV.filters["colorize"] = ENV.filters["colourise"]
 
 
 class EmptyMessageError(ValueError):

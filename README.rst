@@ -34,6 +34,8 @@ Patches
 Bug reports
 '''''''''''
 
+* Brandon Cady
+
 Ideas
 '''''
 
