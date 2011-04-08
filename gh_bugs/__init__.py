@@ -105,6 +105,7 @@ def show(args):
         except RuntimeError as e:
             if "Issue #%s not found" % bug_no in e.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
+                break
             else:
                 raise
 
