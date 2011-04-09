@@ -6,40 +6,40 @@ User-visible changes
 0.6.0 - 2011-04-09
 ------------------
 
-    * Display an issue's pull request in default templates
-    * Include pull request patch output with ``--patch`` option
-    * New template filter ``highlight`` for passing text through Pygments_
+* Display an issue's pull request in default templates
+* Include pull request patch output with ``--patch`` option
+* New template filter ``highlight`` for passing text through Pygments_
 
 .. _Pygments: http://pygments.org/
 
 0.5.0 - 2011-03-10
 ------------------
 
-    * Support for editing an existing bug's title and/or summary
-    * Support for re-opening closed bugs
-    * GitHub authentication values can be read from the environment using
-      ``GITHUB_USER`` and ``GITHUB_TOKEN``
-    * Labels are now included in list output
-    * argh_ is now required
+* Support for editing an existing bug's title and/or summary
+* Support for re-opening closed bugs
+* GitHub authentication values can be read from the environment using
+  ``GITHUB_USER`` and ``GITHUB_TOKEN``
+* Labels are now included in list output
+* argh_ is now required
 
 .. _argh: http://pypi.python.org/pypi/argh/
 
 0.4.0 - 2011-02-26
 ------------------
 
-    * Format Markdown output using terminal escapes
+* Format Markdown output using terminal escapes
 
 0.3.0 - 2011-02-26
 ------------------
 
-    * Renamed to ``gh_bugs``
-    * Support for different ordering methods in list and search output
-    * Add or remove multiple labels by repeating ``-add` or ``-remove`` option
-    * Templates are searched for in ``XDG_DATA_HOME/gh_bugs/``, any ``gh_bugs``
-      directory in ``XDG_DATA_DIRS`` and finally the Python package directory
-    * Jinja_ is now required
-    * If termcolor_ is installed coloured output is produced
-    * Addition of a distutils_ ``setup.py``
+* Renamed to ``gh_bugs``
+* Support for different ordering methods in list and search output
+* Add or remove multiple labels by repeating ``-add` or ``-remove`` option
+* Templates are searched for in ``XDG_DATA_HOME/gh_bugs/``, any ``gh_bugs``
+  directory in ``XDG_DATA_DIRS`` and finally the Python package directory
+* Jinja_ is now required
+* If termcolor_ is installed coloured output is produced
+* Addition of a distutils_ ``setup.py``
 
 .. _Jinja: http://jinja.pocoo.org/
 .. _termcolor: http://pypi.python.org/pypi/termcolor/
@@ -48,9 +48,9 @@ User-visible changes
 0.2.0 - 2011-02-25
 ------------------
 
-    * Support for using an editor to write comments and open issues.
+* Support for using an editor to write comments and open issues.
 
 0.1.0 - 2010-11-02
 ------------------
 
-    * Initial release
+* Initial release
