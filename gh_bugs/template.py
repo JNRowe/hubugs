@@ -28,6 +28,10 @@ import tempfile
 
 import jinja2
 
+from pygments import highlight
+from pygments.formatters import TerminalFormatter
+from pygments.lexers import DiffLexer
+
 from . import utils
 
 
@@ -47,9 +51,12 @@ if utils.colored and sys.stdout.isatty():
     ENV.filters["colourise"] = utils.colored
     # American spelling, just for Brandon Cady ;)
     ENV.filters["colorize"] = ENV.filters["colourise"]
+    ENV.filters["highlight"] = lambda string: highlight(string, DiffLexer(),
+                                                        TerminalFormatter())
 else:
     ENV.filters["colourise"] = lambda string, *args, **kwargs: string
     ENV.filters["colorize"] = ENV.filters["colourise"]
+    ENV.filters["highlight"] = lambda string: string
 
 
 class EmptyMessageError(ValueError):

@@ -11,7 +11,7 @@
 {{ bug.body | wordwrap(break_long_words=False) | term_markdown }}
 {%- endif -%}
 {%- if patch -%}
-{{ patch }}
+{{ patch | highlight }}
 {%- endif -%}
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
