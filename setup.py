@@ -1,12 +1,18 @@
 #! /usr/bin/python -tt
 
+import imp
+
 from setuptools import setup
 
-from gh_bugs import __version__
+# Hack to import _version file without importing gh_bugs/__init__.py, its
+# purpose is to allow import without requiring dependencies at this point.
+ver_file = open("gh_bugs/_version.py")
+_version = imp.load_module("_version", ver_file, ver_file.name,
+                           (".py", ver_file.mode, imp.PY_SOURCE))
 
 setup(
     name='gh_bugs',
-    version=__version__,
+    version=_version.dotted,
     url="https://github.com/JNRowe/gh_bugs",
     author="James Rowe",
     author_email="jnrowe@gmail.com",
