@@ -95,6 +95,7 @@ def search(args):
 
 @command
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
+@argh.arg("-p", "--patch", default=False, help="Display patches for pull requests")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def show(args):
     "displaying bugs"
@@ -113,7 +114,11 @@ def show(args):
             comments = args.api("comments", bug.number)
         else:
             comments = []
-        yield tmpl.render(bug=bug, comments=comments, full=True)
+        if args.patch and bug.pull_request_url:
+            patch = args._http.request(bug.patch_url)[1]
+        else:
+            patch = None
+        yield tmpl.render(bug=bug, comments=comments, full=True, patch=patch)
 
 
 @command

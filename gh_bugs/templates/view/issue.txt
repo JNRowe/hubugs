@@ -10,6 +10,9 @@
 {%- if bug.body %}
 {{ bug.body | wordwrap(break_long_words=False) | term_markdown }}
 {%- endif -%}
+{%- if patch -%}
+{{ patch }}
+{%- endif -%}
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
