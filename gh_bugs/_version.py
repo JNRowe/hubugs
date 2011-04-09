@@ -1,5 +1,8 @@
-# This is gh_bugs version 0.5.2 (2011-03-10)
-dotted = "0.5.2"
-libtool = "5:22"
-hex = 0x000502
-date = "2011-03-10"
+# This is gh_bugs version 0.6.0 (2011-04-09)
+
+dotted = "0.6.0"
+libtool = "6:20"
+hex = 0x000600
+date = "2011-04-09"
+tuple = (0, 6, 0)
+web = "gh_bugs/0.6.0"

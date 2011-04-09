@@ -3,6 +3,15 @@ User-visible changes
 
 .. contents::
 
+0.6.0 - 2011-04-09
+------------------
+
+    * Display an issue's pull request in default templates
+    * Include pull request patch output with ``--patch`` option
+    * New template filter ``highlight`` for passing text through Pygments_
+
+.. _Pygments: http://pygments.org/
+
 0.5.0 - 2011-03-10
 ------------------
 
