@@ -29,8 +29,8 @@ import tempfile
 import jinja2
 
 from pygments import highlight as pyg_highlight
-from pygments.formatters import TerminalFormatter
-from pygments.lexers import DiffLexer
+from pygments.formatters import get_formatter_by_name
+from pygments.lexers import get_lexer_by_name
 
 from . import utils
 
@@ -69,18 +69,24 @@ def jinja_filter(func):
 
 
 @jinja_filter
-def highlight(text):
+def highlight(text, lexer="diff", formatter="terminal"):
     """highlight text with pygments
 
     Returns text untouched if colour output is not enabled
 
     :type text: ``str``
     :param text: Text to highlight
+    :type lexer: ``str``
+    :param lexer: Jinja lexer to use
+    :type formatter: ``str``
+    :param formatter:
     :rtype  text: ``str``
     :return: Syntax highlighted output
     """
     if utils.colored and sys.stdout.isatty():
-        return pyg_highlight(text, DiffLexer(), TerminalFormatter())
+        lexer = get_lexer_by_name(lexer)
+        formatter = get_formatter_by_name(formatter)
+        return pyg_highlight(text, lexer, formatter)
     else:
         return text
 
