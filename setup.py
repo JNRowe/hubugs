@@ -1,7 +1,5 @@
 #! /usr/bin/python -tt
 
-import sys
-
 from setuptools import setup
 
 from gh_bugs import __version__
