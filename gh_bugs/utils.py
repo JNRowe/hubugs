@@ -162,9 +162,13 @@ def set_api(args):
     :type args: argparse.Namespace
     :param args: argparse namespace to operate on
     """
-    issues = get_github_api().issues
+    api = get_github_api()
+    issues = api.issues
 
     def api_method(method, *opts, **kwargs):
         return getattr(issues, method)(args.repository, *opts, **kwargs)
 
     args.api = api_method
+    # Include a direct httplib2.Http object, for non-issues related network
+    # access.
+    args._http = api.request._http
