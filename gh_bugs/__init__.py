@@ -52,8 +52,10 @@ COMMANDS = []
 def command(func):
     "Simple decorator to add function to Jinja filters"
     COMMANDS.append(func)
+
     def decorator(*args, **kwargs):
         return func(*args, **kwargs)
+
     return functools.update_wrapper(decorator, func)
 
 
@@ -261,9 +263,10 @@ def label(args):
 
 def main():
     """Main script"""
-    parser = argh.ArghParser(description=__doc__.splitlines()[0],
-                             epilog="Please report bugs to the JNRowe/gh_bugs" \
-                                    " repository or by email to %s" % __author__,
+    description = __doc__.splitlines()[0].split("-", 1)[1]
+    epilog = "Please report bugs to the JNRowe/gh_bugs repository or by " \
+             "email to %s" % __author__
+    parser = argh.ArghParser(description=description, epilog=epilog,
                              version="%%(prog)s %s" % __version__)
     parser.add_argument("-r", "--repository", action=utils.RepoAction,
                         default=utils.get_repo(),

@@ -53,14 +53,16 @@ else:
 
 
 class EmptyMessageError(ValueError):
-     pass
+    pass
 
 
 def jinja_filter(func):
     "Simple decorator to add function to Jinja filters"
     ENV.filters[func.__name__] = func
+
     def decorator(*args):
         return func(*args)
+
     return functools.update_wrapper(decorator, func)
 
 
@@ -123,25 +125,28 @@ def term_markdown(text):
     :rtype: ``str``
     :return: Rendered text with terminal control sequences
     """
-    if utils.colored and sys.stdout.isatty():
-        # For uniform line ending split and rejoin, this saves having to handle \r and \r\n
-        text = "\n".join(text.splitlines())
-        text = re.sub(r"^#+ +(.*)$",
-                      lambda s: utils.colored(s.groups()[0], attrs=["underline"]),
-                      text, flags=re.MULTILINE)
-        text = re.sub(r"^(([*-] *){3,})$",
-                      lambda s: utils.colored(s.groups()[0], "green"),
-                      text, flags=re.MULTILINE)
-        text = re.sub(r'([\*_]{2})([^ \*]+)\1',
-                      lambda s: utils.colored(s.groups()[1], attrs=["underline"]),
-                      text)
-        text = re.sub(r'([\*_])([^ \*]+)\1',
-                      lambda s: utils.colored(s.groups()[1], attrs=["bold"]), text)
-        if sys.stdout.encoding == "UTF-8":
-            text = re.sub(r"^( {0,4})[*+-] ", u"\\1• ", text,
-                          flags=re.MULTILINE)
+    if not utils.colored and sys.stdout.isatty():
+        return
+    # For uniform line ending split and rejoin, this saves having to handle \r
+    # and \r\n
+    text = "\n".join(text.splitlines())
+    text = re.sub(r"^#+ +(.*)$",
+                  lambda s: utils.colored(s.groups()[0], attrs=["underline"]),
+                  text, flags=re.MULTILINE)
+    text = re.sub(r"^(([*-] *){3,})$",
+                  lambda s: utils.colored(s.groups()[0], "green"),
+                  text, flags=re.MULTILINE)
+    text = re.sub(r'([\*_]{2})([^ \*]+)\1',
+                  lambda s: utils.colored(s.groups()[1], attrs=["underline"]),
+                  text)
+    text = re.sub(r'([\*_])([^ \*]+)\1',
+                  lambda s: utils.colored(s.groups()[1], attrs=["bold"]), text)
+    if sys.stdout.encoding == "UTF-8":
+        text = re.sub(r"^( {0,4})[*+-] ", u"\\1• ", text,
+                      flags=re.MULTILINE)
 
     return text
+
 
 def display_bugs(bugs, order):
     """Display bugs to users
@@ -174,6 +179,7 @@ def display_bugs(bugs, order):
 
     return template.render(bugs=bugs, spacer=spacer, id_len=id_len,
                            max_title=columns - id_len - 2)
+
 
 def edit_text(edit_type="default", data=None):
     """Edit data with external editor

@@ -73,7 +73,8 @@ class RepoAction(argh.utils.argparse.Action):
             get_github_api().repos.show(repository)
         except RuntimeError as e:
             if "Repository not found" in e.args[0]:
-                raise parser.error(fail("Repository %r not found" % repository))
+                raise parser.error(fail("Repository %r not found"
+                                        % repository))
             else:
                 raise
         except httplib2.ServerNotFoundError:
@@ -98,7 +99,8 @@ def get_github_api():
 
     if "cache" in inspect.getargspec(Github.__init__).args:
         xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
-                                  os.path.join(os.getenv("HOME", "/"), ".cache"))
+                                  os.path.join(os.getenv("HOME", "/"),
+                                               ".cache"))
         cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
         kwargs = {"cache": cache_dir}
     else:
@@ -153,6 +155,7 @@ def get_term_size():
     """
     return map(int, subprocess.check_output(["stty", "size"]).split())
 
+
 def set_api(args):
     """Add authenticated issues API object to args namespace
 
@@ -160,6 +163,8 @@ def set_api(args):
     :param args: argparse namespace to operate on
     """
     issues = get_github_api().issues
+
     def api_method(method, *opts, **kwargs):
         return getattr(issues, method)(args.repository, *opts, **kwargs)
+
     args.api = api_method
