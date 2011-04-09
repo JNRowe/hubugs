@@ -28,7 +28,7 @@ import tempfile
 
 import jinja2
 
-from pygments import highlight
+from pygments import highlight as pyg_highlight
 from pygments.formatters import TerminalFormatter
 from pygments.lexers import DiffLexer
 
@@ -51,12 +51,9 @@ if utils.colored and sys.stdout.isatty():
     ENV.filters["colourise"] = utils.colored
     # American spelling, just for Brandon Cady ;)
     ENV.filters["colorize"] = ENV.filters["colourise"]
-    ENV.filters["highlight"] = lambda string: highlight(string, DiffLexer(),
-                                                        TerminalFormatter())
 else:
     ENV.filters["colourise"] = lambda string, *args, **kwargs: string
     ENV.filters["colorize"] = ENV.filters["colourise"]
-    ENV.filters["highlight"] = lambda string: string
 
 
 class EmptyMessageError(ValueError):
@@ -69,6 +66,23 @@ def jinja_filter(func):
     def decorator(*args):
         return func(*args)
     return functools.update_wrapper(decorator, func)
+
+
+@jinja_filter
+def highlight(text):
+    """highlight text with pygments
+
+    Returns text untouched if colour output is not enabled
+
+    :type text: ``str``
+    :param text: Text to highlight
+    :rtype  text: ``str``
+    :return: Syntax highlighted output
+    """
+    if utils.colored and sys.stdout.isatty():
+        return pyg_highlight(text, DiffLexer(), TerminalFormatter())
+    else:
+        return text
 
 
 @jinja_filter
