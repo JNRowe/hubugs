@@ -1,6 +1,6 @@
 #
 # coding=utf-8
-"""template_utils - Template utilities for gh_bugs"""
+"""template - Template utilities for gh_bugs"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
