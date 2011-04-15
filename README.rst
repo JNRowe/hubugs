@@ -17,7 +17,22 @@ If you would like coloured terminal output, then you will need termcolor_.
 Configuration
 -------------
 
-.. TODO
+Before using ``gh_bugs`` you must declare your authentication settings, so that
+we can access the API.
+
+You first need to define your GitHub user name::
+
+    $ git config --global github.user username
+
+And then you need to define your GitHub API token, this can be found in the
+`account admin`_ tab of your GitHub `account page`_::
+
+    $ git config --global github.token token
+
+.. note::
+
+   If you change your GitHub password your ``github.token`` setting will be
+   invalid, and you must set it again.
 
 Contributors
 ------------
@@ -80,6 +95,8 @@ I can reproduce the problem, or even better a patch!
 .. _termcolor: http://pypi.python.org/pypi/termcolor/
 .. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
+.. _account admin: https://github.com/account/admin
+.. _account page: https://github.com/account
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _mail: jnrowe@gmail.com
