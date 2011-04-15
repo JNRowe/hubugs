@@ -34,6 +34,12 @@ And then you need to define your GitHub API token, this can be found in the
    If you change your GitHub password your ``github.token`` setting will be
    invalid, and you must set it again.
 
+If you wish to set the authentication information from the command line you can
+use the ``GITHUB_USER`` and ``GITHUB_TOKEN`` environment variables.  For
+example::
+
+    $ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx gh_bugs open
+
 Contributors
 ------------
 
