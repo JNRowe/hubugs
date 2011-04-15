@@ -120,7 +120,9 @@ def relative_time(timestamp):
     ]
     match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
 
-    delta = datetime.datetime.now(utils.UTC()) - timestamp
+    # FIXME: Hack to take GitHub timezone in to account, this really needs
+    # non-naive datetime objects from github2.
+    delta = datetime.datetime.utcnow() - timestamp - datetime.timedelta(hours=7)
     # Switch to delta.total_seconds, if 2.6 support is dropped
     seconds = delta.days * 86400 + delta.seconds
     for scale in matches:

@@ -45,19 +45,6 @@ else:  # pragma: no cover
 # pylint: enable-msg=C0103
 
 
-class UTC(datetime.tzinfo):
-    """UTC"""
-
-    def utcoffset(self, timestamp):
-        return datetime.timedelta(0)
-
-    def tzname(self, timestamp):
-        return "UTC"
-
-    def dst(self, timestamp):
-        return datetime.timedelta(0)
-
-
 class RepoAction(argh.utils.argparse.Action):
     """argparse action class for setting repository"""
     def __call__(self, parser, namespace, repository, option_string=None):
