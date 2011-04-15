@@ -24,5 +24,5 @@ setup(
     package_data={'': ['templates/*/*.mkd', "templates/*/*.txt"], },
     entry_points={'console_scripts': ['gh_bugs = gh_bugs:main', ]},
     zip_safe=False,
-    install_requires=['argh', 'github2', 'Jinja2>=2', 'Pygments'],
+    install_requires=['argh', 'github2>=0.3.0', 'Jinja2>=2', 'Pygments'],
 )
