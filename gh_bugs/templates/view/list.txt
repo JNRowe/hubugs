@@ -1,7 +1,7 @@
 {%- if id_len == 1 -%}
 {% set id_format = "%2d" %}
 {%- else -%}
-{% set id_format = "%%%dd" | format(id_len - 1) %}
+{% set id_format = "%%%dd" | format(id_len) %}
 {%- endif -%}
 {{ "Id" | colourise("green") }} {{ spacer }}{{ "Title" | colourise("green") }}
 {%- for bug in bugs %}
