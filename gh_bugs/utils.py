@@ -127,6 +127,8 @@ def get_editor():
 def get_repo():
     "Extract GitHub repository name from config"
     data = get_git_config_val("remote.origin.url")
+    if not data:
+        raise ValueError("No `origin' remote found")
     match = re.search(r"github.com[:/](.*).git", data)
     if match:
         return match.groups()[0]
