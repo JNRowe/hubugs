@@ -50,7 +50,7 @@ COMMANDS = []
 
 
 def command(func):
-    "Simple decorator to add function to Jinja filters"
+    "Simple decorator to add function to ``COMMANDS`` list"
     COMMANDS.append(func)
 
     def decorator(*args, **kwargs):
