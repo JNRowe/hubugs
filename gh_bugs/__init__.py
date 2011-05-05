@@ -275,7 +275,6 @@ def main():
     parser = argh.ArghParser(description=description, epilog=epilog,
                              version="%%(prog)s %s" % __version__)
     parser.add_argument("-r", "--repository", action=utils.RepoAction,
-                        default=utils.get_repo(),
                         help="GitHub repository to operate on",
                         metavar="repo")
     parser.add_commands(COMMANDS)
