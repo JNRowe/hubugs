@@ -189,9 +189,7 @@ def display_bugs(bugs, order):
         return utils.success("No bugs found!")
 
     # Match ordering method to bug attribute
-    if order == "priority":
-        attr = "position"
-    elif order == "updated":
+    if order == "updated":
         attr = "updated_at"
     else:
         attr = order

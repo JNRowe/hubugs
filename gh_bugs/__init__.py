@@ -68,7 +68,7 @@ def command(func):
 #@argh.arg("-l", "--label", help="list bugs with specified label",
 #          metavar="label")
 @argh.arg("-o", "--order", default="number",
-          choices=["number", "priority", "updated", "votes"],
+          choices=["number", "updated", "votes"],
           help="Sort order for listing bugs")
 def list_bugs(args):
     "listing bugs"
@@ -83,7 +83,7 @@ def list_bugs(args):
 @argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
           help="state of bugs to search")
 @argh.arg("-o", "--order", default="number",
-          choices=["number", "priority", "updated", "votes"],
+          choices=["number", "updated", "votes"],
           help="Sort order for listing bugs")
 @argh.arg("term", help="term to search bugs for")
 def search(args):
