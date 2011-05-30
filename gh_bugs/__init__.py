@@ -152,15 +152,18 @@ def open_bug(args):
 
 
 @command
+@argh.arg("--stdin", default=False, help="Read message from standard input")
 @argh.arg("-m", "--message", help="comment text")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 @argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
     "commenting on bugs"
-    if not args.message:
-        message = template.edit_text()
-    else:
+    if args.stdin:
+        message = sys.stdin.read()
+    elif args.message:
         message = args.message
+    else:
+        message = template.edit_text()
     for bug in args.bugs:
         try:
             args.api("comment", bug, message)
