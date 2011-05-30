@@ -241,11 +241,14 @@ def close(args):
 
 
 @command
+@argh.arg("--stdin", default=False, help="Read message from standard input")
 @argh.arg("-m", "--message", help="comment text")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
 def reopen(args):
     "reopening closed bugs"
-    if not args.message:
+    if args.stdin:
+        message = sys.stdin.read()
+    elif not args.message:
         try:
             message = template.edit_text()
         except template.EmptyMessageError:
