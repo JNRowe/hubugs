@@ -182,6 +182,9 @@ def comment(args):
 @argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
     "editing bugs"
+    if (args.title or args.stdin) and len(args.bugs) > 1:
+        raise argh.CommandError("Can not use --stdin or command line "
+                                "title/body with multiple bugs")
     for bug in args.bugs:
         if args.stdin:
             text = sys.stdin.readlines()
