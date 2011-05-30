@@ -175,6 +175,7 @@ def comment(args):
 
 
 @command
+@argh.arg("--stdin", default=False, help="Read message from standard input")
 @argh.arg("title", help="title for the new bug", nargs="?")
 @argh.arg("body", help="body for the new bug", nargs="?")
 @argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
@@ -182,7 +183,9 @@ def comment(args):
 def edit(args):
     "editing bugs"
     for bug in args.bugs:
-        if not args.title:
+        if args.stdin:
+            text = sys.stdin.readlines()
+        elif not args.title:
             try:
                 current = args.api("show", bug)
             except RuntimeError as e:
@@ -193,6 +196,7 @@ def edit(args):
                     raise
             current_data = {"title": current.title, "body": current.body}
             text = template.edit_text("open", current_data).splitlines()
+        if args.stdin or args.title:
             title = text[0]
             body = "\n".join(text[1:])
         else:
