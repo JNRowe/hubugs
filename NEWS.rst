@@ -3,6 +3,12 @@ User-visible changes
 
 .. contents::
 
+0.8.0 - 2011-05-30
+------------------
+
+* Support for reading input from ``stdin`` for editing commands
+* Supports listing bugs by label
+
 0.7.0 - 2011-05-30
 ------------------
 
