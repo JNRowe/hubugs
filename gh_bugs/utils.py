@@ -97,8 +97,7 @@ def get_github_api():
 def get_git_config_val(key):
     """Fetch a git configuration value
 
-    :type key: ``str``
-    :param key: Configuration value to fetch
+    :param str key: Configuration value to fetch
     """
     try:
         output = subprocess.check_output(["git", "config", key]).strip()
@@ -147,8 +146,7 @@ def get_term_size():
 def set_api(args):
     """Add authenticated issues API object to args namespace
 
-    :type args: argparse.Namespace
-    :param args: argparse namespace to operate on
+    :param argparse.Namespace args: argparse namespace to operate on
     """
     if not args.repository:
         args.repository = get_repo()

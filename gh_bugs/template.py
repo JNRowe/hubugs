@@ -76,13 +76,10 @@ def highlight(text, lexer="diff", formatter="terminal"):
 
     Returns text untouched if colour output is not enabled
 
-    :type text: ``str``
-    :param text: Text to highlight
-    :type lexer: ``str``
-    :param lexer: Jinja lexer to use
-    :type formatter: ``str``
-    :param formatter:
-    :rtype  text: ``str``
+    :param str text: Text to highlight
+    :param str lexer: Jinja lexer to use
+    :param str formatter:
+    :rtype: ``str``
     :return: Syntax highlighted output
     """
     if utils.colored and sys.stdout.isatty():
@@ -99,8 +96,8 @@ def relative_time(timestamp):
 
     Taken from bleeter_.  Duplication is evil, I know.
 
-    :type timestamp: ``datetime.datetime``
-    :param timestamp: Event to generate relative timestamp against
+    :param datetime.datetime timestamp: Event to generate relative timestamp
+        against
     :rtype: ``str``
     :return: Human readable date and time offset
 
@@ -149,8 +146,7 @@ def term_markdown(text):
 
     Formats headings, horizontal rules and emphasis.
 
-    :type text: ``str``
-    :param text: Text to process
+    :param str text: Text to process
     :rtype: ``str``
     :return: Rendered text with terminal control sequences
     """
@@ -182,10 +178,8 @@ def display_bugs(bugs, order, **extras):
 
     :type bugs: ``list` of ``github2.issues.Issue``
     :param bugs: Bugs to display
-    :type order: ``str``
-    :param order: Sorting order for displaying bugs
-    :type extras: ``dict``
-    :param extras: Additional values to pass to templates
+    :param str order: Sorting order for displaying bugs
+    :param dict extras: Additional values to pass to templates
     """
     if not bugs:
         return utils.success("No bugs found!")
@@ -213,10 +207,8 @@ def display_bugs(bugs, order, **extras):
 def edit_text(edit_type="default", data=None):
     """Edit data with external editor
 
-    :type edit_type: ``str``
-    :param edit_type: Template to use in editor
-    :type data: ``dict``
-    :param data: Information to pass to template
+    :param str edit_type: Template to use in editor
+    :param dict data: Information to pass to template
     :rtype: ``str``
     :return: User supplied text
     :raise EmptyMessageError: No message given
