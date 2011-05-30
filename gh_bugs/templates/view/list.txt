@@ -13,4 +13,4 @@
 {{ id_format | format(bug.number) | colourise("yellow") }} {{ bug.title + formatted_labels | truncate(max_title, True) }}
 {%- endfor %}
 
-{{ bugs | length | colourise("green") }} bugs found
+{{ bugs | length | colourise("green") }} bug{% if bugs | length != 1 %}s{% endif %} found
