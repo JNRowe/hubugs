@@ -3,6 +3,14 @@ User-visible changes
 
 .. contents::
 
+0.7.0 - 2011-05-30
+------------------
+
+* Works with unpatched github2_ package now!
+* No longer supports priorities, GitHub have dropped support for this feature
+
+.. _github2: http://pypi.python.org/pypi/github2/
+
 0.6.0 - 2011-04-09
 ------------------
 
