@@ -1,3 +1,4 @@
+{%- block header -%}
 {{ "          Id" | colourise("green") }}: {{ bug.number }}
 {{ "       Title" | colourise("green") }}: {{ bug.title }}
 {{ "      Labels" | colourise("green") }}: {{ bug.labels | join(", ") }}
@@ -7,12 +8,18 @@
 {{ "    Comments" | colourise("green") }}: {{ bug.comments }}
 {{ "       Votes" | colourise("green") }}: {{ bug.votes }}
 {{ "Pull request" | colourise("green") }}: {% if bug.pull_request_url %}{{ bug.pull_request_url }}{% else %}No{% endif %}
+{% endblock -%}
+{%- block body %}
 {%- if bug.body %}
 {{ bug.body | wordwrap(break_long_words=False) | term_markdown }}
 {%- endif -%}
+{% endblock %}
+{% block patch %}
 {%- if patch -%}
 {{ patch | highlight }}
 {%- endif -%}
+{% endblock -%}
+{%- block comments %}
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
@@ -23,3 +30,4 @@
 {{ comment.body | wordwrap(break_long_words=False) | term_markdown }}
 {%- endfor %}
 {%- endif -%}
+{% endblock %}
