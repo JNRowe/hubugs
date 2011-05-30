@@ -40,6 +40,7 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import functools
+import sys
 
 import argh
 
@@ -130,13 +131,17 @@ def show(args):
 
 @command
 @argh.alias("open")
+@argh.arg("--stdin", default=False, help="Read message from standard input")
 @argh.arg("title", help="title for the new bug", nargs="?")
 @argh.arg("body", help="body for the new bug", nargs="?")
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
-    if not args.title:
+    if args.stdin:
+        text = sys.stdin.readlines()
+    elif not args.title:
         text = template.edit_text("open").splitlines()
+    if args.stdin or args.title:
         title = text[0]
         body = "\n".join(text[1:])
     else:
