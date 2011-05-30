@@ -177,13 +177,15 @@ def term_markdown(text):
     return text
 
 
-def display_bugs(bugs, order):
+def display_bugs(bugs, order, **extras):
     """Display bugs to users
 
     :type bugs: ``list` of ``github2.issues.Issue``
     :param bugs: Bugs to display
     :type order: ``str``
     :param order: Sorting order for displaying bugs
+    :type extras: ``dict``
+    :param extras: Additional values to pass to templates
     """
     if not bugs:
         return utils.success("No bugs found!")
@@ -205,7 +207,7 @@ def display_bugs(bugs, order):
     spacer = " " * (id_len - 2)
 
     return template.render(bugs=bugs, spacer=spacer, id_len=id_len,
-                           max_title=columns - id_len - 2)
+                           max_title=columns - id_len - 2, **extras)
 
 
 def edit_text(edit_type="default", data=None):
