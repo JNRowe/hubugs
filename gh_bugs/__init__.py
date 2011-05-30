@@ -92,7 +92,7 @@ def search(args):
     bugs = []
     for state in states:
         bugs.extend(args.api("search", args.term, state))
-    return template.display_bugs(bugs, args.order)
+    return template.display_bugs(bugs, args.order, term=args.term)
 
 
 @command
