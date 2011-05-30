@@ -63,19 +63,22 @@ def command(func):
 @argh.alias("list")
 @argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
           help="state of bugs to list")
-# Currently not supported in python-github2, see
-# https://github.com/ask/python-github2/pull/32
-#@argh.arg("-l", "--label", help="list bugs with specified label",
-#          metavar="label")
+@argh.arg("-l", "--label", help="list bugs with specified label",
+          metavar="label")
 @argh.arg("-o", "--order", default="number",
           choices=["number", "updated", "votes"],
           help="Sort order for listing bugs")
 def list_bugs(args):
     "listing bugs"
-    states = ["open", "closed"] if args.state == "all" else [args.state, ]
-    bugs = []
-    for state in states:
-        bugs.extend(args.api("list", state))
+    if args.label:
+        bugs = args.api("list_by_label", args.label)
+        if not args.state == "all":
+            bugs = filter(lambda x: x.state == args.state, bugs)
+    else:
+        bugs = []
+        states = ["open", "closed"] if args.state == "all" else [args.state, ]
+        for state in states:
+            bugs.extend(args.api("list", state))
     return template.display_bugs(bugs, args.order, state=args.state)
 
 
