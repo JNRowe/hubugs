@@ -154,6 +154,7 @@ def set_api(args):
     issues = api.issues
 
     def api_method(method, *opts, **kwargs):
+        "Wrapper for calling functions from api.issues"
         return getattr(issues, method)(args.repository, *opts, **kwargs)
     args.api = api_method
     # Include a direct httplib2.Http object, for non-issues related network

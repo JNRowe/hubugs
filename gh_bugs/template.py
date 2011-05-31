@@ -57,6 +57,7 @@ else:
 
 
 class EmptyMessageError(ValueError):
+    """Error to raise when the user provides an empty message"""
     pass
 
 
