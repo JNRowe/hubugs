@@ -23,6 +23,7 @@ Contents:
 
    background
    config
+   usage
 
 Indices and tables
 ==================
