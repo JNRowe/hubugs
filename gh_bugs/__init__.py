@@ -72,14 +72,14 @@ message_arg = argh.arg("-m", "--message", help="comment text")
 
 order_arg = argh.arg("-o", "--order", default="number",
                      choices=["number", "updated", "votes"],
-                     help="Sort order for listing bugs")
+                     help="sort order for listing bugs")
 
 states_arg = argh.arg("-s", "--state", default="open",
                       choices=["open", "closed", "all"],
                       help="state of bugs to operate on")
 
 stdin_arg = argh.arg("--stdin", default=False,
-                     help="Read message from standard input")
+                     help="read message from standard input")
 
 title_arg = argh.arg("title", help="title for the new bug", nargs="?")
 body_arg = argh.arg("body", help="body for the new bug", nargs="?")
@@ -123,7 +123,7 @@ def search(args):
 @command
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("-p", "--patch", default=False,
-          help="Display patches for pull requests")
+          help="display patches for pull requests")
 @bugs_arg
 def show(args):
     "displaying bugs"
