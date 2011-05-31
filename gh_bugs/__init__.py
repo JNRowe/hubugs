@@ -116,8 +116,8 @@ def show(args):
     for bug_no in args.bugs:
         try:
             bug = args.api("show", bug_no)
-        except RuntimeError as e:
-            if "Issue #%s not found" % bug_no in e.args[0]:
+        except RuntimeError as error:
+            if "Issue #%s not found" % bug_no in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
                 break
             else:
@@ -172,8 +172,8 @@ def comment(args):
     for bug in args.bugs:
         try:
             args.api("comment", bug, message)
-        except RuntimeError as e:
-            if "Issue #%s not found" % bug in e.args[0]:
+        except RuntimeError as error:
+            if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
             else:
                 raise
@@ -196,8 +196,8 @@ def edit(args):
         elif not args.title:
             try:
                 current = args.api("show", bug)
-            except RuntimeError as e:
-                if "Issue #%s not found" % bug in e.args[0]:
+            except RuntimeError as error:
+                if "Issue #%s not found" % bug in error.args[0]:
                     yield utils.fail("Issue %r not found" % bug)
                     continue
                 else:
@@ -213,8 +213,8 @@ def edit(args):
 
         try:
             args.api("edit", bug, title, body)
-        except RuntimeError as e:
-            if "Issue #%s not found" % bug in e.args[0]:
+        except RuntimeError as error:
+            if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
             else:
                 raise
@@ -241,8 +241,8 @@ def close(args):
             if message:
                 args.api("comment", bug, message)
             args.api("close", bug)
-        except RuntimeError as e:
-            if "Issue #%s not found" % bug in e.args[0]:
+        except RuntimeError as error:
+            if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
             else:
                 raise
@@ -269,8 +269,8 @@ def reopen(args):
             if message:
                 args.api("comment", bug, message)
             args.api("reopen", bug)
-        except RuntimeError as e:
-            if "Issue #%s not found" % bug in e.args[0]:
+        except RuntimeError as error:
+            if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
             else:
                 raise
@@ -286,12 +286,12 @@ def label(args):
     "labelling bugs"
     for bug in args.bugs:
         try:
-            for label in args.add:
-                args.api("add_label", bug, label)
-            for label in args.remove:
-                args.api("remove_label", bug, label)
-        except RuntimeError as e:
-            if "Issue #%s not found" % bug in e.args[0]:
+            for string in args.add:
+                args.api("add_label", bug, string)
+            for string in args.remove:
+                args.api("remove_label", bug, string)
+        except RuntimeError as error:
+            if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
             else:
                 raise

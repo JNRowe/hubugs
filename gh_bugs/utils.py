@@ -57,8 +57,8 @@ class RepoAction(argh.utils.argparse.Action):
             # Check for repo validity early on.  This check is normally less
             # than a 500 bytes transfer
             get_github_api().repos.show(repository)
-        except RuntimeError as e:
-            if "Repository not found" in e.args[0]:
+        except RuntimeError as error:
+            if "Repository not found" in error.args[0]:
                 raise parser.error(fail("Repository %r not found"
                                         % repository))
             else:
@@ -66,8 +66,8 @@ class RepoAction(argh.utils.argparse.Action):
         except httplib2.ServerNotFoundError:
             raise parser.error(fail("Repository lookup failed.  Network or "
                                     "GitHub down?"))
-        except EnvironmentError as e:
-            raise parser.error(e.args[0])
+        except EnvironmentError as error:
+            raise parser.error(error.args[0])
 
         namespace.repository = repository
 
