@@ -39,7 +39,6 @@ __doc__ += """.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
-import functools
 import sys
 
 import argh
@@ -51,13 +50,19 @@ COMMANDS = []
 
 
 def command(func):
-    "Simple decorator to add function to ``COMMANDS`` list"
+    """Simple decorator to add function to ``COMMANDS`` list
+
+    The purpose of this decorator is to make the definition of commands simpler
+    by reducing duplication, it is purely a convenience.
+
+    :param func func: Function to wrap
+    :rtype: func
+    :returns: Original function
+    """
     COMMANDS.append(func)
+    return func
 
-    def decorator(*args, **kwargs):
-        return func(*args, **kwargs)
 
-    return functools.update_wrapper(decorator, func)
 
 
 @command
