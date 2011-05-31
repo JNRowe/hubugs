@@ -161,7 +161,7 @@ def open_bug(args):
         text = sys.stdin.readlines()
     elif not args.title:
         text = template.edit_text("open").splitlines()
-    if args.stdin or args.title:
+    if args.stdin or not args.title:
         title = text[0]
         body = "\n".join(text[1:])
     else:
@@ -219,7 +219,7 @@ def edit(args):
                     raise
             current_data = {"title": current.title, "body": current.body}
             text = template.edit_text("open", current_data).splitlines()
-        if args.stdin or args.title:
+        if args.stdin or not args.title:
             title = text[0]
             body = "\n".join(text[1:])
         else:
