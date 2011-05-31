@@ -18,7 +18,6 @@
 #
 
 import datetime
-import functools
 import operator
 import os
 import re
@@ -65,10 +64,7 @@ def jinja_filter(func):
     "Simple decorator to add function to Jinja filters"
     ENV.filters[func.__name__] = func
 
-    def decorator(*args):
-        return func(*args)
-
-    return functools.update_wrapper(decorator, func)
+    return func
 
 
 @jinja_filter
