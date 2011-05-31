@@ -63,17 +63,35 @@ def command(func):
     return func
 
 
+# Convenience wrappers for defining command arguments
+# pylint: disable-msg=C0103
+bugs_arg = argh.arg("bugs", nargs="+", type=int,
+                    help="bug number(s) to operate on")
+
+message_arg = argh.arg("-m", "--message", help="comment text")
+
+order_arg = argh.arg("-o", "--order", default="number",
+                     choices=["number", "updated", "votes"],
+                     help="Sort order for listing bugs")
+
+states_arg = argh.arg("-s", "--state", default="open",
+                      choices=["open", "closed", "all"],
+                      help="state of bugs to operate on")
+
+stdin_arg = argh.arg("--stdin", default=False,
+                     help="Read message from standard input")
+
+title_arg = argh.arg("title", help="title for the new bug", nargs="?")
+body_arg = argh.arg("body", help="body for the new bug", nargs="?")
+# pylint: enable-msg=C0103
 
 
 @command
 @argh.alias("list")
-@argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
-          help="state of bugs to list")
+@states_arg
 @argh.arg("-l", "--label", help="list bugs with specified label",
           metavar="label")
-@argh.arg("-o", "--order", default="number",
-          choices=["number", "updated", "votes"],
-          help="Sort order for listing bugs")
+@order_arg
 def list_bugs(args):
     "listing bugs"
     if args.label:
@@ -89,11 +107,8 @@ def list_bugs(args):
 
 
 @command
-@argh.arg("-s", "--state", default="open", choices=["open", "closed", "all"],
-          help="state of bugs to search")
-@argh.arg("-o", "--order", default="number",
-          choices=["number", "updated", "votes"],
-          help="Sort order for listing bugs")
+@states_arg
+@order_arg
 @argh.arg("term", help="term to search bugs for")
 def search(args):
     "searching bugs"
@@ -109,7 +124,7 @@ def search(args):
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("-p", "--patch", default=False,
           help="Display patches for pull requests")
-@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@bugs_arg
 def show(args):
     "displaying bugs"
     tmpl = template.ENV.get_template("view/issue.txt")
@@ -136,9 +151,9 @@ def show(args):
 
 @command
 @argh.alias("open")
-@argh.arg("--stdin", default=False, help="Read message from standard input")
-@argh.arg("title", help="title for the new bug", nargs="?")
-@argh.arg("body", help="body for the new bug", nargs="?")
+@stdin_arg
+@title_arg
+@body_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
@@ -157,9 +172,9 @@ def open_bug(args):
 
 
 @command
-@argh.arg("--stdin", default=False, help="Read message from standard input")
-@argh.arg("-m", "--message", help="comment text")
-@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@stdin_arg
+@message_arg
+@bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
     "commenting on bugs"
@@ -180,10 +195,10 @@ def comment(args):
 
 
 @command
-@argh.arg("--stdin", default=False, help="Read message from standard input")
-@argh.arg("title", help="title for the new bug", nargs="?")
-@argh.arg("body", help="body for the new bug", nargs="?")
-@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@stdin_arg
+@title_arg
+@body_arg
+@bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
     "editing bugs"
@@ -221,9 +236,9 @@ def edit(args):
 
 
 @command
-@argh.arg("--stdin", default=False, help="Read message from standard input")
-@argh.arg("-m", "--message", help="comment text")
-@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@stdin_arg
+@message_arg
+@bugs_arg
 def close(args):
     "closing bugs"
     if args.stdin:
@@ -249,9 +264,9 @@ def close(args):
 
 
 @command
-@argh.arg("--stdin", default=False, help="Read message from standard input")
-@argh.arg("-m", "--message", help="comment text")
-@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@stdin_arg
+@message_arg
+@bugs_arg
 def reopen(args):
     "reopening closed bugs"
     if args.stdin:
@@ -281,7 +296,7 @@ def reopen(args):
           help="add label to issue", metavar="label")
 @argh.arg("-r", "--remove", action="append", default=[],
           help="remove label from issue", metavar="label")
-@argh.arg("bugs", nargs="+", type=int, help="bug number(s) to operate on")
+@bugs_arg
 def label(args):
     "labelling bugs"
     for bug in args.bugs:
