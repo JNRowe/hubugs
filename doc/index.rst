@@ -3,8 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to gh_bugs's documentation!
-===================================
+:mod:`gh_bugs`
+==============
+
+:mod:`gh_bugs` is a very simple client for working with `GitHub's issue
+tracker`_ from the command line.
+
+It is written in Python_, and requires v2.6 or later.  :mod:`versionah` is
+released under the `GPL v3`_
 
 Contents:
 
@@ -18,3 +24,6 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _Github's issue tracker: http://github.com/blog/411-github-issue-tracker
+.. _Python: http://www.python.org/
+.. _GPL v3: http://www.gnu.org/licenses/
