@@ -4,7 +4,7 @@ gh_bugs - Simple client for GitHub issues
 Introduction
 ------------
 
-``gh_bugs`` is a very simple client for working `GitHub's issue tracker`_.
+``gh_bugs`` is a very simple client for working with `GitHub's issue tracker`_.
 
 Requirements
 ------------
