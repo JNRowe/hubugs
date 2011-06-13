@@ -26,6 +26,7 @@ Contents:
    config
    usage
    gh_bugs manpage <gh_bugs.1>
+   faq
 
 Indices and tables
 ==================
