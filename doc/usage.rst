@@ -61,7 +61,7 @@ Commands
 .. program:: gh_bugs-list
 
 ::
-  
+
     gh_bugs list [-h] [-s {open,closed,all}] [-l label]
         [-o {number,updated,votes}]
 
