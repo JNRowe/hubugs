@@ -1,10 +1,10 @@
 *.egg-info/
 .ropeproject/
 dist/
+doc/.build/
 
 *.html
 *.py[co]
 
 .coverage
 .noseids
-
