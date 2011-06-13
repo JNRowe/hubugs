@@ -315,12 +315,12 @@ def label(args):
 def main():
     """Main script"""
     description = __doc__.splitlines()[0].split("-", 1)[1]
-    epilog = "Please report bugs to the JNRowe/gh_bugs repository"
+    epilog = "Please report bugs to the JNRowe/gh_bugs project"
     parser = argh.ArghParser(description=description, epilog=epilog,
                              version="%%(prog)s %s" % __version__)
-    parser.add_argument("-r", "--repository", action=utils.RepoAction,
-                        help="GitHub repository to operate on",
-                        metavar="repo")
+    parser.add_argument("-p", "--project", action=utils.ProjectAction,
+                        help="GitHub project to operate on",
+                        metavar="project")
     parser.add_commands(COMMANDS)
     parser.dispatch(pre_call=utils.set_api)
 

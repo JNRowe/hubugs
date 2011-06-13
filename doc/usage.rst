@@ -7,7 +7,7 @@ Let's start with some basic examples:
 
 .. code-block:: sh
 
-    ▶ gh_bugs list  # List the open bugs for the current repository
+    ▶ gh_bugs list  # List the open bugs for the current project
     Id Title
      5 Handle some GitHub markdown extensions [feature]
      6 Sphinx documentation tree [task]
@@ -48,9 +48,9 @@ Options
 
    show this help message and exit
 
-.. cmdoption:: -r <repo>, --repository=<repo>
+.. cmdoption:: -p <project>, --project=<project>
 
-   GitHub repository to operate on
+   GitHub project to operate on
 
 Commands
 --------

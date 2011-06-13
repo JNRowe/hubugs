@@ -44,32 +44,31 @@ else:  # pragma: no cover
 # pylint: enable-msg=C0103
 
 
-class RepoAction(argh.utils.argparse.Action):
-    """argparse action class for setting repository"""
-    def __call__(self, parser, namespace, repository, option_string=None):
-        "Set fully qualified GitHub repository name"
-        if not "/" in repository:
+class ProjectAction(argh.utils.argparse.Action):
+    """argparse action class for setting project"""
+    def __call__(self, parser, namespace, project, option_string=None):
+        "Set fully qualified GitHub project name"
+        if not "/" in project:
             user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
             if not user:
                 raise parser.error("No GitHub user setting!")
-            repository = "%s/%s" % (user, repository)
+            project = "%s/%s" % (user, project)
         try:
-            # Check for repo validity early on.  This check is normally less
+            # Check for project validity early on.  This check is normally less
             # than a 500 bytes transfer
-            get_github_api().repos.show(repository)
+            get_github_api().repos.show(project)
         except RuntimeError as error:
             if "Repository not found" in error.args[0]:
-                raise parser.error(fail("Repository %r not found"
-                                        % repository))
+                raise parser.error(fail("Project %r not found" % project))
             else:
                 raise
         except httplib2.ServerNotFoundError:
-            raise parser.error(fail("Repository lookup failed.  Network or "
+            raise parser.error(fail("Project lookup failed.  Network or "
                                     "GitHub down?"))
         except EnvironmentError as error:
             raise parser.error(error.args[0])
 
-        namespace.repository = repository
+        namespace.project = project
 
 
 def get_github_api():
@@ -123,7 +122,7 @@ def get_editor():
 
 
 def get_repo():
-    "Extract GitHub repository name from config"
+    "Extract GitHub project name from config"
     data = get_git_config_val("remote.origin.url")
     if not data:
         raise ValueError("No `origin' remote found")
@@ -131,7 +130,7 @@ def get_repo():
     if match:
         return match.groups()[0]
     else:
-        raise ValueError("Unknown repository")
+        raise ValueError("Unknown project")
 
 
 def get_term_size():
@@ -148,14 +147,14 @@ def set_api(args):
 
     :param argparse.Namespace args: argparse namespace to operate on
     """
-    if not args.repository:
-        args.repository = get_repo()
+    if not args.project:
+        args.project = get_repo()
     api = get_github_api()
     issues = api.issues
 
     def api_method(method, *opts, **kwargs):
         "Wrapper for calling functions from api.issues"
-        return getattr(issues, method)(args.repository, *opts, **kwargs)
+        return getattr(issues, method)(args.project, *opts, **kwargs)
     args.api = api_method
     # Include a direct httplib2.Http object, for non-issues related network
     # access.
