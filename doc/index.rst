@@ -28,6 +28,7 @@ Contents:
    templates
    gh_bugs manpage <gh_bugs.1>
    faq
+   alternatives
 
 Indices and tables
 ==================
