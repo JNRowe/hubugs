@@ -13,7 +13,7 @@
 :mod:`gh_bugs` is a very simple client for working with `GitHub's issue
 tracker`_ from the command line.
 
-It is written in Python_, and requires v2.6 or later.  :mod:`versionah` is
+It is written in Python_, and requires v2.6 or later.  :mod:`gh_bugs` is
 released under the `GPL v3`_
 
 Contents:
@@ -25,6 +25,7 @@ Contents:
    install
    config
    usage
+   templates
    gh_bugs manpage <gh_bugs.1>
    faq
 
