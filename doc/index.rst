@@ -19,7 +19,8 @@ released under the `GPL v3`_
 :Git repository:  https://github.com/JNRowe/gh_bugs/
 :Issue tracker:  https://github.com/JNRowe/gh_bugs/issues/
 
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
