@@ -1,21 +1,21 @@
 Configuration
 =============
 
-Before using :program:`gh_bugs` you must declare your authentication settings so
-that we can access the GitHub API.
+Before using :program:`gh_bugs` you must declare your authentication settings to
+enable access to the GitHub API.
 
 You first need to define your GitHub user name:
 
 .. code-block:: sh
 
-    ▶ git config --global github.user <username>
+    ▶ git config --global github.user '<username>'
 
 And then you need to define your GitHub API token, this can be found in the
 `account admin`_ tab of your GitHub `account page`_:
 
 .. code-block:: sh
 
-    ▶ git config --global github.token <token>
+    ▶ git config --global github.token '<token>'
 
 .. note::
 
