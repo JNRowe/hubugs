@@ -50,6 +50,8 @@ I'd like to thank the following people who have contributed to
 Patches
 '''''''
 
+<Your name here?>
+
 Bug reports
 '''''''''''
 
@@ -67,10 +69,10 @@ drop me a mail_ and I'll update the list!
 Hacking
 -------
 
-Patches are most welcome, but I'd appreciate it if you could follow the
-guidelines below to make it easier to integrate your changes.  These are
-guidelines however, and as such can be broken if the need arises or you
-just want to convince me that your style is better.
+Patches and `pull requests`_ are most welcome, but I'd appreciate it if you
+could follow the guidelines below to make it easier to integrate your changes.
+These are only guidelines however, and as such can be broken if the need arises
+or you just want to convince me that your style is better.
 
 * `PEP 8`_, the style guide, should be followed where possible.
 * While support for Python versions prior to v2.6 may be added in the future if
@@ -105,6 +107,7 @@ I can reproduce the problem, or even better a patch!
 .. _Pygments: http://pygments.org/
 .. _account admin: https://github.com/account/admin
 .. _account page: https://github.com/account
+.. _pull requests: http://github.com/JNRowe/gh_bugs/issues
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _mail: jnrowe@gmail.com
