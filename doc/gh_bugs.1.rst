@@ -19,8 +19,8 @@ DESCRIPTION
 -----------
 
 :mod:`gh_bugs` is a very simple client for working with GitHub's issue tracker.
-It allows you to perform all the issue related tasks you'd normally use the
-GitHub website for.
+It allows you to perform all the issue related tasks you'd normally perform from
+the command line.
 
 OPTIONS
 -------
@@ -29,7 +29,7 @@ OPTIONS
     show program's version number and exit
 
 -h, --help
-    show this help message and exit
+    show program's help message and exit
 
 -p <project>, --project=<project>
     GitHub project to operate on.  You can supply just ``<project>`` if you wish

@@ -13,12 +13,14 @@ Let's start with some basic examples:
      6 Sphinx documentation tree [task]
      7 Support per project templates [feature]
 
-    6 open bugs found
+    3 open bugs found
+
     ▶ gh_bugs search markdown  # Search for bugs matching markdown
     Id Title
      5 Handle some GitHub markdown extensions [feature]
 
     1 open bug found matching markdown
+
     ▶ gh_bugs show 6  # Show bug number 6
               Id: 6
            Title: Sphinx documentation tree
@@ -32,7 +34,9 @@ Let's start with some basic examples:
 
     This project deserves some real user documentation, not just a few notes in
     `README.rst`.
+
     ▶ gh_bugs comment 6  # Comment on bug 6 using your editor
+
     ▶ gh_bugs comment -m"New comment." 6  # Add comment from command line
 
 Options
@@ -46,7 +50,7 @@ Options
 
 .. cmdoption:: -h, --help
 
-   show this help message and exit
+   show program's help message and exit
 
 .. cmdoption:: -p <project>, --project=<project>
 
@@ -55,10 +59,10 @@ Options
 Commands
 --------
 
-``list``
-''''''''
+``list`` - List bugs for a project
+''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-list
+.. program:: gh_bugs list
 
 ::
 
@@ -73,14 +77,14 @@ Commands
 
    list bugs with specified label
 
-.. cmdoption::  -o <order>, --order=<order>
+.. cmdoption:: -o <order>, --order=<order>
 
    sort order for listing bugs
 
-``search``
-''''''''''
+``search`` - Search bugs reports in a project
+'''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-search
+.. program:: gh_bugs search
 
 ::
 
@@ -92,31 +96,31 @@ Commands
 
    state of bugs to operate on
 
-.. cmdoption::  -o <order>, --order=<order>
+.. cmdoption:: -o <order>, --order=<order>
 
    sort order for listing bugs
 
-``show``
-''''''''
+``show`` - Show specific bug(s) from a project
+''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-show
+.. program:: gh_bugs show
 
 ::
 
     gh_bugs show [-h] [-f] [-p] bugs [bugs ...]
 
-.. cmdoption::  -f, --full
+.. cmdoption:: -f, --full
 
    show bug including comments
 
-.. cmdoption::  -p, --patch
+.. cmdoption:: -p, --patch
 
    display patches for pull requests
 
-``open``
-''''''''
+``open`` - Open a new bug in a project
+''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-open
+.. program:: gh_bugs open
 
 ::
 
@@ -126,10 +130,10 @@ Commands
 
    read message from standard input
 
-``comment``
-'''''''''''
+``comment`` - Comment on an existing bug in a project
+'''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-comment
+.. program:: gh_bugs comment
 
 ::
 
@@ -143,10 +147,10 @@ Commands
 
    comment text
 
-``edit``
-''''''''
+``edit`` - Edit an existing bug in a project
+''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-edit
+.. program:: gh_bugs edit
 
 ::
 
@@ -156,10 +160,10 @@ Commands
 
    read message from standard input
 
-``close``
-'''''''''
+``close`` - Close an existing bug in a project
+''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-close
+.. program:: gh_bugs close
 
 ::
 
@@ -173,10 +177,10 @@ Commands
 
    comment text
 
-``reopen``
-''''''''''
+``reopen`` - Reopen a previously closed bug in a project
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs-reopen
+.. program:: gh_bugs reopen
 
 ::
 
@@ -190,11 +194,10 @@ Commands
 
    comment text
 
+``label`` - Perform labelling actions on an existing bug in a project
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-``label``
-'''''''''
-
-.. program:: gh_bugs-label
+.. program:: gh_bugs label
 
 ::
 
