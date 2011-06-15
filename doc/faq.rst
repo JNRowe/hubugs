@@ -21,8 +21,12 @@ The use of Jinja_ should only be an issue if you wish to author your own
 templates, if you're using the built-in templates you shouldn't notice Jinja_ at
 all.  That said...
 
-The use of Jinja_ seems to be an entry barrier to a couple of people, but it
-isn't going to change.  For the same -- invariably pointless and religious --
-reasons people prefer other templating engines *I* prefer Jinja_.
+The use of Jinja_ seems to be an entry barrier to some people, but it isn't
+going to change.  For the same -- invariably pointless and religious -- reasons
+people prefer other templating engines *I* prefer Jinja_.
+
+.. note::
+   With all that said, I probably wouldn't be opposed to accepting patches
+   supporting additional *optional* engines ;)
 
 .. _Jinja: http://jinja.pocoo.org/
