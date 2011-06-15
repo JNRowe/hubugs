@@ -9,8 +9,9 @@ Introduction
 Requirements
 ------------
 
-``gh_bugs`` requires Python_ v2.6 or above. ``gh_bugs``'s only mandatory
-dependencies outside of the standard library are argh_, github2_ and Jinja_.
+``gh_bugs`` requires Python_ v2.6 or above.  ``gh_bugs``'s mandatory
+dependencies outside of the standard library are argh_, github2_, Jinja_ and
+Pygments_.
 
 If you would like coloured terminal output, then you will need termcolor_.
 
@@ -101,6 +102,7 @@ I can reproduce the problem, or even better a patch!
 .. _termcolor: http://pypi.python.org/pypi/termcolor/
 .. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
+.. _Pygments: http://pygments.org/
 .. _account admin: https://github.com/account/admin
 .. _account page: https://github.com/account
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
