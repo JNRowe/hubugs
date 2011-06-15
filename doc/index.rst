@@ -33,6 +33,7 @@ Contents
    gh_bugs manpage <gh_bugs.1>
    faq
    alternatives
+   appendix
 
 Indices and tables
 ==================
