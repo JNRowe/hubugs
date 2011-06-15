@@ -1,3 +1,5 @@
+.. highlight:: jinja
+
 Templates
 =========
 
@@ -26,7 +28,7 @@ Precedence
 
 The first name match in the order specified above selects the template, so a
 :file:`view/list.txt` in :file:`${XDG_DATA_HOME}/gh_bugs/templates` overrides
-:file:`view/list.txt` provided by :mod:`gh_bugs`.
+the :file:`view/list.txt` provided in the :mod:`gh_bugs` package.
 
 Naming
 ------
@@ -36,12 +38,12 @@ templates used in directly producing consumable output(such as from the ``list``
 subcommand).  The second group, ``edit``, is for templates used to generate
 input files for editing text(such as in the ``open`` subcommand).
 
-View group templates currently include:
+``view`` group templates currently include:
 
 * :file:`issue.txt` for formatting a single bug
 * :file:`list.txt` for formatting list output
 
-Edit group templates currently include:
+``edit`` group templates currently include:
 
 * :file:`default.mkd` for general use, such as in commenting on a bug
 * :file:`open.mkd` for opening(or editing) bugs
@@ -54,26 +56,77 @@ The following variables are available for use in templates
 View group
 ''''''''''
 
-* ``bugs`` which contains the sorted list of bugs to display, if any
-* ``columns`` which is the width of the current terminal window
-* ``id_len`` which is set to the maximum length of the bug IDs to display
-* ``state`` of the bugs being searched/listed
-* ``term`` which is set to the search term being listed
-* ``order`` which is the ordering method to use
+.. data:: columns(int)
+
+   The width of the current terminal window
+
+``list.txt`` data
+~~~~~~~~~~~~~~~~~
+
+.. data:: bugs(list)
+
+   Contains the sorted list of bugs to display, if any.  See
+   :ref:`bug_objects-label`.
+
+.. data:: id_len(int)
+
+   Set to the maximum length of the bug IDs to display
+
+.. data:: state(str)
+
+   The bug states being searched/listed
+
+.. data:: order(str)
+
+   The display order
+
+.. data:: term(str)
+
+   The search term being listed, if any
+
+``issue.txt`` data
+~~~~~~~~~~~~~~~~~~
+
+.. data:: bug(list)
+
+   Contains the sorted list of bugs to display, if any.  See
+   :ref:`bug_objects-label`
+
+.. data:: comments(list)
+
+   When displaying a single bug this contains the list of comments associated
+   with a bug, if any.  See :ref:`comment_objects-label`
+
+.. data:: full(bool)
+
+   True, if the user provided the :option:`gh_bugs show -f` option
+
+.. data:: patch(str)
+
+   The content found at the location in :attr:`Bug.patch_url`, if the user
+   provided the :option:`gh_bugs show -p` option
 
 Edit group
 ''''''''''
 
-* ``title`` which will contain the current title in ``edit`` subcommand sessions
-* ``body`` which will contain the current body in ``edit`` subcommand sessions
+.. data:: title(str)
+
+   The current bug title in ``edit`` subcommand sessions.  See
+   :attr:`Bug.title`
+
+.. data:: body(str)
+
+   The current bug body in ``edit`` subcommand sessions, if any.  See
+   :attr:`Bug.body`
 
 All groups
 ''''''''''
 
 Jinja templates support object attribute and method access, so an individual
-``bug`` object's ``created_at`` attribute can be called with a ``strftime``
-method for custom date output.  For example, ``{{ bug.created_at.strftime("%a,
-%e %b %Y %H:%M:%S %z") }}`` can be used to output an :rfc:`2822` date stamp.
+``bug`` object's :data:`~Bug.created_at` attribute can be called with a
+:meth:`~datetime.datetime.strftime` method for custom date output.  For example,
+``{{ bug.created_at.strftime("%a, %e %b %Y %H:%M:%S %z") }}`` can be used to
+output an :rfc:`2822`-style date stamp.
 
 If you're authoring your own templates and you find you need extra data for
 their generation open an issue_.
@@ -81,8 +134,8 @@ their generation open an issue_.
 Filters
 -------
 
-:mod:`gh_bugs` defines the following filters beyond the huge range of `built-in
-filters`_ in Jinja_:
+:mod:`gh_bugs` defines the following filters beyond the huge range of excellent
+`built-in filters`_ in Jinja_:
 
 .. note::
 
@@ -93,18 +146,18 @@ filters`_ in Jinja_:
 ``colourise``
 '''''''''''''
 
-This filter applies a colour to text, if possible.  When directing output to a
-pipe or using a terminal that is incapable of displaying colours the text is
-passed through unchanged.
+This filter applies a colour to text, if possible.  This functionality requires
+:pypi:`termcolor`, if the module is unavailable the filter is simply a no-op.
+
+When directing output to a pipe or using a terminal that is incapable of
+displaying colours the text is passed through unchanged.
 
 For example, to show a bug's ``title`` attribute in red::
-
-.. code-block:: jinja
 
     {{ bug.title | colourise('red') }}
 
 .. note::
-   This filter is also available under the name ``colorize``.
+   This filter is also available under the synonym ``colorize``.
 
 ``highlight``
 '''''''''''''
@@ -119,6 +172,9 @@ For example, to highlight a chunk of text as Python::
 To do the same using the 256-colour mode of Pygments_::
 
     {{ text | highlight('python', 'terminal256') }}
+
+See the output of :program:`pygmentize -L` for the list of available lexers and
+formatters.
 
 ``relative_time``
 '''''''''''''''''
@@ -137,17 +193,18 @@ which could produce output such as::
 ``term_markdown``
 '''''''''''''''''
 
-The purpose of this filter is to pretty print Markdown formatted text.  It only
-handles headings, horizontal rules and emphasis currently.
+The purpose of this filter is to pretty print Markdown_ formatted text, which is
+the format used by GitHub issues.  It only handles headings, horizontal rules
+and emphasis currently.
 
 In the default templates it is used to render bug bodies::
 
     {{ comment.body | wordwrap(break_long_words=False) | term_markdown }}
 
 .. note::
-   We pass the text through Jinja's built-in :func:`jinja:wordwrap` filter prior to
-   formatting with ``term_markdown`` so that the terminal escape sequences
-   aren't included in the line width calculations.
+   We pass the text through Jinja's built-in :func:`jinja:wordwrap` filter prior
+   to formatting with ``term_markdown`` so that the terminal escape sequences
+   aren't included in the line width calculations for wrapping.
 
 .. _Jinja: http://jinja.pocoo.org/
 .. _Jinja template designer: http://jinja.pocoo.org/docs/templates/
@@ -156,3 +213,4 @@ In the default templates it is used to render bug bodies::
 .. _GitHub: https://github.com/JNRowe/gh_bugs/
 .. _built-in filters: http://jinja.pocoo.org/docs/templates/#list-of-builtin-filters
 .. _Pygments: http://pygments.org/
+.. _Markdown: http://daringfireball.net/projects/markdown/
