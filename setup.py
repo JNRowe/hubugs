@@ -31,4 +31,8 @@ setup(
     entry_points={'console_scripts': ['gh_bugs = gh_bugs:main', ]},
     zip_safe=False,
     install_requires=install_requires,
+    extras_require={
+        'colour': ['termcolor', ],
+        'color': ['termcolor', ],
+    },
 )
