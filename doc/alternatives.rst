@@ -4,10 +4,10 @@ Alternatives
 Before diving in and spitting out this package I looked at the alternatives
 below.  If I have missed something please drop me a mail_.
 
-Both ``ghi`` and ``github-cli`` listed below are very useful, and quite usable,
-clients for GitHub issues.  You should definitely try them out before making a
-decision on what to use, and this would also allow you to highlight any possible
-bias I may have shown in comparing them ;)
+Both the ``ghi`` and ``github-cli`` packages listed below are very useful, and
+quite usable, clients for GitHub issues.  You should definitely try them out
+before making a decision on what to use, and this would also allow you to
+highlight any possible bias I may have shown in comparing them ;)
 
 ``ghi``
 -------
@@ -35,8 +35,8 @@ and has the following disadvantages:
 --------------
 
 github-cli_ is a fantastic command-line client for GitHub's issues, written in
-Python_.  I really liked ``github-cli`` to the extent of offering a few patches,
-but just didn't find it comfortable to use in the long run [#]_.
+Python_.  I really liked ``github-cli`` to the extent of authoring a few
+patches, but just didn't find it comfortable to use in the long run [#]_.
 
 :mod:`gh_bugs` provides the following advantages:
 
@@ -44,8 +44,8 @@ but just didn't find it comfortable to use in the long run [#]_.
 * HTTP compression support
 * On-disk cache support
 * Pull request integration
-* Uses the same method as ``git`` for choosing an editor to use, which will
-  affects you if you a custom editor for interacting with ``git``
+* Uses the same method as ``git`` for choosing an editor to use, which will only
+  affect you if you a custom editor for interacting with ``git``
 
 and has the following disadvantages:
 
