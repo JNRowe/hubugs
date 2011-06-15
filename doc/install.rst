@@ -1,21 +1,41 @@
 Installation
-============
+------------
 
-You can download releases from the `downloads page`_.
+You can install :mod:`gh_bugs` either via :abbr:`PyPI (Python Package Index)` or
+from source.
 
-:mod:`gh_bugs` requires Python_ v2.6(or newer) and the following Python modules:
+Using :abbr:`PyPI (Python Package Index)`
+'''''''''''''''''''''''''''''''''''''''''
 
-* :pypi:`argh`
-* :pypi:`github2` 0.3.0 or newer
-* :pypi:`Jinja2`
-* :pypi:`Pygments`
+To install using :pypi:`pip`::
 
-.. note::
-   If running with Python v2.6 then :pypi:`argparse` is required.
+    $ pip install gh_bugs  # to install in Python's site-packages
+    $ pip install --install-option="--user" gh_bugs  # to install for a single user
 
-The following optional packages will be used if available:
+To install using :pypi:`easy_install <setuptools>`::
 
-* :pypi:`termcolor` for coloured output in the terminal
+    $ easy_install gh_bugs
 
-.. _downloads page: https://github.com/JNRowe/gh_bugs/downloads
-.. _Python: http://www.python.org/
+Optionally, :pypi:`termcolor` is required for producing coloured terminal
+output.
+
+From source
+'''''''''''
+
+If you have downloaded a source tarball you can install it with the following
+steps::
+
+    $ python setup.py build
+    # python setup.py install  # to install in Python's site-packages
+    $ python setup.py install --user  # to install for a single user
+
+:mod:`gh_bugs` depends on following packages, all of which are available from
+:abbr:`PyPI (Python Package Index)`:
+
+* :pypi:`argh`, an excellent package for building command line tools in Python
+* :pypi:`github2` for wrapping access to the GitHub API
+* :pypi:`Jinja2` for templating
+* :pypi:`Pygments` for syntax highlighting in template output
+
+Optionally, :pypi:`termcolor` is required for producing coloured terminal
+output.
