@@ -16,6 +16,9 @@ tracker`_ from the command line.
 It is written in Python_, and requires v2.6 or later.  :mod:`gh_bugs` is
 released under the `GPL v3`_
 
+:Git repository:  https://github.com/JNRowe/gh_bugs/
+:Issue tracker:  https://github.com/JNRowe/gh_bugs/issues/
+
 Contents:
 
 .. toctree::

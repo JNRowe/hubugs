@@ -150,7 +150,9 @@ Written by `James Rowe <mailto:jnrowe@gmail.com>`__
 RESOURCES
 ---------
 
-Home page: http://jnrowe.github.com/gh_bugs/
+Home page, containing full documentation: http://jnrowe.github.com/gh_bugs/
+
+Issue tracker: https://github.com/JNRowe/gh_bugs/issues/
 
 COPYING
 -------
