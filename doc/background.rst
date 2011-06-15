@@ -2,8 +2,8 @@ Background
 ==========
 
 GitHub_ provide a great issue tracker for small projects.  It is simple, light
-and fast.  There's only one problem, I prefer to edit text for bugs in my editor
-of choice.
+and fast.  There's only one problem for me, I prefer simple command line tools
+for these tasks.
 
 Luckily, the issue tracker exposes your data via a `thoroughly documented API`_,
 so alternative interfaces are only a :abbr:`SMOP (Small Matter of Programming)`
@@ -25,10 +25,10 @@ view over time.  Therefore:
 Data display must be fast, and require the minimum possible network access.
 Therefore:
 
-    Network data must be cached_ where possible
+    Network data must be `cached and compressed`_ where possible
 
 .. _GitHub: https://github.com/
 .. _thoroughly documented API: http://develop.github.com/
 .. _command line interface: http://pypi.python.org/pypi/argh/
 .. _templates: http://jinja.pocoo.org/
-.. _cached: http://code.google.com/p/httplib2/
+.. _cached and compressed: http://code.google.com/p/httplib2/
