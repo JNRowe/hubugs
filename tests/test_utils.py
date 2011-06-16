@@ -3,6 +3,7 @@ import argparse
 import imp
 import sys
 
+from subprocess import CalledProcessError
 from unittest import TestCase
 
 from httplib2 import ServerNotFoundError
@@ -141,3 +142,20 @@ class GetGithubApi(TestCase):
         getenv.side_effect = self.fake_env
         api = utils.get_github_api()
         assert_equals(api.request._http.cache, None)
+
+
+class GetGitConfigVal(TestCase):
+    @patch('subprocess.check_output')
+    def test_valid_key(self, check_output):
+        check_output.return_value = 'JNRowe'
+        assert_equals(utils.get_git_config_val('github.user'), 'JNRowe')
+
+    @patch('subprocess.check_output')
+    def test_invalid_key(self, check_output):
+        check_output.return_value = ''
+        assert_equals(utils.get_git_config_val('no_such_key'), '')
+
+    @patch('subprocess.check_output')
+    def test_command_error(self, check_output):
+        check_output.side_effect = CalledProcessError('255', 'cmd')
+        assert_equals(utils.get_git_config_val('github.user'), None)
