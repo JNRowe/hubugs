@@ -232,3 +232,11 @@ class GetRepo(TestCase):
     def test_invalid_url(self, get_git_config_val):
         get_git_config_val.return_value = 'http://example.com/dog.git'
         utils.get_repo()
+
+
+@patch('subprocess.check_output')
+def test_get_term_size(check_output):
+    check_output.return_value = '62 118'
+    term = utils.get_term_size()
+    assert_equals(term.lines, 62)
+    assert_equals(term.columns, 118)
