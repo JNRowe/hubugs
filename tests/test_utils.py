@@ -159,3 +159,44 @@ class GetGitConfigVal(TestCase):
     def test_command_error(self, check_output):
         check_output.side_effect = CalledProcessError('255', 'cmd')
         assert_equals(utils.get_git_config_val('github.user'), None)
+
+
+class GetEditor(TestCase):
+    @patch('os.getenv')
+    def test_git_editor_envvar(self, getenv):
+        getenv.return_value = 'custom git editor'
+        assert_equals(utils.get_editor(), 'custom git editor')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('os.getenv')
+    def test_git_editor_config(self, getenv, get_git_config_val):
+        getenv.return_value = None
+        get_git_config_val.return_value = 'custom config editor'
+        assert_equals(utils.get_editor(), 'custom config editor')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('os.getenv')
+    def test_editor_environment_visual(self, getenv, get_git_config_val):
+        def fake_env(key, default=None):
+            return {'VISUAL': 'visual'}.get(key)
+        getenv.side_effect = fake_env
+        get_git_config_val.return_value = None
+        assert_equals(utils.get_editor(), 'visual')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('os.getenv')
+    def test_editor_environment_editor(self, getenv, get_git_config_val):
+        def fake_env(key, default=None):
+            return {'EDITOR': 'editor'}.get(key, default)
+        getenv.side_effect = fake_env
+        get_git_config_val.return_value = None
+        assert_equals(utils.get_editor(), 'editor')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('os.getenv')
+    def test_editor_default(self, getenv, get_git_config_val):
+        def fake_env(key, default=None):
+            return default
+        getenv.side_effect = fake_env
+        get_git_config_val.return_value = None
+        assert_equals(utils.get_editor(), 'vi')
