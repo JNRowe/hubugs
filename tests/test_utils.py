@@ -240,3 +240,24 @@ def test_get_term_size(check_output):
     term = utils.get_term_size()
     assert_equals(term.lines, 62)
     assert_equals(term.columns, 118)
+
+
+class SetApi(TestCase):
+    @patch('gh_bugs.utils.get_repo')
+    def test_no_project(self, get_repo):
+        get_repo.return_value = 'JNRowe/misc-overlay'
+        namespace = argparse.Namespace(project=None)
+        utils.set_api(namespace)
+        assert_equals(namespace.project, 'JNRowe/misc-overlay')
+
+    def test_project(self):
+        namespace = argparse.Namespace(project='JNRowe/misc-overlay')
+        utils.set_api(namespace)
+        assert_equals(namespace.project, 'JNRowe/misc-overlay')
+
+    @patch('github2.request.GithubRequest.raw_request')
+    def test_api(self, raw_request):
+        raw_request.return_value = {u'issues': []}
+        namespace = argparse.Namespace(project='JNRowe/misc-overlay')
+        utils.set_api(namespace)
+        assert_equals(namespace.api('list'), [])
