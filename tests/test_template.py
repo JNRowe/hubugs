@@ -2,7 +2,7 @@ from collections import namedtuple
 from unittest import TestCase
 
 from mock import (Mock, patch)
-from nose.tools import (assert_equals, assert_true)
+from nose.tools import (assert_equals, assert_true, raises)
 from pygments import (formatters, lexers)
 
 from gh_bugs import template
@@ -45,3 +45,32 @@ class Highlight(TestCase):
         result = template.highlight('True', formatter='terminal256')
         assert_true(isinstance(result.args[3],
                                formatters.terminal256.Terminal256Formatter))
+
+
+class EditText(TestCase):
+    @patch('subprocess.check_call')
+    @raises(template.EmptyMessageError)
+    def test_no_message(self, check_call):
+        check_call.return_value = True
+        template.edit_text()
+
+    @patch('subprocess.check_call')
+    def test_message(self, check_call):
+        def side_effect(args):
+            open(args[1], 'w').write('Some message')
+        check_call.side_effect = side_effect
+        assert_equals(template.edit_text(), 'Some message')
+
+    @patch('subprocess.check_call')
+    def test_message_comments(self, check_call):
+        def side_effect(args):
+            open(args[1], 'w').write('Some message\n#Some comment')
+        check_call.side_effect = side_effect
+        assert_equals(template.edit_text(), 'Some message')
+
+    @patch('subprocess.check_call')
+    def test_message_prefill(self, check_call):
+        check_call.return_value = True
+        assert_equals(template.edit_text('open',
+                                         data={'title': 'Some message'}),
+                      'Some message')
