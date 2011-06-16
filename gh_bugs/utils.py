@@ -23,6 +23,8 @@ import re
 import subprocess
 import sys
 
+from collections import namedtuple
+
 import argh
 import httplib2
 
@@ -136,10 +138,11 @@ def get_repo():
 def get_term_size():
     """Fetch the current terminal size
 
-    :rtype: ``list`` of ``int``
-    :return: Number of columns and lines in current terminal
+    :rtype: ``namedtuple``
+    :return: Number of lines and columns in current terminal
     """
-    return map(int, subprocess.check_output(["stty", "size"]).split())
+    lines, columns = map(int, subprocess.check_output(["stty", "size"]).split())
+    return namedtuple('Tty', 'lines columns')(lines, columns)
 
 
 def set_api(args):

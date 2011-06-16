@@ -190,7 +190,7 @@ def display_bugs(bugs, order, **extras):
 
     bugs = sorted(bugs, key=operator.attrgetter(attr))
 
-    columns = utils.get_term_size()[1]
+    columns = utils.get_term_size().columns
 
     template = ENV.get_template("view/list.txt")
 
