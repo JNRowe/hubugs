@@ -103,3 +103,41 @@ class ProjectAction(TestCase):
             Mock(side_effect=EnvironmentError('config broken'))
         get_git_config_val.return_value = None
         self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
+
+
+class GetGithubApi(TestCase):
+    @staticmethod
+    def fake_env(key, default):
+        fake_data = {
+            'GITHUB_USER': 'JNRowe',
+            'GITHUB_TOKEN': 'xxx',
+            'HOME': '/home/JNRowe',
+            'XDG_CACHE_HOME': 'cache_dir',
+        }
+        return fake_data[key]
+
+    @patch('os.getenv')
+    @patch('os.mkdir')
+    def test_api_builder(self, mkdir, getenv):
+        mkdir.return_value = True
+        getenv.side_effect = self.fake_env
+        api = utils.get_github_api()
+        assert_equals(api.request.username, 'JNRowe')
+        assert_equals(api.request.api_token, 'xxx')
+        assert_equals(api.request._http.cache.cache, 'cache_dir/gh_bugs')
+
+    @patch('os.getenv')
+    @raises(EnvironmentError)
+    def test_invalid_auth(self, getenv):
+        getenv.return_value = None
+        utils.get_github_api()
+
+    @patch('os.getenv')
+    @patch('os.mkdir')
+    @patch('inspect.getargspec')
+    def test_no_cache_support(self, getargspec, mkdir, getenv):
+        getargspec().args = ['no_entry_cache_in_list', ]
+        mkdir.return_value = True
+        getenv.side_effect = self.fake_env
+        api = utils.get_github_api()
+        assert_equals(api.request._http.cache, None)
