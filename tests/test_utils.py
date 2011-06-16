@@ -200,3 +200,35 @@ class GetEditor(TestCase):
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
         assert_equals(utils.get_editor(), 'vi')
+
+
+class GetRepo(TestCase):
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_ssh_url(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'git@github.com:JNRowe/misc-overlay.git'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_git_url(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'git://github.com/JNRowe/misc-overlay.git'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @raises(ValueError)
+    def test_broken_url(self, get_git_config_val):
+        get_git_config_val.return_value = 'git://github.com/misc-overlay.git'
+        utils.get_repo()
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @raises(ValueError)
+    def test_no_url(self, get_git_config_val):
+        get_git_config_val.return_value = None
+        utils.get_repo()
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    @raises(ValueError)
+    def test_invalid_url(self, get_git_config_val):
+        get_git_config_val.return_value = 'http://example.com/dog.git'
+        utils.get_repo()
