@@ -2,8 +2,8 @@ Background
 ==========
 
 GitHub_ provide a great issue tracker for small projects.  It is simple, light
-and fast.  There's only one problem for me, I prefer simple command line tools
-for these tasks.
+and fast.  There's only one problem for me, I prefer command line tools for
+these tasks.
 
 Luckily, the issue tracker exposes your data via a `thoroughly documented API`_,
 so alternative interfaces are only a :abbr:`SMOP (Small Matter of Programming)`
