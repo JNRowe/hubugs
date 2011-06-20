@@ -30,6 +30,7 @@ setup(
     package_data={'': ['templates/*/*.mkd', "templates/*/*.txt"], },
     entry_points={'console_scripts': ['gh_bugs = gh_bugs:main', ]},
     zip_safe=False,
+    tests_require=(['mock', ]),
     install_requires=install_requires,
     extras_require={
         'colour': ['termcolor', ],
