@@ -127,7 +127,7 @@ def search(args):
 @bugs_arg
 def show(args):
     "displaying bugs"
-    tmpl = template.ENV.get_template("view/issue.txt")
+    tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
         try:
             bug = args.api("show", bug_no)

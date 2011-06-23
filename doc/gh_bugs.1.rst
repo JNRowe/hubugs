@@ -137,6 +137,17 @@ Perform labelling actions on an existing bug in a project
 -r <label>, --remove=<label>
    remove label from issue
 
+CONFIGURATION
+-------------
+
+You can specify the template set to use by defining a ``ghbugs.templates``
+setting in your git configuration files.  For example::
+
+    ▶ git config --global ghbugs.templates my_templates
+
+You can also set project specific template sets by editing a repository's
+config.  See :manpage:`git-config(1)`.
+
 BUGS
 ----
 

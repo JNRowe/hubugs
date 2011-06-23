@@ -30,6 +30,17 @@ The first name match in the order specified above selects the template, so a
 :file:`view/list.txt` in :file:`${XDG_DATA_HOME}/gh_bugs/templates` overrides
 the :file:`view/list.txt` provided in the :mod:`gh_bugs` package.
 
+Template sets
+-------------
+
+You can specify the template set to use by defining a `ghbugs.templates`
+setting in your git configuration files.  For example::
+
+    ▶ git config --global ghbugs.templates my_templates
+
+You can also set project specific template sets by editing a repository's
+config.  See :manpage:`git-config(1)`.
+
 Naming
 ------
 

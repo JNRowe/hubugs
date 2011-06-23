@@ -114,7 +114,7 @@ def get_github_api():
     return Github(username=user, api_token=token, **kwargs)
 
 
-def get_git_config_val(key):
+def get_git_config_val(key, default=None):
     """Fetch a git configuration value
 
     :param str key: Configuration value to fetch
@@ -122,7 +122,7 @@ def get_git_config_val(key):
     try:
         output = check_output(["git", "config", key]).strip()
     except subprocess.CalledProcessError:
-        output = None
+        output = default
     return output
 
 
