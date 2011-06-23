@@ -128,7 +128,14 @@ def get_repo():
     data = get_git_config_val("remote.origin.url")
     if not data:
         raise ValueError("No `origin' remote found")
-    match = re.search(r"github.com[:/]([^/]+/.*).git", data)
+    match = re.match(r"""
+        (?:git(?:@|://)  # SSH or git protocol
+          |https?://
+           (?:.*@)?)  # HTTP URLs support optional auth data
+        github.com[:/]  # hostname, : sep for SSH URL
+        ([^/]+/.*?)  # project
+        (?:.git)?$  # .git suffix is optional in all clone URLs""",
+                     data, re.VERBOSE)
     if match:
         return match.groups()[0]
     else:

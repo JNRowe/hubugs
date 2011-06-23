@@ -210,9 +210,57 @@ class GetRepo(TestCase):
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
     @patch('gh_bugs.utils.get_git_config_val')
+    def test_ssh_url_no_suffix(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'git@github.com:JNRowe/misc-overlay'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
     def test_git_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git://github.com/JNRowe/misc-overlay.git'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_git_url_no_suffix(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'git://github.com/JNRowe/misc-overlay'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_https_url(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'https://JNRowe@github.com/JNRowe/misc-overlay.git'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_https_url_no_suffix(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'https://JNRowe@github.com/JNRowe/misc-overlay'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_http_url(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'http://JNRowe@github.com/JNRowe/misc-overlay.git'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_http_url_no_suffix(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'http://JNRowe@github.com/JNRowe/misc-overlay'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_http_url_no_auth(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'http://github.com/JNRowe/misc-overlay.git'
+        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+
+    @patch('gh_bugs.utils.get_git_config_val')
+    def test_http_url_no_suffix_no_auth(self, get_git_config_val):
+        get_git_config_val.return_value = \
+            'http://github.com/JNRowe/misc-overlay'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
     @patch('gh_bugs.utils.get_git_config_val')
