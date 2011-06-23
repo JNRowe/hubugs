@@ -11,8 +11,8 @@ Template locations
 
 Templates are loaded from directories in the following order:
 
-* If it exists, ``${XDG_DATA_HOME:~/.local}/gh_bugs/templates``
-* Any :file:`gh_bugs/templates` directory in the directories specified by
+* If it exists, ``${XDG_DATA_HOME:~/.local}/hubugs/templates``
+* Any :file:`hubugs/templates` directory in the directories specified by
   :envvar:`XDG_DATA_DIRS`
 * The package's ``templates`` directory
 
@@ -27,16 +27,16 @@ Precedence
 ----------
 
 The first name match in the order specified above selects the template, so a
-:file:`view/list.txt` in :file:`${XDG_DATA_HOME}/gh_bugs/templates` overrides
-the :file:`view/list.txt` provided in the :mod:`gh_bugs` package.
+:file:`view/list.txt` in :file:`${XDG_DATA_HOME}/hubugs/templates` overrides
+the :file:`view/list.txt` provided in the :mod:`hubugs` package.
 
 Template sets
 -------------
 
-You can specify the template set to use by defining a `ghbugs.templates`
+You can specify the template set to use by defining a `hubugs.templates`
 setting in your git configuration files.  For example::
 
-    ▶ git config --global ghbugs.templates my_templates
+    ▶ git config --global hubugs.templates my_templates
 
 You can also set project specific template sets by editing a repository's
 config.  See :manpage:`git-config(1)`.
@@ -110,12 +110,12 @@ View group
 
 .. data:: full(bool)
 
-   True, if the user provided the :option:`gh_bugs show -f` option
+   True, if the user provided the :option:`hubugs show -f` option
 
 .. data:: patch(str)
 
    The content found at the location in :attr:`Bug.patch_url`, if the user
-   provided the :option:`gh_bugs show -p` option
+   provided the :option:`hubugs show -p` option
 
 Edit group
 ''''''''''
@@ -145,13 +145,13 @@ their generation open an issue_.
 Filters
 -------
 
-:mod:`gh_bugs` defines the following filters beyond the huge range of excellent
+:mod:`hubugs` defines the following filters beyond the huge range of excellent
 `built-in filters`_ in Jinja_:
 
 .. note::
 
    If you write extra filters that you believe could be of use to other
-   :mod:`gh_bugs` users please consider posting them in an issue_ or pushing
+   :mod:`hubugs` users please consider posting them in an issue_ or pushing
    them to a fork on GitHub_, so that others can benefit from your work.
 
 ``colourise``
@@ -220,8 +220,8 @@ In the default templates it is used to render bug bodies::
 .. _Jinja: http://jinja.pocoo.org/
 .. _Jinja template designer: http://jinja.pocoo.org/docs/templates/
 .. _XDG Base Directory Specification: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
-.. _issue: https://github.com/JNRowe/gh_bugs/issues
-.. _GitHub: https://github.com/JNRowe/gh_bugs/
+.. _issue: https://github.com/JNRowe/hubugs/issues
+.. _GitHub: https://github.com/JNRowe/hubugs/
 .. _built-in filters: http://jinja.pocoo.org/docs/templates/#list-of-builtin-filters
 .. _Pygments: http://pygments.org/
 .. _Markdown: http://daringfireball.net/projects/markdown/

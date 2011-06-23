@@ -5,9 +5,9 @@ import sys
 
 from setuptools import setup
 
-# Hack to import _version file without importing gh_bugs/__init__.py, its
+# Hack to import _version file without importing hubugs/__init__.py, its
 # purpose is to allow import without requiring dependencies at this point.
-ver_file = open("gh_bugs/_version.py")
+ver_file = open("hubugs/_version.py")
 _version = imp.load_module("_version", ver_file, ver_file.name,
                            (".py", ver_file.mode, imp.PY_SOURCE))
 
@@ -17,18 +17,18 @@ if sys.version_info[:2] < (2, 7):
 
 
 setup(
-    name='gh_bugs',
+    name='hubugs',
     version=_version.dotted,
-    url="https://github.com/JNRowe/gh_bugs",
+    url="https://github.com/JNRowe/hubugs",
     author="James Rowe",
     author_email="jnrowe@gmail.com",
     classifiers=[
         'Programming Language :: Python',
     ],
-    packages=['gh_bugs', ],
+    packages=['hubugs', ],
     include_package_data=True,
     package_data={'': ['templates/*/*.mkd', "templates/*/*.txt"], },
-    entry_points={'console_scripts': ['gh_bugs = gh_bugs:main', ]},
+    entry_points={'console_scripts': ['hubugs = hubugs:main', ]},
     zip_safe=False,
     test_suite="nose.collector",
     tests_require=['nose', 'mock'],

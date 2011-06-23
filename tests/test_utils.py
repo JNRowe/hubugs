@@ -10,7 +10,7 @@ from httplib2 import ServerNotFoundError
 from mock import (Mock, patch)
 from nose.tools import (assert_equals, assert_false, raises)
 
-from gh_bugs import utils
+from hubugs import utils
 
 
 class Colouriser(TestCase):
@@ -28,7 +28,7 @@ class Colouriser(TestCase):
 
         # This horrific-ness is here as the .isatty() test happens at import
         # time, so we need to re-import for tests.
-        utils_file = open('gh_bugs/utils.py')
+        utils_file = open('hubugs/utils.py')
         new_utils = imp.load_module("new_utils", utils_file, utils_file.name,
                            (".py", utils_file.mode, imp.PY_SOURCE))
 
@@ -47,8 +47,8 @@ class ProjectAction(TestCase):
         self.namespace = argparse.Namespace()
         self.action = utils.ProjectAction([], '')
 
-    @patch('gh_bugs.utils.get_github_api')
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_github_api')
+    @patch('hubugs.utils.get_git_config_val')
     def test_repo_name(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = 'JNRowe'
@@ -62,16 +62,16 @@ class ProjectAction(TestCase):
         self.action(self.parser, self.namespace, 'ask/python-github2')
         assert_equals(self.namespace.project, 'ask/python-github2')
 
-    @patch('gh_bugs.utils.get_github_api')
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_github_api')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(SystemExit)
     def test_no_user(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = None
         self.action(self.parser, self.namespace, 'misc-overlay')
 
-    @patch('gh_bugs.utils.get_github_api')
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_github_api')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(SystemExit)
     def test_repo_not_found(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = \
@@ -79,8 +79,8 @@ class ProjectAction(TestCase):
         get_git_config_val.return_value = None
         self.action(self.parser, self.namespace, 'JNRowe/never_exist')
 
-    @patch('gh_bugs.utils.get_github_api')
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_github_api')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(RuntimeError)
     def test_random_error(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = \
@@ -88,16 +88,16 @@ class ProjectAction(TestCase):
         get_git_config_val.return_value = None
         self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_github_api')
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_github_api')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(SystemExit)
     def test_httplib2_error(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = Mock(side_effect=ServerNotFoundError())
         get_git_config_val.return_value = None
         self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_github_api')
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_github_api')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(SystemExit)
     def test_env_error(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = \
@@ -125,7 +125,7 @@ class GetGithubApi(TestCase):
         api = utils.get_github_api()
         assert_equals(api.request.username, 'JNRowe')
         assert_equals(api.request.api_token, 'xxx')
-        assert_equals(api.request._http.cache.cache, 'cache_dir/gh_bugs')
+        assert_equals(api.request._http.cache.cache, 'cache_dir/hubugs')
 
     @patch('os.getenv')
     @raises(EnvironmentError)
@@ -145,17 +145,17 @@ class GetGithubApi(TestCase):
 
 
 class GetGitConfigVal(TestCase):
-    @patch('gh_bugs.utils.check_output')
+    @patch('hubugs.utils.check_output')
     def test_valid_key(self, check_output):
         check_output.return_value = 'JNRowe'
         assert_equals(utils.get_git_config_val('github.user'), 'JNRowe')
 
-    @patch('gh_bugs.utils.check_output')
+    @patch('hubugs.utils.check_output')
     def test_invalid_key(self, check_output):
         check_output.return_value = ''
         assert_equals(utils.get_git_config_val('no_such_key'), '')
 
-    @patch('gh_bugs.utils.check_output')
+    @patch('hubugs.utils.check_output')
     def test_command_error(self, check_output):
         check_output.side_effect = CalledProcessError('255', 'cmd')
         assert_equals(utils.get_git_config_val('github.user'), None)
@@ -167,14 +167,14 @@ class GetEditor(TestCase):
         getenv.return_value = 'custom git editor'
         assert_equals(utils.get_editor(), 'custom git editor')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
     def test_git_editor_config(self, getenv, get_git_config_val):
         getenv.return_value = None
         get_git_config_val.return_value = 'custom config editor'
         assert_equals(utils.get_editor(), 'custom config editor')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
     def test_editor_environment_visual(self, getenv, get_git_config_val):
         def fake_env(key, default=None):
@@ -183,7 +183,7 @@ class GetEditor(TestCase):
         get_git_config_val.return_value = None
         assert_equals(utils.get_editor(), 'visual')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
     def test_editor_environment_editor(self, getenv, get_git_config_val):
         def fake_env(key, default=None):
@@ -192,7 +192,7 @@ class GetEditor(TestCase):
         get_git_config_val.return_value = None
         assert_equals(utils.get_editor(), 'editor')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
     def test_editor_default(self, getenv, get_git_config_val):
         def fake_env(key, default=None):
@@ -203,86 +203,86 @@ class GetEditor(TestCase):
 
 
 class GetRepo(TestCase):
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_ssh_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git@github.com:JNRowe/misc-overlay.git'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_ssh_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git@github.com:JNRowe/misc-overlay'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_git_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git://github.com/JNRowe/misc-overlay.git'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_git_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git://github.com/JNRowe/misc-overlay'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_https_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'https://JNRowe@github.com/JNRowe/misc-overlay.git'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_https_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'https://JNRowe@github.com/JNRowe/misc-overlay'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_http_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://JNRowe@github.com/JNRowe/misc-overlay.git'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_http_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://JNRowe@github.com/JNRowe/misc-overlay'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_http_url_no_auth(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://github.com/JNRowe/misc-overlay.git'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     def test_http_url_no_suffix_no_auth(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://github.com/JNRowe/misc-overlay'
         assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(ValueError)
     def test_broken_url(self, get_git_config_val):
         get_git_config_val.return_value = 'git://github.com/misc-overlay.git'
         utils.get_repo()
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(ValueError)
     def test_no_url(self, get_git_config_val):
         get_git_config_val.return_value = None
         utils.get_repo()
 
-    @patch('gh_bugs.utils.get_git_config_val')
+    @patch('hubugs.utils.get_git_config_val')
     @raises(ValueError)
     def test_invalid_url(self, get_git_config_val):
         get_git_config_val.return_value = 'http://example.com/dog.git'
         utils.get_repo()
 
 
-@patch('gh_bugs.utils.check_output')
+@patch('hubugs.utils.check_output')
 def test_get_term_size(check_output):
     check_output.return_value = '62 118'
     term = utils.get_term_size()
@@ -291,7 +291,7 @@ def test_get_term_size(check_output):
 
 
 class SetApi(TestCase):
-    @patch('gh_bugs.utils.get_repo')
+    @patch('hubugs.utils.get_repo')
     def test_no_project(self, get_repo):
         get_repo.return_value = 'JNRowe/misc-overlay'
         namespace = argparse.Namespace(project=None)

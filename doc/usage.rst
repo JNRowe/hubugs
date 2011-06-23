@@ -1,13 +1,13 @@
 Usage
 =====
 
-The :program:`gh_bugs` script is the main workhorse of :mod:`gh_bugs`.
+The :program:`hubugs` script is the main workhorse of :mod:`hubugs`.
 
 Let's start with some basic examples:
 
 .. code-block:: sh
 
-    ▶ gh_bugs list  # List the open bugs for the current project
+    ▶ hubugs list  # List the open bugs for the current project
     Id Title
      5 Handle some GitHub markdown extensions [feature]
      6 Sphinx documentation tree [task]
@@ -15,13 +15,13 @@ Let's start with some basic examples:
 
     3 open bugs found
 
-    ▶ gh_bugs search markdown  # Search for bugs matching markdown
+    ▶ hubugs search markdown  # Search for bugs matching markdown
     Id Title
      5 Handle some GitHub markdown extensions [feature]
 
     1 open bug found matching markdown
 
-    ▶ gh_bugs show 6  # Show bug number 6
+    ▶ hubugs show 6  # Show bug number 6
               Id: 6
            Title: Sphinx documentation tree
           Labels: task
@@ -35,14 +35,14 @@ Let's start with some basic examples:
     This project deserves some real user documentation, not just a few notes in
     `README.rst`.
 
-    ▶ gh_bugs comment 6  # Comment on bug 6 using your editor
+    ▶ hubugs comment 6  # Comment on bug 6 using your editor
 
-    ▶ gh_bugs comment -m"New comment." 6  # Add comment from command line
+    ▶ hubugs comment -m"New comment." 6  # Add comment from command line
 
 Options
 -------
 
-.. program:: gh_bugs
+.. program:: hubugs
 
 .. cmdoption:: --version
 
@@ -62,11 +62,11 @@ Commands
 ``list`` - List bugs for a project
 ''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs list
+.. program:: hubugs list
 
 ::
 
-    gh_bugs list [-h] [-s {open,closed,all}] [-l label]
+    hubugs list [-h] [-s {open,closed,all}] [-l label]
         [-o {number,updated,votes}]
 
 .. cmdoption:: -s <state>, --state=<state>
@@ -84,11 +84,11 @@ Commands
 ``search`` - Search bugs reports in a project
 '''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs search
+.. program:: hubugs search
 
 ::
 
-    gh_bugs search [-h] [-s {open,closed,all}]
+    hubugs search [-h] [-s {open,closed,all}]
         [-o {number,updated,votes}]
         term
 
@@ -103,11 +103,11 @@ Commands
 ``show`` - Show specific bug(s) from a project
 ''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs show
+.. program:: hubugs show
 
 ::
 
-    gh_bugs show [-h] [-f] [-p] bugs [bugs ...]
+    hubugs show [-h] [-f] [-p] bugs [bugs ...]
 
 .. cmdoption:: -f, --full
 
@@ -120,11 +120,11 @@ Commands
 ``open`` - Open a new bug in a project
 ''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs open
+.. program:: hubugs open
 
 ::
 
-    gh_bugs open [-h] [--stdin] [title] [body]
+    hubugs open [-h] [--stdin] [title] [body]
 
 .. cmdoption:: --stdin
 
@@ -133,11 +133,11 @@ Commands
 ``comment`` - Comment on an existing bug in a project
 '''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs comment
+.. program:: hubugs comment
 
 ::
 
-    gh_bugs comment [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
+    hubugs comment [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
 
 .. cmdoption:: --stdin
 
@@ -150,11 +150,11 @@ Commands
 ``edit`` - Edit an existing bug in a project
 ''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs edit
+.. program:: hubugs edit
 
 ::
 
-    gh_bugs edit [-h] [--stdin] [title] [body] bugs [bugs ...]
+    hubugs edit [-h] [--stdin] [title] [body] bugs [bugs ...]
 
 .. cmdoption:: --stdin
 
@@ -163,11 +163,11 @@ Commands
 ``close`` - Close an existing bug in a project
 ''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs close
+.. program:: hubugs close
 
 ::
 
-    gh_bugs close [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
+    hubugs close [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
 
 .. cmdoption:: --stdin
 
@@ -180,7 +180,7 @@ Commands
 ``reopen`` - Reopen a previously closed bug in a project
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs reopen
+.. program:: hubugs reopen
 
 ::
 
@@ -197,11 +197,11 @@ Commands
 ``label`` - Perform labelling actions on an existing bug in a project
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-.. program:: gh_bugs label
+.. program:: hubugs label
 
 ::
 
-    gh_bugs label [-h] [-a label] [-r label] bugs [bugs ...]
+    hubugs label [-h] [-a label] [-r label] bugs [bugs ...]
 
 .. cmdoption:: -a <label>, --add=<label>
 

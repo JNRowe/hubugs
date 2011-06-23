@@ -1,15 +1,15 @@
-gh_bugs - Simple client for GitHub issues
-=========================================
+hubugs - Simple client for GitHub issues
+========================================
 
 Introduction
 ------------
 
-``gh_bugs`` is a very simple client for working with `GitHub's issue tracker`_.
+``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
 
 Requirements
 ------------
 
-``gh_bugs`` requires Python_ v2.6 or above.  ``gh_bugs``'s mandatory
+``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
 dependencies outside of the standard library are argh_, github2_, Jinja_ and
 Pygments_.
 
@@ -18,7 +18,7 @@ If you would like coloured terminal output, then you will need termcolor_.
 Configuration
 -------------
 
-Before using ``gh_bugs`` you must declare your authentication settings, so that
+Before using ``hubugs`` you must declare your authentication settings, so that
 we can access the API.
 
 You first need to define your GitHub user name::
@@ -39,13 +39,13 @@ If you wish to set the authentication information from the command line you can
 use the ``GITHUB_USER`` and ``GITHUB_TOKEN`` environment variables.  For
 example::
 
-    $ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx gh_bugs open
+    $ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx hubugs open
 
 Contributors
 ------------
 
 I'd like to thank the following people who have contributed to
-``gh_bugs``.
+``hubugs``.
 
 Patches
 '''''''
@@ -107,8 +107,8 @@ I can reproduce the problem, or even better a patch!
 .. _Pygments: http://pygments.org/
 .. _account admin: https://github.com/account/admin
 .. _account page: https://github.com/account
-.. _pull requests: http://github.com/JNRowe/gh_bugs/issues
+.. _pull requests: http://github.com/JNRowe/hubugs/issues
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _mail: jnrowe@gmail.com
-.. _issue: http://github.com/JNRowe/gh_bugs/issues
+.. _issue: http://github.com/JNRowe/hubugs/issues

@@ -1,24 +1,24 @@
-.. gh_bugs documentation master file, created by
+.. hubugs documentation master file, created by
    sphinx-quickstart on Mon May 31 20:00:36 2011.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. _gh_bugs-label:
+.. _hubugs-label:
 
-.. module:: gh_bugs
+.. module:: hubugs
 
-:mod:`gh_bugs`
+:mod:`hubugs`
 ==============
 
-:mod:`gh_bugs` is a very simple client for working with `GitHub's issue
+:mod:`hubugs` is a very simple client for working with `GitHub's issue
 tracker`_ from the command line.
 
-It is written in Python_, and requires v2.6 or later.  :mod:`gh_bugs` is
+It is written in Python_, and requires v2.6 or later.  :mod:`hubugs` is
 released under the `GPL v3`_
 
-:Git repository:  https://github.com/JNRowe/gh_bugs/
-:Issue tracker:  https://github.com/JNRowe/gh_bugs/issues/
-:Contributors:  https://github.com/JNRowe/gh_bugs/contributors/
+:Git repository:  https://github.com/JNRowe/hubugs/
+:Issue tracker:  https://github.com/JNRowe/hubugs/issues/
+:Contributors:  https://github.com/JNRowe/hubugs/contributors/
 
 Contents
 --------
@@ -31,7 +31,7 @@ Contents
    config
    usage
    templates
-   gh_bugs manpage <gh_bugs.1>
+   hubugs manpage <hubugs.1>
    faq
    alternatives
    appendix

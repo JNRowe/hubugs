@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# gh_bugs documentation build configuration file, created by
+# hubugs documentation build configuration file, created by
 # sphinx-quickstart on Mon May 31 20:00:36 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -43,7 +43,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'gh_bugs'
+project = u'hubugs'
 copyright = u'2010-2011, James Rowe'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -51,7 +51,7 @@ copyright = u'2010-2011, James Rowe'
 # built documents.
 root_dir = os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2])
 sys.path.insert(0, root_dir)
-from gh_bugs import _version
+from hubugs import _version
 # The short X.Y version.
 version = ".".join(map(str, _version.tuple[:2]))
 # The full version, including alpha/beta/rc tags.
@@ -171,7 +171,7 @@ html_static_path = ['.static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'gh_bugsdoc'
+htmlhelp_basename = 'hubugsdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -185,7 +185,7 @@ htmlhelp_basename = 'gh_bugsdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'gh_bugs.tex', u'gh\\_bugs Documentation',
+  ('index', 'hubugs.tex', u'hubugs Documentation',
    u'James Rowe', 'manual'),
 ]
 
@@ -218,7 +218,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('gh_bugs.1', 'gh_bugs', u'gh_bugs Documentation',
+    ('hubugs.1', 'hubugs', u'hubugs Documentation',
      [u'James Rowe'], 1)
 ]
 

@@ -4,8 +4,8 @@
 :Manual section: 1
 :Manual group: Developer
 
-gh_bugs
-=======
+hubugs
+======
 
 Simple client for GitHub issues
 -------------------------------
@@ -13,12 +13,12 @@ Simple client for GitHub issues
 SYNOPSIS
 --------
 
-    gh_bugs [option]... <command>
+    hubugs [option]... <command>
 
 DESCRIPTION
 -----------
 
-:mod:`gh_bugs` is a very simple client for working with GitHub's issue tracker.
+:mod:`hubugs` is a very simple client for working with GitHub's issue tracker.
 It allows you to perform all the issue related tasks you'd normally perform from
 the command line.
 
@@ -140,10 +140,10 @@ Perform labelling actions on an existing bug in a project
 CONFIGURATION
 -------------
 
-You can specify the template set to use by defining a ``ghbugs.templates``
+You can specify the template set to use by defining a ``hubugs.templates``
 setting in your git configuration files.  For example::
 
-    ▶ git config --global ghbugs.templates my_templates
+    ▶ git config --global hubugs.templates my_templates
 
 You can also set project specific template sets by editing a repository's
 config.  See :manpage:`git-config(1)`.
@@ -161,9 +161,9 @@ Written by `James Rowe <mailto:jnrowe@gmail.com>`__
 RESOURCES
 ---------
 
-Home page, containing full documentation: http://jnrowe.github.com/gh_bugs/
+Home page, containing full documentation: http://jnrowe.github.com/hubugs/
 
-Issue tracker: https://github.com/JNRowe/gh_bugs/issues/
+Issue tracker: https://github.com/JNRowe/hubugs/issues/
 
 COPYING
 -------

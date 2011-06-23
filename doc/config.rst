@@ -1,7 +1,7 @@
 Configuration
 =============
 
-Before using :program:`gh_bugs` you must declare your authentication settings to
+Before using :program:`hubugs` you must declare your authentication settings to
 enable access to the GitHub API.
 
 You first need to define your GitHub user name:
@@ -28,7 +28,7 @@ For example:
 
 .. code-block:: sh
 
-    ▶ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx gh_bugs open
+    ▶ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx hubugs open
 
 .. _account admin: https://github.com/account/admin
 .. _account page: https://github.com/account

@@ -1,6 +1,6 @@
 #
 # coding=utf-8
-"""template - Template utilities for gh_bugs"""
+"""template - Template utilities for hubugs"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -39,13 +39,13 @@ USER_DATA_DIR = os.environ.get("XDG_DATA_HOME",
                                             ".local"))
 SYSTEM_DATA_DIR = os.environ.get("XDG_DATA_DIRS",
                                  "/usr/local/share/:/usr/share/").split(":")
-PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, "gh_bugs", "templates"), ]
+PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, "hubugs", "templates"), ]
 for directory in SYSTEM_DATA_DIR:
-    PKG_DATA_DIRS.append(os.path.join(directory, "gh_bugs", "templates"))
+    PKG_DATA_DIRS.append(os.path.join(directory, "hubugs", "templates"))
 
 ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
     [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
-ENV.loader.loaders.append(jinja2.PackageLoader("gh_bugs", "templates"))
+ENV.loader.loaders.append(jinja2.PackageLoader("hubugs", "templates"))
 if utils.colored and sys.stdout.isatty():
     ENV.filters["colourise"] = utils.colored
     # American spelling, just for Brandon Cady ;)
@@ -68,7 +68,7 @@ def get_template(group, name):
     :rtype: jinja2.environment.Template
     :return: Jinja template instance
     """
-    template_set = utils.get_git_config_val('ghbugs.templates', 'default')
+    template_set = utils.get_git_config_val('hubugs.templates', 'default')
     return ENV.get_template("%s/%s/%s" % (template_set, group, name))
 
 

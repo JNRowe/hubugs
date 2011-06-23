@@ -17,7 +17,7 @@ ghi_ is a great issues client, written in Ruby_.
 I personally didn't like the "feel" of the command line interface, and wanted
 slightly different output.
 
-:mod:`gh_bugs` provides the following advantages:
+:mod:`hubugs` provides the following advantages:
 
 * Easily customisable output
 * HTTP compression support
@@ -28,7 +28,7 @@ and has the following disadvantages:
 
 * No built-in pager support, but that is only a less_ pipe or shell function
   away
-* :mod:`gh_bugs` requires a significant number of external packages, which may
+* :mod:`hubugs` requires a significant number of external packages, which may
   be a problem for some users
 
 ``github-cli``
@@ -38,7 +38,7 @@ github-cli_ is a fantastic command-line client for GitHub's issues, written in
 Python_.  I really liked ``github-cli`` to the extent of authoring a few
 patches, but just didn't find it comfortable to use in the long run [#]_.
 
-:mod:`gh_bugs` provides the following advantages:
+:mod:`hubugs` provides the following advantages:
 
 * Easily customisable output
 * HTTP compression support
@@ -51,12 +51,12 @@ and has the following disadvantages:
 
 * No built-in pager support, but that is only a less_ pipe or shell function
   away
-* :mod:`gh_bugs` requires a significant number of external packages, which may
+* :mod:`hubugs` requires a significant number of external packages, which may
   be a problem for some users
 
-.. [#] If you look at the timeline for the `gh_bugs repository`_ and my
+.. [#] If you look at the timeline for the `hubugs repository`_ and my
    `github-cli fork`_ you'll see I was using ``github-cli`` for a few months
-   after spiking :mod:`gh_bugs`.
+   after spiking :mod:`hubugs`.
 
 .. _mail: jnrowe@gmail.com
 .. _ghi: https://github.com/stephencelis/ghi
@@ -64,5 +64,5 @@ and has the following disadvantages:
 .. _less: http://www.greenwoodsoftware.com/less/
 .. _github-cli: http://packages.python.org/github-cli/
 .. _Python: http://python.org/
-.. _gh_bugs repository: https://github.com/JNRowe/gh_bugs
+.. _hubugs repository: https://github.com/JNRowe/hubugs
 .. _github-cli fork: https://github.com/JNRowe/github-cli

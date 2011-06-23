@@ -9,8 +9,8 @@ template compatibility for you in case something changes in a future version.
 
 Either open an issue_ or push them to a fork on GitHub_.
 
-.. _issue: https://github.com/JNRowe/gh_bugs/issues
-.. _GitHub: https://github.com/JNRowe/gh_bugs/
+.. _issue: https://github.com/JNRowe/hubugs/issues
+.. _GitHub: https://github.com/JNRowe/hubugs/
 
 I don't like your choice of template language
 '''''''''''''''''''''''''''''''''''''''''''''

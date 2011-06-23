@@ -1,6 +1,6 @@
 #
 # coding=utf-8
-"""utils - Utility functions for gh_bugs"""
+"""utils - Utility functions for hubugs"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -107,7 +107,7 @@ def get_github_api():
         xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
                                   os.path.join(os.getenv("HOME", "/"),
                                                ".cache"))
-        cache_dir = os.path.join(xdg_cache_dir, "gh_bugs")
+        cache_dir = os.path.join(xdg_cache_dir, "hubugs")
         kwargs = {"cache": cache_dir}
     else:
         kwargs = {}

@@ -1,6 +1,6 @@
 #
 # coding=utf-8
-"""gh_bugs - Simple client for GitHub issues"""
+"""hubugs - Simple client for GitHub issues"""
 # Copyright (C) 2010-2011  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ from email.utils import parseaddr
 
 __doc__ += """.
 
-``gh_bugs`` is a very simple client for working with `GitHub's issue tracker`_.
+``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 
@@ -315,7 +315,7 @@ def label(args):
 def main():
     """Main script"""
     description = __doc__.splitlines()[0].split("-", 1)[1]
-    epilog = "Please report bugs to the JNRowe/gh_bugs project"
+    epilog = "Please report bugs to the JNRowe/hubugs project"
     parser = argh.ArghParser(description=description, epilog=epilog,
                              version="%%(prog)s %s" % __version__)
     parser.add_argument("-p", "--project", action=utils.ProjectAction,
