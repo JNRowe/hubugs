@@ -1,2 +1,9 @@
 include COPYING *.rst
-include gh_bugs/templates/*/*
+
+include doc/*.rst
+include doc/conf.py
+
+include gh_bugs/templates/*/*.mkd
+include gh_bugs/templates/*/*.txt
+
+include tests/*.py
