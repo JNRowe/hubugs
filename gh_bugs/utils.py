@@ -73,6 +73,25 @@ class ProjectAction(argh.utils.argparse.Action):
         namespace.project = project
 
 
+def check_output(args):
+    """Simple check_output implementation for Python 2.6 compatibililty
+
+    :param list args: Command and arguments to call
+    :rtype: str:
+    :return: Command output
+    :raise subprocess.CalledProcessError: If command execution fails
+    """
+    try:
+        return subprocess.check_output(args)
+    except AttributeError:
+        process = subprocess.Popen(args, stdout=subprocess.PIPE)
+        output, unused_err = process.communicate()
+        retcode = process.poll()
+        if retcode:
+            raise subprocess.CalledProcessError(retcode, args[0])
+        return output
+
+
 def get_github_api():
     """Create a GitHub API instance
 
@@ -101,7 +120,7 @@ def get_git_config_val(key):
     :param str key: Configuration value to fetch
     """
     try:
-        output = subprocess.check_output(["git", "config", key]).strip()
+        output = check_output(["git", "config", key]).strip()
     except subprocess.CalledProcessError:
         output = None
     return output
@@ -148,7 +167,7 @@ def get_term_size():
     :rtype: ``namedtuple``
     :return: Number of lines and columns in current terminal
     """
-    lines, columns = map(int, subprocess.check_output(["stty", "size"]).split())
+    lines, columns = map(int, check_output(["stty", "size"]).split())
     return namedtuple('Tty', 'lines columns')(lines, columns)
 
 
