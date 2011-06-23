@@ -60,6 +60,18 @@ class EmptyMessageError(ValueError):
     pass
 
 
+def get_template(group, name):
+    """Fetch a Jinja template instance
+
+    :param str group: Template group indentifier
+    :param str name: Template name
+    :rtype: jinja2.environment.Template
+    :return: Jinja template instance
+    """
+    template_set = utils.get_git_config_val('ghbugs.templates', 'default')
+    return ENV.get_template("%s/%s/%s" % (template_set, group, name))
+
+
 def jinja_filter(func):
     "Simple decorator to add function to Jinja filters"
     ENV.filters[func.__name__] = func
@@ -192,7 +204,7 @@ def display_bugs(bugs, order, **extras):
 
     columns = utils.get_term_size().columns
 
-    template = ENV.get_template("view/list.txt")
+    template = get_template('view' ,'list.txt')
 
     max_id = max(i.number for i in bugs)
     id_len = len(str(max_id))
@@ -211,7 +223,7 @@ def edit_text(edit_type="default", data=None):
     :return: User supplied text
     :raise EmptyMessageError: No message given
     """
-    template = ENV.get_template("edit/%s.mkd" % edit_type)
+    template = get_template('edit' , '%s.mkd' % edit_type)
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
         temp.write(template.render(data if data else {}))
         temp.flush()
