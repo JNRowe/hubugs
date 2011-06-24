@@ -28,6 +28,7 @@ from collections import namedtuple
 import argh
 import httplib2
 
+from github2 import core as ghcore
 from github2.client import Github
 
 try:
@@ -44,6 +45,10 @@ if colored and sys.stdout.isatty():
 else:  # pragma: no cover
     success = fail = warn = str
 # pylint: enable-msg=C0103
+
+
+# Use timezone aware datetimes in github2 package
+ghcore.NAIVE = False
 
 
 class ProjectAction(argh.utils.argparse.Action):

@@ -27,6 +27,7 @@ import tempfile
 
 import jinja2
 
+from dateutil import tz
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
@@ -126,10 +127,7 @@ def relative_time(timestamp):
     ]
     match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
 
-    # FIXME: Hack to take GitHub timezone in to account, this really needs
-    # non-naive datetime objects from github2.
-    delta = (datetime.datetime.utcnow() - timestamp
-         - datetime.timedelta(hours=7))
+    delta = datetime.datetime.utcnow().replace(tzinfo=tz.tzutc()) - timestamp
     # Switch to delta.total_seconds, if 2.6 support is dropped
     seconds = delta.days * 86400 + delta.seconds
     for scale in matches:
