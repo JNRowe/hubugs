@@ -3,6 +3,17 @@ User-visible changes
 
 .. contents::
 
+0.9.0 - 2011-06-24
+------------------
+
+* Renamed to ``hubugs``
+* Thorough documentation for the package
+* Testsuite that can be run via nose_ or tox_
+* github2 v0.5.0, or later, is now required
+
+.. _nose: http://pypi.python.org/pypi/nose
+.. _tox: http://pypi.python.org/pypi/tox/
+
 0.8.0 - 2011-05-30
 ------------------
 
