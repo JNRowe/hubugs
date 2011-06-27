@@ -81,6 +81,9 @@ Show specific bug(s) from a project
 
 Open a new bug in a project
 
+-a label, --add label
+   add label to issue
+
 --stdin
    read message from standard input
 

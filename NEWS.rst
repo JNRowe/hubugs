@@ -3,6 +3,11 @@ User-visible changes
 
 .. contents::
 
+``master`` branch
+-----------------
+
+* Supports adding initial labels to bugs when opening
+
 0.9.0 - 2011-06-24
 ------------------
 
