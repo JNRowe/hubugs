@@ -202,7 +202,7 @@ def display_bugs(bugs, order, **extras):
 
     columns = utils.get_term_size().columns
 
-    template = get_template('view' ,'list.txt')
+    template = get_template('view', 'list.txt')
 
     max_id = max(i.number for i in bugs)
     id_len = len(str(max_id))
@@ -221,7 +221,7 @@ def edit_text(edit_type="default", data=None):
     :return: User supplied text
     :raise EmptyMessageError: No message given
     """
-    template = get_template('edit' , '%s.mkd' % edit_type)
+    template = get_template('edit', '%s.mkd' % edit_type)
     with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
         temp.write(template.render(data if data else {}))
         temp.flush()
