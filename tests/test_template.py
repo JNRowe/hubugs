@@ -8,6 +8,36 @@ from pygments import (formatters, lexers)
 from hubugs import template
 
 
+class Colourise(TestCase):
+    @patch('sys.stdout')
+    def test_no_color(self, stdout):
+        stdout.isatty = Mock(return_value=False)
+        assert_equals(template.colourise('s', 'red'), 's')
+
+    @patch('sys.stdout')
+    def test_color(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.colourise('s', 'red'), '\x1b[31ms\x1b[0m')
+
+    @patch('sys.stdout')
+    def test_background_color(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.colourise('s', on_color='on_blue'),
+                      '\x1b[44ms\x1b[0m')
+
+    @patch('sys.stdout')
+    def test_attribute(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.colourise('s', attrs=['bold', ]),
+                      '\x1b[1ms\x1b[0m')
+
+    @patch('sys.stdout')
+    @raises(KeyError)
+    def test_invalid_colour(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.colourise('s', 'mauve with a hint of green'), 's')
+
+
 class Highlight(TestCase):
     def pyg_side_effect(*args, **kwargs):
         return namedtuple('Call', 'args kwargs')(args, kwargs)
