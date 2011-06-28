@@ -83,6 +83,11 @@ stdin_arg = argh.arg("--stdin", default=False,
 
 title_arg = argh.arg("title", help="title for the new bug", nargs="?")
 body_arg = argh.arg("body", help="body for the new bug", nargs="?")
+
+label_add_arg = argh.arg("-a", "--add", action="append", default=[],
+                         help="add label to issue", metavar="label")
+label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
+                            help="remove label from issue", metavar="label")
 # pylint: enable-msg=C0103
 
 
@@ -151,6 +156,7 @@ def show(args):
 
 @command
 @argh.alias("open")
+@label_add_arg
 @stdin_arg
 @title_arg
 @body_arg
@@ -168,6 +174,8 @@ def open_bug(args):
         title = args.title
         body = args.body
     bug = args.api("open", title, body)
+    for string in args.add:
+        args.api("add_label", bug.number, string)
     return utils.success("Bug %d opened" % bug.number)
 
 
@@ -292,10 +300,8 @@ def reopen(args):
 
 
 @command
-@argh.arg("-a", "--add", action="append", default=[],
-          help="add label to issue", metavar="label")
-@argh.arg("-r", "--remove", action="append", default=[],
-          help="remove label from issue", metavar="label")
+@label_add_arg
+@label_remove_arg
 @bugs_arg
 def label(args):
     "labelling bugs"

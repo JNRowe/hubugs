@@ -124,7 +124,11 @@ Commands
 
 ::
 
-    hubugs open [-h] [--stdin] [title] [body]
+    hubugs open [-h] [-a label] [--stdin] [title] [body]
+
+.. cmdoption:: -a label, --add label
+
+   add label to issue
 
 .. cmdoption:: --stdin
 
