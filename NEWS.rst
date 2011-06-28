@@ -3,10 +3,11 @@ User-visible changes
 
 .. contents::
 
-``master`` branch
------------------
+0.10.0 - 2011-06-28
+-------------------
 
 * Supports adding initial labels to bugs when opening
+* Fixes for Python 2.6 compatibility
 
 0.9.0 - 2011-06-24
 ------------------
