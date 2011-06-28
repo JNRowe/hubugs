@@ -328,7 +328,10 @@ def main():
                         help="GitHub project to operate on",
                         metavar="project")
     parser.add_commands(COMMANDS)
-    parser.dispatch(pre_call=utils.set_api)
+    try:
+        parser.dispatch(pre_call=utils.set_api)
+    except EnvironmentError as error:
+        parser.error(error)
 
 if __name__ == '__main__':
     main()
