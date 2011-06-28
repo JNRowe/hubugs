@@ -13,6 +13,17 @@ from nose.tools import (assert_equals, assert_false, raises)
 from hubugs import utils
 
 
+def fake_env(key, default=None):
+    """Fake environment settings used for os.getenv mocking"""
+    fake_data = {
+        'GITHUB_USER': 'JNRowe',
+        'GITHUB_TOKEN': 'xxx',
+        'HOME': '/home/JNRowe',
+        'XDG_CACHE_HOME': 'cache_dir',
+    }
+    return fake_data[key]
+
+
 class Colouriser(TestCase):
     @patch('sys.stdout')
     def test_is_not_a_tty_colour(self, stdout):
@@ -107,21 +118,11 @@ class ProjectAction(TestCase):
 
 
 class GetGithubApi(TestCase):
-    @staticmethod
-    def fake_env(key, default):
-        fake_data = {
-            'GITHUB_USER': 'JNRowe',
-            'GITHUB_TOKEN': 'xxx',
-            'HOME': '/home/JNRowe',
-            'XDG_CACHE_HOME': 'cache_dir',
-        }
-        return fake_data[key]
-
     @patch('os.getenv')
     @patch('os.mkdir')
     def test_api_builder(self, mkdir, getenv):
         mkdir.return_value = True
-        getenv.side_effect = self.fake_env
+        getenv.side_effect = fake_env
         api = utils.get_github_api()
         assert_equals(api.request.username, 'JNRowe')
         assert_equals(api.request.api_token, 'xxx')
@@ -139,7 +140,7 @@ class GetGithubApi(TestCase):
     def test_no_cache_support(self, getargspec, mkdir, getenv):
         getargspec().args = ['no_entry_cache_in_list', ]
         mkdir.return_value = True
-        getenv.side_effect = self.fake_env
+        getenv.side_effect = fake_env
         api = utils.get_github_api()
         assert_equals(api.request._http.cache, None)
 
@@ -291,21 +292,27 @@ def test_get_term_size(check_output):
 
 
 class SetApi(TestCase):
+    @patch('os.getenv')
     @patch('hubugs.utils.get_repo')
-    def test_no_project(self, get_repo):
+    def test_no_project(self, get_repo, getenv):
         get_repo.return_value = 'JNRowe/misc-overlay'
+        getenv.side_effect = fake_env
         namespace = argparse.Namespace(project=None)
         utils.set_api(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
 
-    def test_project(self):
+    @patch('os.getenv')
+    def test_project(self, getenv):
+        getenv.side_effect = fake_env
         namespace = argparse.Namespace(project='JNRowe/misc-overlay')
         utils.set_api(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
 
+    @patch('os.getenv')
     @patch('github2.request.GithubRequest.raw_request')
-    def test_api(self, raw_request):
+    def test_api(self, raw_request, getenv):
         raw_request.return_value = {u'issues': []}
+        getenv.side_effect = fake_env
         namespace = argparse.Namespace(project='JNRowe/misc-overlay')
         utils.set_api(namespace)
         assert_equals(namespace.api('list'), [])
