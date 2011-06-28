@@ -1,6 +1,8 @@
 from collections import namedtuple
 from unittest import TestCase
 
+from datetime import (datetime, timedelta)
+from dateutil import tz
 from mock import (Mock, patch)
 from nose.tools import (assert_equals, assert_true, raises)
 from pygments import (formatters, lexers)
@@ -104,6 +106,52 @@ class EditText(TestCase):
         assert_equals(template.edit_text('open',
                                          data={'title': 'Some message'}),
                       'Some message')
+
+
+class RelativeTime(TestCase):
+    @staticmethod
+    def now():
+        return datetime.utcnow().replace(tzinfo=tz.tzutc())
+
+    def test_last_year(self):
+        dt = self.now() - timedelta(days=365)
+        assert_equals(template.relative_time(dt), 'last year')
+
+    def test_months_ago(self):
+        dt = self.now() - timedelta(days=70)
+        assert_equals(template.relative_time(dt), 'about two months ago')
+
+    def test_month_ago(self):
+        dt = self.now() - timedelta(days=30)
+        assert_equals(template.relative_time(dt), 'last month')
+
+    def test_weeks_ago(self):
+        dt = self.now() - timedelta(days=21)
+        assert_equals(template.relative_time(dt), 'about three weeks ago')
+
+    def test_days_ago(self):
+        dt = self.now() - timedelta(days=4)
+        assert_equals(template.relative_time(dt), 'about four days ago')
+
+    def test_yesterday(self):
+        dt = self.now() - timedelta(days=1)
+        assert_equals(template.relative_time(dt), 'yesterday')
+
+    def test_hours_ago(self):
+        dt = self.now() - timedelta(hours=5)
+        assert_equals(template.relative_time(dt), 'about five hours ago')
+
+    def test_hour_ago(self):
+        dt = self.now() - timedelta(hours=1)
+        assert_equals(template.relative_time(dt), 'about an hour ago')
+
+    def test_minutes_ago(self):
+        dt = self.now() - timedelta(minutes=6)
+        assert_equals(template.relative_time(dt), 'about six minutes ago')
+
+    def test_seconds_ago(self):
+        dt = self.now() - timedelta(seconds=12)
+        assert_equals(template.relative_time(dt), 'about 12 seconds ago')
 
 
 class TermMarkdown(TestCase):
