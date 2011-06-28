@@ -104,3 +104,45 @@ class EditText(TestCase):
         assert_equals(template.edit_text('open',
                                          data={'title': 'Some message'}),
                       'Some message')
+
+
+class TermMarkdown(TestCase):
+    @patch('sys.stdout')
+    def test_no_formatting(self, stdout):
+        stdout.isatty = Mock(return_value=False)
+        assert_equals(template.term_markdown('### hello'), '### hello')
+
+    @patch('sys.stdout')
+    def test_rule(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.term_markdown('- - -'), '\x1b[32m- - -\x1b[0m')
+        assert_equals(template.term_markdown('- - - - -'),
+                      '\x1b[32m- - - - -\x1b[0m')
+
+    @patch('sys.stdout')
+    def test_emphasis(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.term_markdown('this is *emphasis*'),
+                      'this is \x1b[1memphasis\x1b[0m')
+        assert_equals(template.term_markdown('this is _emphasis_'),
+                      'this is \x1b[1memphasis\x1b[0m')
+
+    @patch('sys.stdout')
+    def test_strong_emphasis(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        assert_equals(template.term_markdown('this is **strong** emphasis'),
+                      'this is \x1b[4mstrong\x1b[0m emphasis')
+        assert_equals(template.term_markdown('this is __strong__ emphasis'),
+                      'this is \x1b[4mstrong\x1b[0m emphasis')
+
+
+    @patch('sys.stdout')
+    def test_fancy_bullet(self, stdout):
+        stdout.isatty = Mock(return_value=True)
+        stdout.encoding = 'UTF-8'
+        assert_equals(template.term_markdown('* list item'),
+                      u'\u2022 list item')
+        assert_equals(template.term_markdown('+ list item'),
+                      u'\u2022 list item')
+        assert_equals(template.term_markdown('- list item'),
+                      u'\u2022 list item')
