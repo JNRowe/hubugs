@@ -170,8 +170,8 @@ def term_markdown(text):
     :rtype: ``str``
     :return: Rendered text with terminal control sequences
     """
-    if not utils.colored and sys.stdout.isatty():
-        return
+    if not utils.colored or not sys.stdout.isatty():
+        return text
     # For uniform line ending split and rejoin, this saves having to handle \r
     # and \r\n
     text = "\n".join(text.splitlines())
