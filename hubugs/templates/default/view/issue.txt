@@ -1,13 +1,15 @@
+{%- set heading_colour = "green" -%}
+{%- set user_colour = "yellow" -%}
 {%- block header -%}
-{{ "          Id" | colourise("green") }}: {{ bug.number }}
-{{ "       Title" | colourise("green") }}: {{ bug.title }}
-{{ "      Labels" | colourise("green") }}: {{ bug.labels | join(", ") }}
-{{ "     Created" | colourise("green") }}: {{ bug.created_at | relative_time }} by {{ bug.user | colourise("yellow") }}
-{{ "     Updated" | colourise("green") }}: {{ bug.updated_at | relative_time }}
-{{ "       State" | colourise("green") }}: {{ bug.state }}{% if bug.closed_at %} {{ bug.closed_at | relative_time }}{% endif %}
-{{ "    Comments" | colourise("green") }}: {{ bug.comments }}
-{{ "       Votes" | colourise("green") }}: {{ bug.votes }}
-{{ "Pull request" | colourise("green") }}: {% if bug.pull_request_url %}{{ bug.pull_request_url }}{% else %}No{% endif %}
+{{ "          Id" | colourise(heading_colour) }}: {{ bug.number }}
+{{ "       Title" | colourise(heading_colour) }}: {{ bug.title }}
+{{ "      Labels" | colourise(heading_colour) }}: {{ bug.labels | join(", ") }}
+{{ "     Created" | colourise(heading_colour) }}: {{ bug.created_at | relative_time }} by {{ bug.user | colourise(user_colour) }}
+{{ "     Updated" | colourise(heading_colour) }}: {{ bug.updated_at | relative_time }}
+{{ "       State" | colourise(heading_colour) }}: {{ bug.state }}{% if bug.closed_at %} {{ bug.closed_at | relative_time }}{% endif %}
+{{ "    Comments" | colourise(heading_colour) }}: {{ bug.comments }}
+{{ "       Votes" | colourise(heading_colour) }}: {{ bug.votes }}
+{{ "Pull request" | colourise(heading_colour) }}: {% if bug.pull_request_url %}{{ bug.pull_request_url }}{% else %}No{% endif %}
 {% endblock -%}
 {%- block body %}
 {%- if bug.body %}
@@ -23,9 +25,9 @@
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
-{{ " Comment" | colourise("green") }}: {{ loop.index }}
-{{ " Created" | colourise("green") }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise("yellow") }}
-{{ " Updated" | colourise("green") }}: {{ comment.updated_at | relative_time }}
+{{ " Comment" | colourise(heading_colour) }}: {{ loop.index }}
+{{ " Created" | colourise(heading_colour) }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise(user_colour) }}
+{{ " Updated" | colourise(heading_colour) }}: {{ comment.updated_at | relative_time }}
 
 {{ comment.body | wordwrap(break_long_words=False) | term_markdown }}
 {%- endfor %}
