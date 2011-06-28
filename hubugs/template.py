@@ -175,20 +175,25 @@ def term_markdown(text):
     # For uniform line ending split and rejoin, this saves having to handle \r
     # and \r\n
     text = "\n".join(text.splitlines())
-    text = re.sub(r"^#+ +(.*)$",
-                  lambda s: utils.colored(s.groups()[0], attrs=["underline"]),
-                  text, flags=re.MULTILINE)
-    text = re.sub(r"^(([*-] *){3,})$",
-                  lambda s: utils.colored(s.groups()[0], "green"),
-                  text, flags=re.MULTILINE)
+
+    # Compile these REs for Python 2.6 compatibility, as flags isn't supported
+    # as a re.sub keyword argument until 2.7.  The others can take advantage of
+    # the implicit caching.
+    headings_re = re.compile(r"^#+ +(.*)$", re.MULTILINE)
+    rules_re = re.compile(r"^(([*-] *){3,})$", re.MULTILINE)
+    bullets_re = re.compile(r"^( {0,4})[*+-] ", re.MULTILINE)
+
+    text = headings_re.sub(lambda s: utils.colored(s.groups()[0], attrs=["underline"]),
+                           text)
+    text = rules_re.sub(lambda s: utils.colored(s.groups()[0], "green"),
+                        text)
     text = re.sub(r'([\*_]{2})([^ \*]+)\1',
                   lambda s: utils.colored(s.groups()[1], attrs=["underline"]),
                   text)
     text = re.sub(r'([\*_])([^ \*]+)\1',
                   lambda s: utils.colored(s.groups()[1], attrs=["bold"]), text)
     if sys.stdout.encoding == "UTF-8":
-        text = re.sub(r"^( {0,4})[*+-] ", u"\\1• ", text,
-                      flags=re.MULTILINE)
+        text = bullets_re.sub(u"\\1• ", text)
 
     return text
 
