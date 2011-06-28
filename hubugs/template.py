@@ -47,13 +47,6 @@ for directory in SYSTEM_DATA_DIR:
 ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
     [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
 ENV.loader.loaders.append(jinja2.PackageLoader("hubugs", "templates"))
-if utils.colored and sys.stdout.isatty():
-    ENV.filters["colourise"] = utils.colored
-    # American spelling, just for Brandon Cady ;)
-    ENV.filters["colorize"] = ENV.filters["colourise"]
-else:
-    ENV.filters["colourise"] = lambda string, *args, **kwargs: string
-    ENV.filters["colorize"] = ENV.filters["colourise"]
 
 
 class EmptyMessageError(ValueError):
@@ -81,8 +74,27 @@ def jinja_filter(func):
 
 
 @jinja_filter
+def colourise(text, *args, **kwargs):
+    """Colourise text with termcolor.
+
+    Returns text untouched if colour output is not enabled
+
+    :see: ``termcolor.colored``
+
+    :rtype: ``str``
+    :return: Colourised text, when possible
+    """
+    if utils.colored and sys.stdout.isatty():
+        return utils.colored(text, *args, **kwargs)
+    else:
+        return text
+# American spelling, just for Brandon Cady ;)
+ENV.filters["colorize"] = ENV.filters["colourise"]
+
+
+@jinja_filter
 def highlight(text, lexer="diff", formatter="terminal"):
-    """highlight text with pygments
+    """Highlight text with pygments
 
     Returns text untouched if colour output is not enabled
 
@@ -90,7 +102,7 @@ def highlight(text, lexer="diff", formatter="terminal"):
     :param str lexer: Jinja lexer to use
     :param str formatter:
     :rtype: ``str``
-    :return: Syntax highlighted output
+    :return: Syntax highlighted output, when possible
     """
     if utils.colored and sys.stdout.isatty():
         lexer = get_lexer_by_name(lexer)

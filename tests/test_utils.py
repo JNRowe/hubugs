@@ -37,16 +37,9 @@ class Colouriser(TestCase):
     def test_colouriser(self, stdout):
         stdout.isatty = Mock(return_value=True)
 
-        # This horrific-ness is here as the .isatty() test happens at import
-        # time, so we need to re-import for tests.
-        utils_file = open('hubugs/utils.py')
-        new_utils = imp.load_module("new_utils", utils_file, utils_file.name,
-                           (".py", utils_file.mode, imp.PY_SOURCE))
-
-        assert_equals(new_utils.success('test'), '\x1b[32mtest\x1b[0m')
-        assert_equals(new_utils.fail('test'), '\x1b[31mtest\x1b[0m')
-        assert_equals(new_utils.warn('test'), '\x1b[33mtest\x1b[0m')
-        del sys.modules['new_utils']
+        assert_equals(utils.success('test'), '\x1b[32mtest\x1b[0m')
+        assert_equals(utils.fail('test'), '\x1b[31mtest\x1b[0m')
+        assert_equals(utils.warn('test'), '\x1b[33mtest\x1b[0m')
 
 
 class ProjectAction(TestCase):

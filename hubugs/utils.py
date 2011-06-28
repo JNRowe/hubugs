@@ -24,6 +24,7 @@ import subprocess
 import sys
 
 from collections import namedtuple
+from functools import partial
 
 import argh
 import httplib2
@@ -36,14 +37,21 @@ try:
 except ImportError:  # pragma: no cover
     colored = None  # pylint: disable-msg=C0103
 
-# Select colours if terminal is a tty
+
+# Set up informational message functions
+def _colourise(text, colour):
+    """Colour text, if possible
+
+    :param str text: Text to colourise
+    :param str colour:
+    :rtype: str
+    :return: Colourised text, if possible
+    """
+    return colored(text, colour) if colored and sys.stdout.isatty() else text
 # pylint: disable-msg=C0103
-if colored and sys.stdout.isatty():
-    success = lambda s: colored(s, "green")
-    fail = lambda s: colored(s, "red")
-    warn = lambda s: colored(s, "yellow")
-else:  # pragma: no cover
-    success = fail = warn = str
+success = partial(_colourise, colour='green')
+fail = partial(_colourise, colour='red')
+warn = partial(_colourise, colour='yellow')
 # pylint: enable-msg=C0103
 
 
