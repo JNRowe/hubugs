@@ -40,6 +40,7 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import sys
+import webbrowser
 
 import argh
 
@@ -129,11 +130,16 @@ def search(args):
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("-p", "--patch", default=False,
           help="display patches for pull requests")
+@argh.arg("-b", "--browse", default=False, help="open bug in web browser")
 @bugs_arg
 def show(args):
     "displaying bugs"
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
+        if args.browse:
+            webbrowser.open_new_tab("https://github.com/%s/issues/%d"
+                                    % (args.project, bug_no))
+            continue
         try:
             bug = args.api("show", bug_no)
         except RuntimeError as error:

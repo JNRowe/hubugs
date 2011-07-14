@@ -117,6 +117,10 @@ Commands
 
    display patches for pull requests
 
+.. cmdoption:: -b, --browse
+
+   open bug in web browser
+
 ``open`` - Open a new bug in a project
 ''''''''''''''''''''''''''''''''''''''
 

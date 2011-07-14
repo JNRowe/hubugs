@@ -60,6 +60,7 @@ Bug reports
 Ideas
 '''''
 
+* James Gray
 * Matt Leighy
 * Jules Marleau
 

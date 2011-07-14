@@ -76,6 +76,9 @@ Show specific bug(s) from a project
 -p, --patch
    display patches for pull requests
 
+-b, --browse
+   open bug in web browser
+
 ``open``
 ''''''''
 
