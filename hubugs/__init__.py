@@ -42,6 +42,8 @@ __doc__ += """.
 import sys
 import webbrowser
 
+import jinja2  # This unused import is here to silence a warning caused by setuptools
+
 import argh
 
 from . import (template, utils)
