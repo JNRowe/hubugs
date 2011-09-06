@@ -182,6 +182,7 @@ def term_markdown(text):
     headings_re = re.compile(r"^#+ +(.*)$", re.MULTILINE)
     rules_re = re.compile(r"^(([*-] *){3,})$", re.MULTILINE)
     bullets_re = re.compile(r"^( {0,4})[*+-] ", re.MULTILINE)
+    quotes_re = re.compile(r"^> .*$", re.MULTILINE)
 
     text = headings_re.sub(lambda s: utils.colored(s.groups()[0], attrs=["underline"]),
                            text)
@@ -190,6 +191,8 @@ def term_markdown(text):
     text = re.sub(r'([\*_]{2})([^ \*]+)\1',
                   lambda s: utils.colored(s.groups()[1], attrs=["underline"]),
                   text)
+    text = quotes_re.sub(lambda s: utils.colored(s.group(), attrs=["reverse"]),
+                         text)
     text = re.sub(r'([\*_])([^ \*]+)\1',
                   lambda s: utils.colored(s.groups()[1], attrs=["bold"]), text)
     if sys.stdout.encoding == "UTF-8":
