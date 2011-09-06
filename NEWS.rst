@@ -3,6 +3,12 @@ User-visible changes
 
 .. contents::
 
+0.11.0 - 2011-09-06
+-------------------
+
+* Supports opening bugs in your web browser
+* ``setuptools`` users should no longer see ``UserWarning`` messages at startup
+
 0.10.0 - 2011-06-28
 -------------------
 
