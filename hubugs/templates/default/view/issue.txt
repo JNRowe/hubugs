@@ -13,7 +13,7 @@
 {% endblock -%}
 {%- block body %}
 {%- if bug.body %}
-{{ bug.body | wordwrap(break_long_words=False) | term_markdown }}
+{{ bug.body | term_markdown | wordwrap(break_long_words=False) }}
 {%- endif -%}
 {% endblock %}
 {% block patch %}
