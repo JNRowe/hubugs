@@ -338,7 +338,7 @@ def main():
     parser.add_commands(COMMANDS)
     try:
         parser.dispatch(pre_call=utils.set_api)
-    except EnvironmentError as error:
+    except (EnvironmentError, utils.RepoError) as error:
         parser.error(error)
 
 if __name__ == '__main__':

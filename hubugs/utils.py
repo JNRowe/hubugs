@@ -59,6 +59,10 @@ warn = partial(_colourise, colour='yellow')
 ghcore.NAIVE = False
 
 
+class RepoError(ValueError):
+    """Error raised for invalid repository values"""
+
+
 class ProjectAction(argh.utils.argparse.Action):
     """argparse action class for setting project"""
     def __call__(self, parser, namespace, project, option_string=None):
@@ -159,7 +163,7 @@ def get_repo():
     "Extract GitHub project name from config"
     data = get_git_config_val("remote.origin.url")
     if not data:
-        raise ValueError("No `origin' remote found")
+        raise RepoError("No `origin' remote found")
     match = re.match(r"""
         (?:git(?:@|://)  # SSH or git protocol
           |https?://
@@ -171,7 +175,7 @@ def get_repo():
     if match:
         return match.groups()[0]
     else:
-        raise ValueError("Unknown project")
+        raise RepoError("Unknown project, specify with `--project' option")
 
 
 def get_term_size():
