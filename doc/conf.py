@@ -225,6 +225,7 @@ man_pages = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
-    'jinja': ('http://jinja.pocoo.org/docs/', None),
-    'python': ('http://docs.python.org/', None),
+    'jinja': ('http://jinja.pocoo.org/docs/',
+              os.getenv('SPHINX_JINJA_OBJECTS')),
+    'python': ('http://docs.python.org/', os.getenv('SPHINX_PYTHON_OBJECTS')),
 }
