@@ -107,6 +107,14 @@ class EditText(TestCase):
                                          data={'title': 'Some message'}),
                       'Some message')
 
+class Markdown(TestCase):
+    def test_basic(self):
+        assert_equals(template.markdown('### hello'), '<h3>hello</h3>\n')
+
+    def test_smarty_pants(self):
+        assert_equals(template.markdown('"hello"'),
+                      '<p>&#8220;hello&#8221;</p>\n')
+
 
 class Html2Text(TestCase):
     def test_basic(self):
