@@ -187,6 +187,11 @@ To do the same using the 256-colour mode of Pygments_::
 See the output of :program:`pygmentize -L` for the list of available lexers and
 formatters.
 
+``html2text``
+'''''''''''''
+
+This filter converts HTML to a plain text representation using html2text_.
+
 ``relative_time``
 '''''''''''''''''
 
@@ -224,4 +229,5 @@ In the default templates it is used to render bug bodies::
 .. _GitHub: https://github.com/JNRowe/hubugs/
 .. _built-in filters: http://jinja.pocoo.org/docs/templates/#list-of-builtin-filters
 .. _Pygments: http://pygments.org/
+.. _html2text: http://pypi.python.org/pypi/html2text/
 .. _Markdown: http://daringfireball.net/projects/markdown/

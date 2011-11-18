@@ -108,6 +108,17 @@ class EditText(TestCase):
                       'Some message')
 
 
+class Html2Text(TestCase):
+    def test_basic(self):
+        assert_equals(template.html2text('<h3>hello</h3>'), '### hello\n\n')
+
+    def test_width(self):
+        para = """<p>This is a long paragraph that needs wrapping to work so it
+        doesn't make you want to claw your eyes out."""
+        assert_equals(template.html2text(para).count('\n'), 3)
+        assert_equals(template.html2text(para, width=20).count('\n'), 7)
+
+
 class RelativeTime(TestCase):
     @staticmethod
     def now():

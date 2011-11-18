@@ -11,7 +11,8 @@ ver_file = open("hubugs/_version.py")
 _version = imp.load_module("_version", ver_file, ver_file.name,
                            (".py", ver_file.mode, imp.PY_SOURCE))
 
-install_requires = ['argh', 'github2>=0.5.0', 'Jinja2>=2', 'Pygments']
+install_requires = ['argh', 'github2>=0.5.0', 'html2text', 'Jinja2>=2',
+                    'Pygments']
 if sys.version_info[:2] < (2, 7):
     install_requires.append('argparse')
 

@@ -25,6 +25,7 @@ import sys
 import subprocess
 import tempfile
 
+import html2text as html2
 import jinja2
 
 from dateutil import tz
@@ -110,6 +111,21 @@ def highlight(text, lexer="diff", formatter="terminal"):
         return pyg_highlight(text, lexer, formatter)
     else:
         return text
+
+
+@jinja_filter
+def html2text(html, width=80, ascii_replacements=False):
+    """HTML to plain text renderer
+
+    :param str text: Text to process
+    :param int width: Paragraph width
+    :param bool ascii_replacements: Use psuedo-ascii replacements for Unicode
+    :rtype: ``str``
+    :return: Rendered text
+    """
+    html2.BODY_WIDTH = width
+    html2.UNICODE_SNOB = ascii_replacements
+    return html2.html2text(html).strip()
 
 
 @jinja_filter
