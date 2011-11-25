@@ -10,8 +10,8 @@ Requirements
 ------------
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
-dependencies outside of the standard library are argh_, github2_, Jinja_ and
-Pygments_.
+dependencies outside of the standard library are argh_, github2_, html2text_,
+Jinja_, markdown2_ and Pygments_.
 
 If you would like coloured terminal output, then you will need termcolor_.
 
@@ -105,6 +105,8 @@ I can reproduce the problem, or even better a patch!
 .. _termcolor: http://pypi.python.org/pypi/termcolor/
 .. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
+.. _html2text: http://pypi.python.org/pypi/html2text/
+.. _markdown2: http://github.com/trentm/python-markdown2
 .. _Pygments: http://pygments.org/
 .. _account admin: https://github.com/account/admin
 .. _account page: https://github.com/account

@@ -13,7 +13,7 @@
 {% endblock -%}
 {%- block body %}
 {%- if bug.body %}
-{{ bug.body | term_markdown | wordwrap(break_long_words=False) }}
+{{ bug.body | markdown | html2text }}
 {%- endif -%}
 {% endblock %}
 {% block patch %}
@@ -29,7 +29,7 @@
 {{ " Created" | colourise(heading_colour) }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise(user_colour) }}
 {{ " Updated" | colourise(heading_colour) }}: {{ comment.updated_at | relative_time }}
 
-{{ comment.body | wordwrap(break_long_words=False) | term_markdown }}
+{{ comment.body | markdown | html2text }}
 {%- endfor %}
 {%- endif -%}
 {% endblock %}

@@ -34,7 +34,9 @@ steps::
 
 * :pypi:`argh`, an excellent package for building command line tools in Python
 * :pypi:`github2` for wrapping access to the GitHub API
+* :pypi:`html2text` is used formatting HTML for the terminal
 * :pypi:`Jinja2` for templating
+* :pypi:`markdown2` is used for converting issue text to HTML
 * :pypi:`Pygments` for syntax highlighting in template output
 
 Optionally, :pypi:`termcolor` is required for producing coloured terminal
