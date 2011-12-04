@@ -56,6 +56,7 @@ Bug reports
 '''''''''''
 
 * Brandon Cady
+* Sorin Ionescu
 
 Ideas
 '''''

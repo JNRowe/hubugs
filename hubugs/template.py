@@ -130,19 +130,15 @@ def html2text(html, width=80, ascii_replacements=False):
 
 
 @jinja_filter
-def markdown(text, tab_width=markdown2.DEFAULT_TAB_WIDTH, smarty_pants=False):
+def markdown(text, tab_width=markdown2.DEFAULT_TAB_WIDTH):
     """Markdown to HTML renderer
 
     :param str text: Text to process
     :param int tab_width: Indentation width
-    :param bool smarty_pants: Enable "fancy" quotation characters
     :rtype: ``str``
     :return: Rendered HTML
     """
-    extras = {
-        "smarty-pants": smarty_pants,
-    }
-    return markdown2.markdown(text, tab_width=tab_width, extras=extras)
+    return markdown2.markdown(text, tab_width=tab_width)
 
 
 @jinja_filter
