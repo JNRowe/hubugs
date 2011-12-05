@@ -1,15 +1,13 @@
 #! /usr/bin/python -tt
 
-import imp
 import sys
 
 from setuptools import setup
 
 # Hack to import _version file without importing hubugs/__init__.py, its
 # purpose is to allow import without requiring dependencies at this point.
-ver_file = open("hubugs/_version.py")
-_version = imp.load_module("_version", ver_file, ver_file.name,
-                           (".py", ver_file.mode, imp.PY_SOURCE))
+_version = {}
+execfile('hubugs/_version.py', {}, _version)
 
 install_requires = ['argh', 'github2>=0.5.0', 'html2text', 'Jinja2>=2',
                     'markdown2', 'Pygments']
@@ -19,7 +17,7 @@ if sys.version_info[:2] < (2, 7):
 
 setup(
     name='hubugs',
-    version=_version.dotted,
+    version=_version['dotted'],
     description="Simple client for GitHub issues",
     long_description=open("README.rst").read(),
     author="James Rowe",
