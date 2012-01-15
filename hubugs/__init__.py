@@ -46,6 +46,8 @@ import jinja2  # This unused import is here to silence a warning caused by setup
 
 import argh
 
+from github2.request import charset_from_headers
+
 from . import (template, utils)
 
 
@@ -156,7 +158,8 @@ def show(args):
         else:
             comments = []
         if args.patch and bug.pull_request_url:
-            patch = args._http.request(bug.patch_url)[1]
+            request, body = args._http.request(bug.patch_url)
+            patch = body.decode(charset_from_headers(request))
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True, patch=patch)
