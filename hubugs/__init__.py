@@ -44,8 +44,6 @@ import logging
 import sys
 import webbrowser
 
-import jinja2  # This unused import is here to silence a warning caused by setuptools
-
 import argh
 
 
