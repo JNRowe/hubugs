@@ -39,12 +39,21 @@ __doc__ += """.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
+import atexit
+import logging
 import sys
 import webbrowser
 
 import jinja2  # This unused import is here to silence a warning caused by setuptools
 
 import argh
+
+
+logging.basicConfig(level=logging.ERROR,
+                    format="%(asctime)s - %(message)s",
+                    datefmt="%Y-%m-%dT%H:%M:%S")
+atexit.register(logging.shutdown)
+
 
 from github2.request import charset_from_headers
 
