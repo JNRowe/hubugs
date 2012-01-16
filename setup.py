@@ -38,7 +38,7 @@ setup(
     test_suite="nose.collector",
     tests_require=['nose', 'mock'],
     classifiers=[
-        "Development Status :: 4 - Beta",
+        'Development Status :: 5 - Production/Stable',
         "Environment :: Console",
         "Intended Audience :: Developers",
         "Intended Audience :: End Users/Desktop",
