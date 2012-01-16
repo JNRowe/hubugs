@@ -3,6 +3,17 @@ User-visible changes
 
 .. contents::
 
+0.12.0 - 2012-01-16
+-------------------
+
+* Improved Markdown using markdown2_ is available, see the ``markdown`` template
+  filter for more information
+* html2text_ is now required, and is available in templates using the
+  ``html2text`` filter
+
+.. _markdown2: http://github.com/trentm/python-markdown2
+.. _html2text: http://pypi.python.org/pypi/html2text
+
 0.11.0 - 2011-09-06
 -------------------
 
