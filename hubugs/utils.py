@@ -21,21 +21,18 @@ import inspect
 import os
 import re
 import subprocess
-import sys
 
 from collections import namedtuple
-from functools import partial
 
 import argh
+import blessings
 import httplib2
 
 from github2 import core as ghcore
 from github2.client import Github
 
-try:
-    from termcolor import colored
-except ImportError:  # pragma: no cover
-    colored = None  # pylint: disable-msg=C0103
+
+T = blessings.Terminal()
 
 
 # Set up informational message functions
@@ -43,16 +40,23 @@ def _colourise(text, colour):
     """Colour text, if possible
 
     :param str text: Text to colourise
-    :param str colour:
+    :param str colour: Colour to display text in
     :rtype: str
     :return: Colourised text, if possible
     """
-    return colored(text, colour) if colored and sys.stdout.isatty() else text
-# pylint: disable-msg=C0103
-success = partial(_colourise, colour='green')
-fail = partial(_colourise, colour='red')
-warn = partial(_colourise, colour='yellow')
-# pylint: enable-msg=C0103
+    return getattr(T, colour.replace(' ', '_'))(text)
+
+
+def success(text):
+    return _colourise(text, 'bright green')
+
+
+def fail(text):
+    return _colourise(text, 'bright red')
+
+
+def warn(text):
+    return _colourise(text, 'bright yellow')
 
 
 # Use timezone aware datetimes in github2 package

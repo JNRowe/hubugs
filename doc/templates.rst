@@ -157,15 +157,16 @@ Filters
 ``colourise``
 '''''''''''''
 
-This filter applies a colour to text, if possible.  This functionality requires
-:pypi:`termcolor`, if the module is unavailable the filter is simply a no-op.
+This filter applies a colour to text, if possible.
 
-When directing output to a pipe or using a terminal that is incapable of
-displaying colours the text is passed through unchanged.
 
 For example, to show a bug's ``title`` attribute in red::
 
     {{ bug.title | colourise('red') }}
+
+or to display black text on a red background::
+
+    {{ bug.title | colourise('black on red') }}
 
 .. note::
    This filter is also available under the synonym ``colorize``.

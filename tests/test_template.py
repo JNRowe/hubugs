@@ -3,41 +3,34 @@ from unittest import TestCase
 
 from datetime import (datetime, timedelta)
 from dateutil import tz
-from mock import (Mock, patch)
+from mock import patch
 from nose.tools import (assert_equals, assert_true, raises)
 from pygments import (formatters, lexers)
 
 from hubugs import template
 
 
+# We only test forced styling output of blessings, as blessings handles the
+# sys.stdout.isatty() flipping
+template.utils.T = template.utils.blessings.Terminal(force_styling=True)
+
+
 class Colourise(TestCase):
-    @patch('sys.stdout')
-    def test_no_color(self, stdout):
-        stdout.isatty = Mock(return_value=False)
-        assert_equals(template.colourise('s', 'red'), 's')
+    def test_color(self):
+        assert_equals(template.colourise('s', 'red'),
+                      u'\x1b[38;5;1ms\x1b[m\x1b(B')
 
-    @patch('sys.stdout')
-    def test_color(self, stdout):
-        stdout.isatty = Mock(return_value=True)
-        assert_equals(template.colourise('s', 'red'), '\x1b[31ms\x1b[0m')
+    def test_background_color(self):
+        assert_equals(template.colourise('s', 'on blue'),
+                                         u'\x1b[48;5;4ms\x1b[m\x1b(B')
 
-    @patch('sys.stdout')
-    def test_background_color(self, stdout):
-        stdout.isatty = Mock(return_value=True)
-        assert_equals(template.colourise('s', on_color='on_blue'),
-                      '\x1b[44ms\x1b[0m')
+    def test_attribute(self):
+        assert_equals(template.colourise('s', 'bold'), u'\x1b[1ms\x1b[m\x1b(B')
 
-    @patch('sys.stdout')
-    def test_attribute(self, stdout):
-        stdout.isatty = Mock(return_value=True)
-        assert_equals(template.colourise('s', attrs=['bold', ]),
-                      '\x1b[1ms\x1b[0m')
-
-    @patch('sys.stdout')
-    @raises(KeyError)
-    def test_invalid_colour(self, stdout):
-        stdout.isatty = Mock(return_value=True)
-        assert_equals(template.colourise('s', 'mauve with a hint of green'), 's')
+    @raises(TypeError)
+    def test_invalid_colour(self):
+        assert_equals(template.colourise('s', 'mauve with a hint of green'),
+                                         's')
 
 
 class Highlight(TestCase):
@@ -45,16 +38,7 @@ class Highlight(TestCase):
         return namedtuple('Call', 'args kwargs')(args, kwargs)
 
     @patch('hubugs.template.pyg_highlight')
-    @patch('sys.stdout')
-    def test_no_highlight(self, stdout, pyg_highlight):
-        stdout.isatty = Mock(return_value=False)
-        pyg_highlight.side_effect = self.pyg_side_effect
-        assert_equals(template.highlight('s'), 's')
-
-    @patch('hubugs.template.pyg_highlight')
-    @patch('sys.stdout')
-    def test_highlight(self, stdout, pyg_highlight):
-        stdout.isatty = Mock(return_value=True)
+    def test_highlight(self, pyg_highlight):
         pyg_highlight.side_effect = self.pyg_side_effect
         result = template.highlight('+++ a\n--- b\n+Test\n')
         assert_true(isinstance(result.args[2], lexers.DiffLexer))
@@ -62,17 +46,13 @@ class Highlight(TestCase):
                                formatters.terminal.TerminalFormatter))
 
     @patch('hubugs.template.pyg_highlight')
-    @patch('sys.stdout')
-    def test_highlight_lexer(self, stdout, pyg_highlight):
-        stdout.isatty = Mock(return_value=True)
+    def test_highlight_lexer(self, pyg_highlight):
         pyg_highlight.side_effect = self.pyg_side_effect
         result = template.highlight('True', 'python')
         assert_true(isinstance(result.args[2], lexers.PythonLexer))
 
     @patch('hubugs.template.pyg_highlight')
-    @patch('sys.stdout')
-    def test_highlight_formatter(self, stdout, pyg_highlight):
-        stdout.isatty = Mock(return_value=True)
+    def test_highlight_formatter(self, pyg_highlight):
         pyg_highlight.side_effect = self.pyg_side_effect
         result = template.highlight('True', formatter='terminal256')
         assert_true(isinstance(result.args[3],
@@ -107,24 +87,21 @@ class EditText(TestCase):
                                          data={'title': 'Some message'}),
                       'Some message')
 
+
 class Markdown(TestCase):
     def test_basic(self):
         assert_equals(template.markdown('### hello'), '<h3>hello</h3>\n')
 
-    def test_smarty_pants(self):
-        assert_equals(template.markdown('"hello"'),
-                      '<p>&#8220;hello&#8221;</p>\n')
-
 
 class Html2Text(TestCase):
     def test_basic(self):
-        assert_equals(template.html2text('<h3>hello</h3>'), '### hello\n\n')
+        assert_equals(template.html2text('<h3>hello</h3>'), '### hello')
 
     def test_width(self):
         para = """<p>This is a long paragraph that needs wrapping to work so it
         doesn't make you want to claw your eyes out."""
-        assert_equals(template.html2text(para).count('\n'), 3)
-        assert_equals(template.html2text(para, width=20).count('\n'), 7)
+        assert_equals(template.html2text(para).count('\n'), 1)
+        assert_equals(template.html2text(para, width=20).count('\n'), 5)
 
 
 class RelativeTime(TestCase):
@@ -175,37 +152,31 @@ class RelativeTime(TestCase):
 
 class TermMarkdown(TestCase):
     @patch('sys.stdout')
-    def test_no_formatting(self, stdout):
-        stdout.isatty = Mock(return_value=False)
-        assert_equals(template.term_markdown('### hello'), '### hello')
-
-    @patch('sys.stdout')
     def test_rule(self, stdout):
-        stdout.isatty = Mock(return_value=True)
-        assert_equals(template.term_markdown('- - -'), '\x1b[32m- - -\x1b[0m')
+        stdout.encoding = 'UTF-8'
+        assert_equals(template.term_markdown('- - -'),
+                      u'\x1b[38;5;2m- - -\x1b[m\x1b(B')
         assert_equals(template.term_markdown('- - - - -'),
-                      '\x1b[32m- - - - -\x1b[0m')
+                      u'\x1b[38;5;2m- - - - -\x1b[m\x1b(B')
 
     @patch('sys.stdout')
     def test_emphasis(self, stdout):
-        stdout.isatty = Mock(return_value=True)
+        stdout.encoding = 'UTF-8'
         assert_equals(template.term_markdown('this is *emphasis*'),
-                      'this is \x1b[1memphasis\x1b[0m')
+                      u'this is \x1b[1memphasis\x1b[m\x1b(B')
         assert_equals(template.term_markdown('this is _emphasis_'),
-                      'this is \x1b[1memphasis\x1b[0m')
+                      u'this is \x1b[1memphasis\x1b[m\x1b(B')
 
     @patch('sys.stdout')
     def test_strong_emphasis(self, stdout):
-        stdout.isatty = Mock(return_value=True)
+        stdout.encoding = 'UTF-8'
         assert_equals(template.term_markdown('this is **strong** emphasis'),
-                      'this is \x1b[4mstrong\x1b[0m emphasis')
+                      u'this is \x1b[4mstrong\x1b[m\x1b(B emphasis')
         assert_equals(template.term_markdown('this is __strong__ emphasis'),
-                      'this is \x1b[4mstrong\x1b[0m emphasis')
-
+                      u'this is \x1b[4mstrong\x1b[m\x1b(B emphasis')
 
     @patch('sys.stdout')
     def test_fancy_bullet(self, stdout):
-        stdout.isatty = Mock(return_value=True)
         stdout.encoding = 'UTF-8'
         assert_equals(template.term_markdown('* list item'),
                       u'\u2022 list item')

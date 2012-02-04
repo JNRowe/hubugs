@@ -9,8 +9,8 @@ from setuptools import setup
 _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
-install_requires = ['argh', 'github2>=0.5.0', 'html2text', 'Jinja2>=2',
-                    'markdown2', 'Pygments']
+install_requires = ['argh', 'blessings', 'github2>=0.5.0', 'html2text',
+                    'Jinja2>=2', 'markdown2', 'Pygments']
 if sys.version_info[:2] < (2, 7):
     install_requires.append('argparse')
 
@@ -30,10 +30,6 @@ setup(
     package_data={'': ['templates/*/*.mkd', "templates/*/*.txt"], },
     entry_points={'console_scripts': ['hubugs = hubugs:main', ]},
     install_requires=install_requires,
-    extras_require={
-        'colour': ['termcolor', ],
-        'color': ['termcolor', ],
-    },
     zip_safe=False,
     test_suite="nose.collector",
     tests_require=['nose', 'mock'],

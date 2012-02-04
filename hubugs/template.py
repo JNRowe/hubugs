@@ -76,20 +76,19 @@ def jinja_filter(func):
 
 
 @jinja_filter
-def colourise(text, *args, **kwargs):
-    """Colourise text with termcolor.
+def colourise(text, formatting):
+    """Colourise text using blessings
 
     Returns text untouched if colour output is not enabled
 
-    :see: ``termcolor.colored``
+    :see: ``blessings``
 
+    :param str text: Text to colourise
+    :param str formatting: Formatting to apply to text
     :rtype: ``str``
     :return: Colourised text, when possible
     """
-    if utils.colored and sys.stdout.isatty():
-        return utils.colored(text, *args, **kwargs)
-    else:
-        return text
+    return getattr(utils.T, formatting.replace(' ', '_'))(text)
 # American spelling, just for Brandon Cady ;)
 ENV.filters["colorize"] = ENV.filters["colourise"]
 
@@ -106,7 +105,7 @@ def highlight(text, lexer="diff", formatter="terminal"):
     :rtype: ``str``
     :return: Syntax highlighted output, when possible
     """
-    if utils.colored and sys.stdout.isatty():
+    if utils.T.is_a_tty:
         lexer = get_lexer_by_name(lexer)
         formatter = get_formatter_by_name(formatter)
         return pyg_highlight(text, lexer, formatter)
@@ -199,7 +198,7 @@ def term_markdown(text):
     :rtype: ``str``
     :return: Rendered text with terminal control sequences
     """
-    if not utils.colored or not sys.stdout.isatty():
+    if not utils.T.is_a_tty:
         return text
     # For uniform line ending split and rejoin, this saves having to handle \r
     # and \r\n
@@ -213,17 +212,13 @@ def term_markdown(text):
     bullets_re = re.compile(r"^( {0,4})[*+-] ", re.MULTILINE)
     quotes_re = re.compile(r"^> .*$", re.MULTILINE)
 
-    text = headings_re.sub(lambda s: utils.colored(s.groups()[0], attrs=["underline"]),
-                           text)
-    text = rules_re.sub(lambda s: utils.colored(s.groups()[0], "green"),
-                        text)
+    text = headings_re.sub(lambda s: utils.T.underline(s.groups()[0]), text)
+    text = rules_re.sub(lambda s: utils.T.green(s.groups()[0]), text)
     text = re.sub(r'([\*_]{2})([^ \*]+)\1',
-                  lambda s: utils.colored(s.groups()[1], attrs=["underline"]),
-                  text)
-    text = quotes_re.sub(lambda s: utils.colored(s.group(), attrs=["reverse"]),
-                         text)
+                  lambda s: utils.T.underline(s.groups()[1]), text)
+    text = quotes_re.sub(lambda s: utils.T.reverse(s.group()), text)
     text = re.sub(r'([\*_])([^ \*]+)\1',
-                  lambda s: utils.colored(s.groups()[1], attrs=["bold"]), text)
+                  lambda s: utils.T.bold(s.groups()[1]), text)
     if sys.stdout.encoding == "UTF-8":
         text = bullets_re.sub(u"\\1• ", text)
 

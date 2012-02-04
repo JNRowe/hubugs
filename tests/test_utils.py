@@ -13,6 +13,11 @@ from nose.tools import (assert_equals, assert_false, raises)
 from hubugs import utils
 
 
+# We only test forced styling output of blessings, as blessings handles the
+# sys.stdout.isatty() flipping
+utils.T = utils.blessings.Terminal(force_styling=True)
+
+
 def fake_env(key, default=None):
     """Fake environment settings used for os.getenv mocking"""
     fake_data = {
@@ -25,21 +30,10 @@ def fake_env(key, default=None):
 
 
 class Colouriser(TestCase):
-    @patch('sys.stdout')
-    def test_is_not_a_tty_colour(self, stdout):
-        stdout.isatty = Mock(return_value=False)
-        assert_false(sys.stdout.isatty())
-        assert_equals(utils.success('test'), 'test')
-        assert_equals(utils.fail('test'), 'test')
-        assert_equals(utils.warn('test'), 'test')
-
-    @patch('sys.stdout')
-    def test_colouriser(self, stdout):
-        stdout.isatty = Mock(return_value=True)
-
-        assert_equals(utils.success('test'), '\x1b[32mtest\x1b[0m')
-        assert_equals(utils.fail('test'), '\x1b[31mtest\x1b[0m')
-        assert_equals(utils.warn('test'), '\x1b[33mtest\x1b[0m')
+    def test_colouriser(self):
+        assert_equals(utils.success('test'), u'\x1b[38;5;10mtest\x1b[m\x1b(B')
+        assert_equals(utils.fail('test'), u'\x1b[38;5;9mtest\x1b[m\x1b(B')
+        assert_equals(utils.warn('test'), u'\x1b[38;5;11mtest\x1b[m\x1b(B')
 
 
 class ProjectAction(TestCase):
