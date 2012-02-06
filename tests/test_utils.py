@@ -1,14 +1,11 @@
 import argparse
 
-import imp
-import sys
-
 from subprocess import CalledProcessError
 from unittest import TestCase
 
 from httplib2 import ServerNotFoundError
 from mock import (Mock, patch)
-from nose.tools import (assert_equals, assert_false, raises)
+from nose.tools import (assert_equals, raises)
 
 from hubugs import utils
 
