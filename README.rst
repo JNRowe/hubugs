@@ -10,8 +10,8 @@ Requirements
 ------------
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
-dependencies outside of the standard library are argh_, blessings_, github2_,
-html2text_, Jinja_, markdown2_ and Pygments_.
+dependencies outside of the standard library are argh_, blessings_, github2_
+v0.6 or newer, html2text_, Jinja_, markdown2_ and Pygments_.
 
 Configuration
 -------------
