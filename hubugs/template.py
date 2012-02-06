@@ -37,9 +37,12 @@ from pygments.lexers import get_lexer_by_name
 from . import utils
 
 
-USER_DATA_DIR = os.environ.get("XDG_DATA_HOME",
-                               os.path.join(os.environ.get("HOME", "/"),
-                                            ".local"))
+if sys.platform == 'darwin':
+    _USER_DATA_DIR = os.path.expanduser('~/Library/Application Support')
+else:
+    _USER_DATA_DIR = os.path.join(os.environ.get("HOME", "/"), ".local")
+
+USER_DATA_DIR = os.environ.get("XDG_DATA_HOME", _USER_DATA_DIR)
 SYSTEM_DATA_DIR = os.environ.get("XDG_DATA_DIRS",
                                  "/usr/local/share/:/usr/share/").split(":")
 PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, "hubugs", "templates"), ]
