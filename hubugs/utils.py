@@ -76,21 +76,6 @@ class ProjectAction(argh.utils.argparse.Action):
             if not user:
                 raise parser.error("No GitHub user setting!")
             project = "%s/%s" % (user, project)
-        try:
-            # Check for project validity early on.  This check is normally less
-            # than a 500 bytes transfer
-            get_github_api().repos.show(project)
-        except RuntimeError as error:
-            if "Repository not found" in error.args[0]:
-                raise parser.error(fail("Project %r not found" % project))
-            else:
-                raise
-        except httplib2.ServerNotFoundError:
-            raise parser.error(fail("Project lookup failed.  Network or "
-                                    "GitHub down?"))
-        except EnvironmentError as error:
-            raise parser.error(error.args[0])
-
         namespace.project = project
 
 
