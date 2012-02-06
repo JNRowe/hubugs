@@ -121,16 +121,6 @@ class GetGithubApi(TestCase):
         getenv.return_value = None
         utils.get_github_api()
 
-    @patch('os.getenv')
-    @patch('os.mkdir')
-    @patch('inspect.getargspec')
-    def test_no_cache_support(self, getargspec, mkdir, getenv):
-        getargspec().args = ['no_entry_cache_in_list', ]
-        mkdir.return_value = True
-        getenv.side_effect = fake_env
-        api = utils.get_github_api()
-        assert_equals(api.request._http.cache, None)
-
 
 class GetGitConfigVal(TestCase):
     @patch('hubugs.utils.check_output')
