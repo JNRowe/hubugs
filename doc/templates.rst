@@ -17,7 +17,7 @@ Templates are loaded from directories in the following order:
 * The package's ``templates`` directory
 
 For information on the usage of :envvar:`XDG_DATA_HOME` and
-:envvar:`XDG_DATA_DIRS` read `XDG Base Directory Specification`_
+:envvar:`XDG_DATA_DIRS` read `XDG Base Directory Specification`_.
 
 .. note::
    If you create some cool templates of your own please consider posting them in
