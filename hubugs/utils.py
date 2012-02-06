@@ -20,6 +20,7 @@
 import inspect
 import os
 import re
+import sys
 import subprocess
 
 from collections import namedtuple
@@ -125,10 +126,12 @@ def get_github_api():
         raise EnvironmentError("No GitHub authentication settings found!")
 
     if "cache" in inspect.getargspec(Github.__init__).args:
-        xdg_cache_dir = os.getenv("XDG_CACHE_HOME",
-                                  os.path.join(os.getenv("HOME", "/"),
-                                               ".cache"))
-        cache_dir = os.path.join(xdg_cache_dir, "hubugs")
+        if sys.platform == 'darwin':
+            user_cache_dir = os.path.expanduser("~/Library/Caches")
+        else:
+            user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
+        xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
+        cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
         kwargs = {"cache": cache_dir}
     else:
         kwargs = {}
