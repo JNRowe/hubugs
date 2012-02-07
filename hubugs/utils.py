@@ -26,7 +26,6 @@ from collections import namedtuple
 
 import argh
 import blessings
-import httplib2
 
 from github2 import core as ghcore
 from github2.client import Github
