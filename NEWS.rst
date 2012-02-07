@@ -3,6 +3,17 @@ User-visible changes
 
 .. contents::
 
+0.13.0 - 2012-02-07
+-------------------
+
+* misaka_ is now required; misaka_ supports the full range of `GitHub flavoured
+  Markdown`_
+* blessings_ is now required for terminal formatting
+
+.. _misaka: http://pypi.python.org/pypi/misaka/
+.. _blessings: http://pypi.python.org/pypi/blessings/
+.. _GitHub flavoured Markdown: http://github.github.com/github-flavored-markdown/
+
 0.12.0 - 2012-01-16
 -------------------
 
