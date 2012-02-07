@@ -27,7 +27,7 @@ import tempfile
 
 import html2text as html2
 import jinja2
-import markdown2
+import misaka
 
 from dateutil import tz
 from pygments import highlight as pyg_highlight
@@ -132,15 +132,15 @@ def html2text(html, width=80, ascii_replacements=False):
 
 
 @jinja_filter
-def markdown(text, tab_width=markdown2.DEFAULT_TAB_WIDTH):
+def markdown(text):
     """Markdown to HTML renderer
 
     :param str text: Text to process
-    :param int tab_width: Indentation width
     :rtype: ``str``
     :return: Rendered HTML
     """
-    return markdown2.markdown(text, tab_width=tab_width)
+    extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
+    return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
 
 
 @jinja_filter

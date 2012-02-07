@@ -199,7 +199,7 @@ This filter converts HTML to a plain text representation using html2text_.
 ''''''''''''
 
 The purpose of this filter is to convert the Markdown_ formatted text from
-a GitHub issue to html.  The excellent markdown2_ package is used to provide the
+a GitHub issue to html.  The excellent misaka_ package is used to provide the
 conversion.
 
 In the default templates it is used to render bug bodies::
@@ -251,4 +251,4 @@ sequences aren't included in the line width calculations for wrapping.
 .. _Pygments: http://pygments.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
 .. _Markdown: http://daringfireball.net/projects/markdown/
-.. _markdown2: http://github.com/trentm/python-markdown2/
+.. _misaka: http://pypi.python.org/pypi/misaka/
