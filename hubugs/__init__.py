@@ -69,6 +69,7 @@ atexit.register(logging.shutdown)
 
 
 from . import (template, utils)
+from .i18n import _
 
 
 COMMANDS = []
