@@ -32,6 +32,7 @@ from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 
 from . import utils
+from .i18n import _
 
 
 if sys.platform == 'darwin':
@@ -201,7 +202,7 @@ def display_bugs(bugs, order, **extras):
 
     """
     if not bugs:
-        return utils.success("No bugs found!")
+        return utils.success(_("No bugs found!"))
 
     # Match ordering method to bug attribute
     if order == "updated":
@@ -252,8 +253,8 @@ def edit_text(edit_type="default", data=None):
         os.unlink(name)
 
     if not text:
-        raise EmptyMessageError("No message given")
+        raise EmptyMessageError(_("No message given"))
     elif orig_mtime == new_mtime:
-        raise EmptyMessageError("Message not edited")
+        raise EmptyMessageError(_("Message not edited"))
 
     return text.strip()

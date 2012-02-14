@@ -32,6 +32,8 @@ import httplib2
 
 from . import (_version, models)
 
+from .i18n import _
+
 
 T = blessings.Terminal()
 
@@ -129,7 +131,7 @@ class ProjectAction(argh.utils.argparse.Action):
         if not "/" in project:
             user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
             if not user:
-                raise parser.error("No GitHub user setting!")
+                raise parser.error(_("No GitHub user setting!"))
             project = "%s/%s" % (user, project)
         namespace.project = project
 
@@ -237,7 +239,7 @@ def get_repo():
     """
     data = get_git_config_val("remote.origin.url", local_only=True)
     if not data:
-        raise RepoError("No `origin' remote found")
+        raise RepoError(_("No `origin' remote found"))
     match = re.match(r"""
         (?:git(?:@|://)  # SSH or git protocol
           |https?://
@@ -249,7 +251,7 @@ def get_repo():
     if match:
         return match.groups()[0]
     else:
-        raise RepoError("Unknown project, specify with `--project' option")
+        raise RepoError(_("Unknown project, specify with `--project' option"))
 
 
 def setup_environment(args):
@@ -275,8 +277,8 @@ def setup_environment(args):
     if use_auth:
         token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
         if not token:
-            raise EnvironmentError("No hubugs authorisation token found!  "
-                                   "Run 'hubugs setup' to create a token")
+            raise EnvironmentError(_("No hubugs authorisation token found!  "
+                                   "Run 'hubugs setup' to create a token"))
         HEADERS["Authorization"] = "token %s" % token
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
@@ -316,11 +318,11 @@ def setup_environment(args):
             r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project))
         except HttpClientError as e:
             if e.content['message'] == 'Not Found':
-                raise RepoError('Invalid project %r' % args.project)
+                raise RepoError(_('Invalid project %r') % args.project)
             raise
         args.repo_obj = models.Repository.from_dict(c)
         if not args.repo_obj.has_issues:
-            raise RepoError("Issues aren't enabled for %r" % args.project)
+            raise RepoError(("Issues aren't enabled for %r") % args.project)
 
 
 def sync_labels(args):
@@ -337,10 +339,10 @@ def sync_labels(args):
 
     for label in args.add:
         if label not in label_names:
-            raise ValueError('No such label %r' % label)
+            raise ValueError(_('No such label %r') % label)
     for label in args.create:
         if label in label_names:
-            print warn('%r label already exists' % label)
+            print warn(_('%r label already exists') % label)
         else:
             data = {'name': label, 'color': '000000'}
             args.req_post(labels_url, body=data)
