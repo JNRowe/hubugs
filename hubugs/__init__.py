@@ -125,7 +125,6 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
 @argh.arg('--local', default=False,
           help='set access token for local repository only')
 def setup(args):
-    """setup GitHub access token"""
     if not utils.SYSTEM_CERTS:
         yield utils.warn(_('Falling back on bundled certificates'))
     if utils.CURL_CERTS:
@@ -156,6 +155,7 @@ def setup(args):
                             headers=header, model='Authorisation')
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
     yield utils.success(_('Configuration complete!'))
+setup.__doc__ = _("setup GitHub access token")
 
 
 @command
@@ -165,7 +165,6 @@ def setup(args):
           metavar="label")
 @order_arg
 def list_bugs(args):
-    """listing bugs"""
     bugs = []
     params = {}
     if args.label:
@@ -180,6 +179,7 @@ def list_bugs(args):
 
     yield template.display_bugs(bugs, args.order, state=args.state,
                                 project=args.repo_obj)
+list_bugs.__doc__ = _("listing bugs")
 
 
 @command
@@ -187,7 +187,6 @@ def list_bugs(args):
 @order_arg
 @argh.arg("term", help=_("term to search bugs for"))
 def search(args):
-    "searching bugs"
     # This chunk of code is horrific, as is the Issue.from_search() that is
     # required to support it.  However, without search support in API v3 there
     # is realistic way around it.
@@ -202,6 +201,8 @@ def search(args):
     return template.display_bugs(bugs, args.order, term=args.term,
                                  state=args.state, project=args.repo_obj)
 
+search.__doc__ = _("searching bugs")
+
 
 @command
 @argh.arg("-f", "--full", default=False, help=_("show bug including comments"))
@@ -212,7 +213,6 @@ def search(args):
 @argh.arg("-b", "--browse", default=False, help=_("open bug in web browser"))
 @bugs_arg
 def show(args):
-    """displaying bugs"""
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
         if args.browse:
@@ -234,6 +234,7 @@ def show(args):
         yield tmpl.render(bug=bug, comments=comments, full=True,
                           patch=patch, patch_only=args.patch_only,
                           project=args.repo_obj)
+show.__doc__ = _("displaying bugs")
 
 
 @command
@@ -245,7 +246,6 @@ def show(args):
 @body_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
-    """opening new bugs"""
     utils.sync_labels(args)
     if args.stdin:
         text = sys.stdin.readlines()
@@ -260,6 +260,7 @@ def open_bug(args):
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
     yield utils.success(_("Bug %d opened") % bug.number)
+open_bug.__doc__ = _("opening new bugs")
 
 
 @command
@@ -268,7 +269,6 @@ def open_bug(args):
 @bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
-    """commenting on bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif args.message:
@@ -277,6 +277,7 @@ def comment(args):
         message = template.edit_text()
     for bug in args.bugs:
         args.req_post('%s/comments' % bug, body={'body': message})
+comment.__doc__ = _("commenting on bugs")
 
 
 @command
@@ -286,7 +287,6 @@ def comment(args):
 @bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
-    """editing bugs"""
     if (args.title or args.stdin) and len(args.bugs) > 1:
         raise argh.CommandError(_("Can not use --stdin or command line "
                                   "title/body with multiple bugs"))
@@ -306,6 +306,7 @@ def edit(args):
 
         data = {'title': title, 'body': body}
         args.req_post(bug, body=data)
+edit.__doc__ = _("editing bugs")
 
 
 @command
@@ -313,7 +314,6 @@ def edit(args):
 @message_arg
 @bugs_arg
 def close(args):
-    """closing bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -328,6 +328,7 @@ def close(args):
         if message:
             args.req_post('%s/comments' % bug, body={'body': message})
         args.req_post(bug, body={'state': 'closed'})
+close.__doc__ = _("closing bugs")
 
 
 @command
@@ -335,7 +336,6 @@ def close(args):
 @message_arg
 @bugs_arg
 def reopen(args):
-    """reopening closed bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -350,6 +350,7 @@ def reopen(args):
         if message:
             args.req_post('%s/comments' % bug, body={'body': message})
         args.req_post(bug, body={'state': 'open'})
+reopen.__doc__ = _("reopening closed bugs")
 
 
 @command
@@ -360,7 +361,6 @@ def reopen(args):
 @argh.arg("bugs", nargs="*", type=int,
           help="bug number(s) to operate on")
 def label(args):
-    """labelling bugs"""
     label_names = utils.sync_labels(args)
 
     if args.list:
@@ -375,12 +375,12 @@ def label(args):
         for string in args.remove:
             labels.remove(string)
         args.req_post(bug_no, body={'labels': labels})
+label.__doc__ = _("labelling bugs")
 
 
 @command
 @argh.wrap_errors(template.EmptyMessageError)
 def report_bug(args):
-    """report a new bug against hubugs"""
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
@@ -403,6 +403,7 @@ def report_bug(args):
     r, bug = args.req_post('', body=data, model='Issue')
     yield utils.success(_("Bug %d opened against hubugs, thanks!")
                         % bug.number)
+report_bug.__doc__ = _("report a new bug against hubugs")
 
 
 def main():
