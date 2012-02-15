@@ -23,6 +23,22 @@ The easiest way to workaround the issue is to disable wrapping in your text
 editor for template files.  The files ``hubugs`` creates are easy to match for
 automating this within your editor, just use ``$TMPDIR/*.mkd``.
 
+How do I create headlines when lines beginning with ``#`` are scrubbed?
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Markdown syntax supports two different heading formats, and only one of them
+requires a ``#`` at the start of a line.  Using the alternative setext_ format
+is simple:
+
+.. code-block:: rest
+
+    Heading
+    =======
+
+    Sub-heading
+    -----------
+
+.. _setext: http://docutils.sourceforge.net/mirror/setext.html
 
 I don't like your choice of template language
 '''''''''''''''''''''''''''''''''''''''''''''
