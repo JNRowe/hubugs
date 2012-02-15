@@ -1,0 +1,94 @@
+#compdef hubugs hubugs.py
+# coding=utf-8
+# hubugs - ZSH completion support for hubugs
+# Copyright (C) 2010-2012  James Rowe <jnrowe@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Most of this file is generated from hubugs/__init__.py, but feel free to
+# customise it!  If you make improvements, open a pull request against
+# `JNRowe/hubugs' with your super changes attached.
+
+__list_projects() {
+    local tmp
+    tmp=($(git remote -v \
+        | sed -n '/push/s,^.*github.com[/:]\([^ ]*\)\.git .*$,\1,p'))
+    if [ -z "${tmp}" ]; then
+        _message "No github remotes found!"
+    else
+        compadd ${tmp[@]}
+    fi
+}
+
+_arguments '--help[show help message and exit]' \
+    "--version[show program's version number and exit]" \
+    '--project=[GitHub project to operate on]:select project:__list_projects' \
+    ':hubugs command:(close comment edit label list open reopen search show)' \
+    '*::subcmd:->subcmd' && return 0
+
+### DGEN_TAG: Generated from hubugs/__init__.py {{{
+case "$words[1]" in
+(close)
+    _arguments '--help[show help message and exit]' \
+        '--stdin[read message from standard input]' \
+        '--message=[comment text]:message text: '
+    ;;
+(comment)
+    _arguments '--help[show help message and exit]' \
+        '--stdin[read message from standard input]' \
+        '--message=[comment text]:message text: '
+    ;;
+(edit)
+    _arguments '--help[show help message and exit]' \
+        '--stdin[read message from standard input]'
+    ;;
+(label)
+    _arguments '--help[show help message and exit]' \
+        '--add[add label to issue]:select label: ' \
+        '--remove[remove label from issue]:select label: '
+    ;;
+(list)
+    _arguments '--help[show help message and exit]' \
+        '--state=[state of bugs to operate on]:select state:(open closed all)' \
+        '--label=[list bugs with specified label]:select label: ' \
+        '--order=[sort order for listing bugs]:select order:(number updated votes)'
+    ;;
+(open)
+    _arguments '--help[show help message and exit]' \
+        '--add[add label to issue]:select label: ' \
+        '--stdin[read message from standard input]'
+    ;;
+(reopen)
+    _arguments '--help[show help message and exit]' \
+        '--stdin[read message from standard input]' \
+        '--message=[comment text]:message text: '
+    ;;
+(search)
+    _arguments '--help[show help message and exit]' \
+        '--state=[state of bugs to operate on]:select state:(open closed all)' \
+        '--order=[sort order for listing bugs]:select order:(number updated votes)'
+    ;;
+(show)
+    _arguments '--help[show help message and exit]' \
+        '--help[show this help message and exit]' \
+        '--full[show bug including comments]' \
+        '--patch[display patches for pull requests]' \
+        '--browse[open bug in web browser]'
+    ;;
+(*)
+    ;;
+esac
+### DGEN_TAG: Generated from hubugs/__init__.py }}}
+
