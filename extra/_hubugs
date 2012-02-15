@@ -26,7 +26,7 @@ __list_projects() {
     tmp=($(git remote -v \
         | sed -n '/push/s,^.*github.com[/:]\([^ ]*\)\.git .*$,\1,p'))
     if [ -z "${tmp}" ]; then
-        _message "No github remotes found!"
+        _message "No GitHub remotes found!"
     else
         compadd ${tmp[@]}
     fi
