@@ -123,6 +123,7 @@ def get_git_config_val(key, default=None, local_only=False):
     """Fetch a git configuration value
 
     :param str key: Configuration value to fetch
+    :param str default: Default value to use, if key isn't set
     :param bool local_only: Fetch configuration values from repo config only
     """
     cmd = ['git', 'config', ]
