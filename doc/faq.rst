@@ -12,6 +12,18 @@ Either open an issue_ or push them to a fork on GitHub_.
 .. _issue: https://github.com/JNRowe/hubugs/issues
 .. _GitHub: https://github.com/JNRowe/hubugs/
 
+Why is the wrapping broken in comments I make?
+''''''''''''''''''''''''''''''''''''''''''''''
+
+Unfortunately, GitHub have crippled the newline behaviour of Markdown.  If you
+wrap your comments for readability then you'll be creating new paragraphs with
+every single line.  There is very little that can be done locally to fix this.
+
+The easiest way to workaround the issue is to disable wrapping in your text
+editor for template files.  The files ``hubugs`` creates are easy to match for
+automating this within your editor, just use ``$TMPDIR/*.mkd``.
+
+
 I don't like your choice of template language
 '''''''''''''''''''''''''''''''''''''''''''''
 
