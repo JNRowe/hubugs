@@ -119,13 +119,18 @@ def get_github_api(host_url=None):
                   github_url=host_url)
 
 
-def get_git_config_val(key, default=None):
+def get_git_config_val(key, default=None, local_only=False):
     """Fetch a git configuration value
 
     :param str key: Configuration value to fetch
+    :param bool local_only: Fetch configuration values from repo config only
     """
+    cmd = ['git', 'config', ]
+    if local_only:
+        cmd.append('--local')
+    cmd.extend(['--get', key])
     try:
-        output = check_output(["git", "config", key]).strip()
+        output = check_output(cmd).strip()
     except subprocess.CalledProcessError:
         output = default
     return output
@@ -149,7 +154,7 @@ def get_editor():
 
 def get_repo():
     "Extract GitHub project name from config"
-    data = get_git_config_val("remote.origin.url")
+    data = get_git_config_val("remote.origin.url", local_only=True)
     if not data:
         raise RepoError("No `origin' remote found")
     match = re.match(r"""
