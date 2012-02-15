@@ -61,6 +61,8 @@ from base64 import b64encode
 import argh
 import httplib2
 
+from kitchen.text.converters import to_unicode
+
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -228,7 +230,7 @@ def show(args):
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
             r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
-            patch = c.decode('utf-8')
+            patch = to_unicode(c)
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,
