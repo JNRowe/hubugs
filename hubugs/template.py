@@ -269,7 +269,7 @@ def edit_text(edit_type="default", data=None):
     :raise EmptyMessageError: No message given
     """
     template = get_template('edit', '%s.mkd' % edit_type)
-    with tempfile.NamedTemporaryFile(suffix=".mkd") as temp:
+    with tempfile.NamedTemporaryFile(prefix="hubugs-", suffix=".mkd") as temp:
         temp.write(template.render(data if data else {}))
         temp.flush()
 

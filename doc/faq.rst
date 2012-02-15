@@ -21,7 +21,7 @@ every single line.  There is very little that can be done locally to fix this.
 
 The easiest way to workaround the issue is to disable wrapping in your text
 editor for template files.  The files ``hubugs`` creates are easy to match for
-automating this within your editor, just use ``$TMPDIR/*.mkd``.
+automating this within your editor, just use ``$TMPDIR/hubugs-*.mkd``.
 
 How do I create headlines when lines beginning with ``#`` are scrubbed?
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
