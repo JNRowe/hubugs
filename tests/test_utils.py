@@ -271,14 +271,15 @@ class SetApi(TestCase):
     def test_no_project(self, get_repo, getenv):
         get_repo.return_value = 'JNRowe/misc-overlay'
         getenv.side_effect = fake_env
-        namespace = argparse.Namespace(project=None)
+        namespace = argparse.Namespace(project=None, host_url=None)
         utils.set_api(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
 
     @patch('os.getenv')
     def test_project(self, getenv):
         getenv.side_effect = fake_env
-        namespace = argparse.Namespace(project='JNRowe/misc-overlay')
+        namespace = argparse.Namespace(project='JNRowe/misc-overlay',
+                                       host_url=None)
         utils.set_api(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
 
@@ -287,6 +288,7 @@ class SetApi(TestCase):
     def test_api(self, raw_request, getenv):
         raw_request.return_value = {u'issues': []}
         getenv.side_effect = fake_env
-        namespace = argparse.Namespace(project='JNRowe/misc-overlay')
+        namespace = argparse.Namespace(project='JNRowe/misc-overlay',
+                                       host_url=None)
         utils.set_api(namespace)
         assert_equals(namespace.api('list'), [])

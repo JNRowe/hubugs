@@ -346,6 +346,9 @@ def main():
     parser.add_argument("-p", "--project", action=utils.ProjectAction,
                         help="GitHub project to operate on",
                         metavar="project")
+    parser.add_argument("-u", "--host-url", default=None,
+                        help="GitHub Enterprise host to connect to",
+                        metavar="url")
     parser.add_commands(COMMANDS)
     try:
         parser.dispatch(pre_call=utils.set_api)

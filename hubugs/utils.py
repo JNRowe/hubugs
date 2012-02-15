@@ -97,9 +97,10 @@ def check_output(args):
         return output
 
 
-def get_github_api():
+def get_github_api(host_url=None):
     """Create a GitHub API instance
 
+    :param str host_url: GitHub host to connect to
     :rtype: ``Github``
     :return: Authenticated GitHub API instance
     """
@@ -114,7 +115,8 @@ def get_github_api():
         user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
     xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
     cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
-    return Github(username=user, api_token=token, cache=cache_dir)
+    return Github(username=user, api_token=token, cache=cache_dir,
+                  github_url=host_url)
 
 
 def get_git_config_val(key, default=None):
@@ -181,7 +183,7 @@ def set_api(args):
     """
     if not args.project:
         args.project = get_repo()
-    api = get_github_api()
+    api = get_github_api(args.host_url)
     issues = api.issues
 
     def api_method(method, *opts, **kwargs):

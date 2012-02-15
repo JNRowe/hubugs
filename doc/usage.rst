@@ -56,6 +56,10 @@ Options
 
    GitHub project to operate on
 
+.. cmdoption:: -u <url>, --host-url=<url>
+
+   host to connect to, for GitHub Enterprise support
+
 Commands
 --------
 

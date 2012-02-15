@@ -37,6 +37,9 @@ OPTIONS
     another user's repository.  Default is derived from the current repository,
     if possible.
 
+-u <url>, --host-url=<url>
+    host to connect to, for GitHub Enterprise support
+
 Commands
 --------
 
