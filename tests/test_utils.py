@@ -3,7 +3,6 @@ import argparse
 from subprocess import CalledProcessError
 from unittest import TestCase
 
-from httplib2 import ServerNotFoundError
 from mock import (Mock, patch)
 from nose.tools import (assert_equals, raises)
 
@@ -64,41 +63,6 @@ class ProjectAction(TestCase):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = None
         self.action(self.parser, self.namespace, 'misc-overlay')
-
-    @patch('hubugs.utils.get_github_api')
-    @patch('hubugs.utils.get_git_config_val')
-    @raises(SystemExit)
-    def test_repo_not_found(self, get_git_config_val, get_github_api):
-        get_github_api().repos.show = \
-            Mock(side_effect=RuntimeError('Repository not found'))
-        get_git_config_val.return_value = None
-        self.action(self.parser, self.namespace, 'JNRowe/never_exist')
-
-    @patch('hubugs.utils.get_github_api')
-    @patch('hubugs.utils.get_git_config_val')
-    @raises(RuntimeError)
-    def test_random_error(self, get_git_config_val, get_github_api):
-        get_github_api().repos.show = \
-            Mock(side_effect=RuntimeError('something went wrong'))
-        get_git_config_val.return_value = None
-        self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
-
-    @patch('hubugs.utils.get_github_api')
-    @patch('hubugs.utils.get_git_config_val')
-    @raises(SystemExit)
-    def test_httplib2_error(self, get_git_config_val, get_github_api):
-        get_github_api().repos.show = Mock(side_effect=ServerNotFoundError())
-        get_git_config_val.return_value = None
-        self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
-
-    @patch('hubugs.utils.get_github_api')
-    @patch('hubugs.utils.get_git_config_val')
-    @raises(SystemExit)
-    def test_env_error(self, get_git_config_val, get_github_api):
-        get_github_api().repos.show = \
-            Mock(side_effect=EnvironmentError('config broken'))
-        get_git_config_val.return_value = None
-        self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
 
 
 class GetGithubApi(TestCase):
