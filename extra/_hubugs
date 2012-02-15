@@ -21,6 +21,7 @@
 # customise it!  If you make improvements, open a pull request against
 # `JNRowe/hubugs' with your super changes attached.
 
+(( $+functions[__list_projects] )) ||
 __list_projects() {
     local tmp
     tmp=($(git remote -v \
@@ -32,6 +33,7 @@ __list_projects() {
     fi
 }
 
+(( $+functions[__list_hosts] )) ||
 __list_hosts() {
     local tmp
     if [ -f ~/.ssh/known_hosts ]; then
