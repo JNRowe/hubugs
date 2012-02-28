@@ -3,6 +3,17 @@ User-visible changes
 
 .. contents::
 
+0.13.1 - 2012-02-28
+-------------------
+
+* ``github2`` v0.6.1, or newer, is required
+* Support for `GitHub:Enterprise`_ using the ``--host-url`` option
+* Temp files now use ``hubugs-`` prefix for easier matching in editor configs
+* Basic Zsh_ completion support in ``extra/_hubugs``
+
+.. _GitHub:Enterprise: https://enterprise.github.com/
+.. _Zsh: http://www.zsh.org/
+
 0.13.0 - 2012-02-07
 -------------------
 
