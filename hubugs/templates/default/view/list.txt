@@ -11,7 +11,7 @@
 {%- block body %}
 {%- for bug in bugs %}
 {%- if bug.labels %}
-{%- set formatted_labels = " [" + bug.labels | join(", ") | colourise("on_blue") + "]" %}
+{%- set formatted_labels = " [" + bug.labels | join(", ") | colourise("blue") + "]" %}
 {% else %}
 {%- set formatted_labels = "" %}
 {% endif -%}
