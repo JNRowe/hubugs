@@ -142,6 +142,8 @@ def search(args):
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("-p", "--patch", default=False,
           help="display patches for pull requests")
+@argh.arg("-o", "--patch-only", default=False,
+          help="display only the patch content of pull requests")
 @argh.arg("-b", "--browse", default=False, help="open bug in web browser")
 @bugs_arg
 def show(args):
@@ -165,12 +167,13 @@ def show(args):
             comments = args.api("comments", bug.number)
         else:
             comments = []
-        if args.patch and bug.pull_request_url:
+        if (args.patch or args.patch_only) and bug.pull_request_url:
             request, body = args._http.request(bug.patch_url)
             patch = body.decode(charset_from_headers(request))
         else:
             patch = None
-        yield tmpl.render(bug=bug, comments=comments, full=True, patch=patch)
+        yield tmpl.render(bug=bug, comments=comments, full=True,
+                          patch=patch, patch_only=args.patch_only)
 
 
 @command

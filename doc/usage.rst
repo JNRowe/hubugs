@@ -121,6 +121,10 @@ Commands
 
    display patches for pull requests
 
+.. cmdoption:: -o, --patch-only
+
+   display only the patch content of pull requests
+
 .. cmdoption:: -b, --browse
 
    open bug in web browser

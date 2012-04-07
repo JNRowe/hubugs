@@ -79,6 +79,9 @@ Show specific bug(s) from a project
 -p, --patch
    display patches for pull requests
 
+-o, --patch-only
+   display only the patch content of pull requests
+
 -b, --browse
    open bug in web browser
 

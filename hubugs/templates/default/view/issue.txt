@@ -1,6 +1,7 @@
 {%- set heading_colour = "green" -%}
 {%- set user_colour = "yellow" -%}
 {%- block header -%}
+{%- if not patch_only -%}
 {{ "          Id" | colourise(heading_colour) }}: {{ bug.number }}
 {{ "       Title" | colourise(heading_colour) }}: {{ bug.title }}
 {{ "      Labels" | colourise(heading_colour) }}: {{ bug.labels | join(", ") }}
@@ -10,18 +11,24 @@
 {{ "    Comments" | colourise(heading_colour) }}: {{ bug.comments }}
 {{ "       Votes" | colourise(heading_colour) }}: {{ bug.votes }}
 {{ "Pull request" | colourise(heading_colour) }}: {% if bug.pull_request_url %}{{ bug.pull_request_url }}{% else %}No{% endif %}
+{%- endif -%}
 {% endblock -%}
 {%- block body %}
+{%- if not patch_only -%}
 {%- if bug.body %}
 {{ bug.body | markdown | html2text }}
+{%- endif -%}
 {%- endif -%}
 {% endblock %}
 {% block patch %}
 {%- if patch -%}
 {{ patch | highlight }}
+{%- elif patch_only -%}
+{{ "Not a pull request!" | colourise('red') }}
 {%- endif -%}
 {% endblock -%}
 {%- block comments %}
+{%- if not patch_only -%}
 {%- if full and bug.comments > 0 -%}
 {% for comment in comments %}
 
@@ -31,5 +38,6 @@
 
 {{ comment.body | markdown | html2text }}
 {%- endfor %}
+{%- endif -%}
 {%- endif -%}
 {% endblock %}

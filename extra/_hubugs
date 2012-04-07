@@ -100,6 +100,7 @@ case "$words[1]" in
         '--help[show this help message and exit]' \
         '--full[show bug including comments]' \
         '--patch[display patches for pull requests]' \
+        '--patch-only[display only the patch content of pull requests]' \
         '--browse[open bug in web browser]'
     ;;
 (*)
