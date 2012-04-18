@@ -26,6 +26,55 @@ class ISODateTimeField(micromodels.DateTimeField):
                                                **kwargs)
 
 
+class User(micromodels.Model):
+    login = micromodels.CharField()
+    url = micromodels.CharField()
+    gravatar_id = micromodels.CharField()
+    avatar_url = micromodels.CharField()
+    id = micromodels.IntegerField()
+
+
+class Label(micromodels.Model):
+    color = micromodels.CharField()
+    url = micromodels.CharField()
+    name = micromodels.CharField()
+
+
+class PullRequest(micromodels.Model):
+    patch_url = micromodels.CharField()
+    diff_url = micromodels.CharField()
+    html_url = micromodels.CharField()
+
+
+class Issue(micromodels.Model):
+    updated_at = ISODateTimeField()
+    comments = micromodels.IntegerField()
+    assignee = micromodels.ModelField(User)
+    state = micromodels.CharField()
+    closed_at = ISODateTimeField()
+    milestone = micromodels.CharField()
+    url = micromodels.CharField()
+    user = micromodels.ModelField(User)
+    closed_by = micromodels.ModelField(User)
+    title = micromodels.CharField()
+    created_at = ISODateTimeField()
+    labels = micromodels.ModelCollectionField(Label)
+    number = micromodels.IntegerField()
+    body = micromodels.CharField()
+    pull_request = micromodels.ModelField(PullRequest)
+    id = micromodels.IntegerField()
+    html_url = micromodels.CharField()
+
+
+class Comment(micromodels.Model):
+    user = micromodels.ModelField(User)
+    created_at = ISODateTimeField()
+    body = micromodels.CharField()
+    url = micromodels.CharField()
+    id = micromodels.IntegerField()
+    updated_at = ISODateTimeField()
+
+
 class Application(micromodels.Model):
     url = micromodels.CharField()
     name = micromodels.CharField()
