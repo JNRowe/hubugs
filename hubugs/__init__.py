@@ -150,15 +150,18 @@ def setup(args):
 @order_arg
 def list_bugs(args):
     "listing bugs"
+    bugs = []
+    params = {}
     if args.label:
-        bugs = args.api("list_by_label", args.label)
-        if not args.state == "all":
-            bugs = filter(lambda x: x.state == args.state, bugs)
-    else:
-        bugs = []
-        states = ["open", "closed"] if args.state == "all" else [args.state, ]
-        for state in states:
-            bugs.extend(args.api("list", state))
+        params['labels'] = args.label
+
+    states = ["open", "closed"] if args.state == "all" else [args.state, ]
+    for state in states:
+        _params = params.copy()
+        _params['state'] = state
+        r = args.req_get('', params=_params)
+        bugs.extend(map(models.Issue.from_dict, json.loads(r.content)))
+
     return template.display_bugs(bugs, args.order, state=args.state)
 
 

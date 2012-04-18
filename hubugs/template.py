@@ -230,7 +230,7 @@ def term_markdown(text):
 def display_bugs(bugs, order, **extras):
     """Display bugs to users
 
-    :type bugs: ``list` of ``github2.issues.Issue``
+    :type bugs: ``list` of ``models.Issue``
     :param bugs: Bugs to display
     :param str order: Sorting order for displaying bugs
     :param dict extras: Additional values to pass to templates
