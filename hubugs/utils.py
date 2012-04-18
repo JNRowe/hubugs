@@ -19,13 +19,13 @@
 
 import os
 import re
-import sys
 import subprocess
 
 from collections import namedtuple
 
 import argh
 import blessings
+import requests
 
 from github2 import core as ghcore
 from github2.client import Github
@@ -78,7 +78,7 @@ class ProjectAction(argh.utils.argparse.Action):
         namespace.project = project
 
 
-def check_output(args):
+def check_output(args, **kwargs):
     """Simple check_output implementation for Python 2.6 compatibililty
 
     :param list args: Command and arguments to call
@@ -87,9 +87,9 @@ def check_output(args):
     :raise subprocess.CalledProcessError: If command execution fails
     """
     try:
-        return subprocess.check_output(args)
+        return subprocess.check_output(args, **kwargs)
     except AttributeError:
-        process = subprocess.Popen(args, stdout=subprocess.PIPE)
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, **kwargs)
         output, unused_err = process.communicate()
         retcode = process.poll()
         if retcode:
@@ -97,26 +97,29 @@ def check_output(args):
         return output
 
 
-def get_github_api(host_url=None):
+def get_github_api(auth=True):
     """Create a GitHub API instance
 
-    :param str host_url: GitHub host to connect to
-    :rtype: ``Github``
-    :return: Authenticated GitHub API instance
+    :param bool auth: Whether to create authenticated session
+    :rtype: ``requests.sessions.Session``
+    :return: GitHub HTTP session
     """
-    user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
-    token = os.getenv("GITHUB_TOKEN", get_git_config_val("github.token"))
-    if not user or not token:
-        raise EnvironmentError("No GitHub authentication settings found!")
+    headers = {}
+    if auth:
+        token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
+        if not token:
+            raise EnvironmentError("No hubugs authentication token found!  "
+                                   "Run 'hubugs setup' to create a token")
+        headers["Authorization"] = "token %s" % token
 
-    if sys.platform == 'darwin':
-        user_cache_dir = os.path.expanduser("~/Library/Caches")
-    else:
-        user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
-    xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
-    cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
-    return Github(username=user, api_token=token, cache=cache_dir,
-                  github_url=host_url)
+    # if sys.platform == 'darwin':
+    #     user_cache_dir = os.path.expanduser("~/Library/Caches")
+    # else:
+    #     user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
+    # xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
+    # cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
+
+    return requests.session(headers=headers)
 
 
 def get_git_config_val(key, default=None, local_only=False):
@@ -135,6 +138,23 @@ def get_git_config_val(key, default=None, local_only=False):
     except subprocess.CalledProcessError:
         output = default
     return output
+
+
+def set_git_config_val(key, value, local_only=False):
+    """Set a git configuration value
+
+    :param str key: Configuration value to fetch
+    :param str value: Value to set
+    :param bool local_only: Set configuration values from repo config only
+    """
+    cmd = ['git', 'config', ]
+    if not local_only:
+        cmd.append('--global')
+    cmd.extend([key, value])
+    try:
+        check_output(cmd, stderr=subprocess.STDOUT).strip()
+    except subprocess.CalledProcessError as e:
+        raise argh.CommandError(e.output)
 
 
 def get_editor():
@@ -183,19 +203,13 @@ def get_term_size():
 
 
 def set_api(args):
-    """Add authenticated issues API object to args namespace
+    """Add HTTP session object to args namespace
 
     :param argparse.Namespace args: argparse namespace to operate on
     """
     if not args.project:
         args.project = get_repo()
-    api = get_github_api(args.host_url)
-    issues = api.issues
 
-    def api_method(method, *opts, **kwargs):
-        "Wrapper for calling functions from api.issues"
-        return getattr(issues, method)(args.project, *opts, **kwargs)
-    args.api = api_method
-    # Include a direct httplib2.Http object, for non-issues related network
-    # access.
-    args._http = api.request._http
+    # We use manual auth when calling setup
+    use_auth = not args.function.__name__ == 'setup'
+    args.session = get_github_api(use_auth)

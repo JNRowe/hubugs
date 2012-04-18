@@ -40,12 +40,16 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import atexit
+import getpass
+import json
 import logging
+import os
 import sys
 import webbrowser
 
 import argh
 import httplib2
+import requests
 
 
 logging.basicConfig(level=logging.ERROR,
@@ -56,7 +60,7 @@ atexit.register(logging.shutdown)
 
 from github2.request import (HttpError, charset_from_headers)
 
-from . import (template, utils)
+from . import (models, template, utils)
 
 
 COMMANDS = []
@@ -102,6 +106,41 @@ label_add_arg = argh.arg("-a", "--add", action="append", default=[],
 label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
                             help="remove label from issue", metavar="label")
 # pylint: enable-msg=C0103
+
+
+@command
+@argh.arg('--local', default=False,
+          help='set access token for local repository only')
+def setup(args):
+    "setup GitHub access token"
+    default_user = os.getenv("GITHUB_USER",
+                             utils.get_git_config_val("github.user",
+                                                      getpass.getuser()))
+    try:
+        user = raw_input('GitHub user? [%s] ' % default_user)
+        if not user:
+            user = default_user
+        password = getpass.getpass('GitHub password? ')
+    except KeyboardInterrupt:
+        return
+    private = argh.confirm('Support private repositories', default=True)
+    data = {
+        'scopes': ['repo' if private else 'public_repo'],
+        'note': 'hubugs',
+        'note_url': 'https://github.com/JNRowe/hubugs'
+    }
+
+    auth = requests.auth.HTTPBasicAuth(user, password)
+    r = requests.post('https://api.github.com/authorizations', auth=auth,
+                      data=json.dumps(data))
+    try:
+        r.raise_for_status()
+    except requests.HTTPError:
+        raise argh.CommandError("Error generating token: %s"
+                                % json.loads(r.content)['message'])
+    auth = models.Authorisation.from_dict(r.content, is_json=True)
+    utils.set_git_config_val('hubugs.token', auth.token, args.local)
+    yield utils.success('Configuration complete!')
 
 
 @command

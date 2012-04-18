@@ -17,33 +17,30 @@ Requirements
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
 dependencies outside of the standard library are argh_, blessings_, github2_
-v0.6 or newer, html2text_, Jinja_, misaka_ and Pygments_.
+v0.6 or newer, html2text_, Jinja_, micromodels_, misaka_, Pygments_ and
+requests_.
 
 Configuration
 -------------
 
-Before using ``hubugs`` you must declare your authentication settings, so that
-we can access the API.
+Before ``hubugs`` can operate on issues you must generate an OAuth_ token.
+``hubugs`` provides functionality to do this::
 
-You first need to define your GitHub user name::
-
-    $ git config --global github.user username
-
-And then you need to define your GitHub API token, this can be found in the
-`account admin`_ tab of your GitHub `account page`_::
-
-    $ git config --global github.token token
+    $ hubugs setup
+    GitHub user? [JNRowe]
+    GitHub password? <password>
+    Support private repositories? (Y/n) y
+    Configuration complete!
 
 .. note::
 
-   If you change your GitHub password your ``github.token`` setting will be
-   invalid, and you must set it again.
+   You can revoke the generated token at any time from the `GitHub settings`_
+   page.
 
-If you wish to set the authentication information from the command line you can
-use the ``GITHUB_USER`` and ``GITHUB_TOKEN`` environment variables.  For
-example::
+If you wish to set the authentication token from the command line you can
+use the ``HUBUGS_TOKEN`` environment variable.  For example::
 
-    $ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx hubugs open
+    $ HUBUGS_TOKEN=xxx hubugs open
 
 Contributors
 ------------
@@ -112,10 +109,12 @@ I can reproduce the problem, or even better a patch!
 .. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
+.. _micromodels: http://pypi.python.org/pypi/micromodels/
 .. _misaka: http://pypi.python.org/pypi/misaka/
 .. _Pygments: http://pygments.org/
-.. _account admin: https://github.com/account/admin
-.. _account page: https://github.com/account
+.. _requests: http://pypi.python.org/pypi/requests/
+.. _OAuth: http://oauth.net/
+.. _GitHub settings: https://github.com/settings/applications/
 .. _pull requests: http://github.com/JNRowe/hubugs/issues
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html

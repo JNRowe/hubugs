@@ -43,6 +43,14 @@ OPTIONS
 Commands
 --------
 
+``setup``
+'''''''''
+
+Generate a new GitHub access token
+
+--local
+   set access token for local repository only
+
 ``list``
 ''''''''
 

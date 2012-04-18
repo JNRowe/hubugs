@@ -63,6 +63,20 @@ Options
 Commands
 --------
 
+``setup`` - Generate a new GitHub access token
+''''''''''''''''''''''''''''''''''''''''''''''
+
+.. program:: hubugs setup
+
+::
+
+    hubugs.py setup [-h] [--local]
+
+.. cmdoption:: --local
+
+   set access token for local repository only
+
+
 ``list`` - List bugs for a project
 ''''''''''''''''''''''''''''''''''
 
