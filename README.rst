@@ -6,6 +6,12 @@ Introduction
 
 ``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
 
+.. important::
+
+   This package is in a *rapid* state of flux right now, as support for version
+   3 of the `GitHub API`_ is added.  Be aware there may be some significant
+   changes to the user interface coming soon!
+
 Requirements
 ------------
 
@@ -99,6 +105,7 @@ If you've found a problem please attempt to include a minimal testcase so
 I can reproduce the problem, or even better a patch!
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
+.. _GitHub API: http://developer.github.com/v3/
 .. _Python: http://www.python.org/
 .. _argh: http://pypi.python.org/pypi/argh/
 .. _blessings: http://pypi.python.org/pypi/blessings/

@@ -28,7 +28,7 @@ Therefore:
     Network data must be `cached and compressed`_ where possible
 
 .. _GitHub: https://github.com/
-.. _thoroughly documented API: http://develop.github.com/
+.. _thoroughly documented API: http://developer.github.com/v3/
 .. _command line interface: http://pypi.python.org/pypi/argh/
 .. _templates: http://jinja.pocoo.org/
 .. _cached and compressed: http://code.google.com/p/httplib2/
