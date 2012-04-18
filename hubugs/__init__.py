@@ -44,6 +44,8 @@ import getpass
 import json
 import logging
 import os
+# Used by raw_input, when imported
+import readline  # NOQA
 import sys
 import webbrowser
 
