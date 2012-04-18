@@ -25,11 +25,10 @@ def fake_env(key, default=None):
     return fake_data[key]
 
 
-class Colouriser(TestCase):
-    def test_colouriser(self):
-        assert_equals(utils.success('test'), u'\x1b[38;5;10mtest\x1b[m\x1b(B')
-        assert_equals(utils.fail('test'), u'\x1b[38;5;9mtest\x1b[m\x1b(B')
-        assert_equals(utils.warn('test'), u'\x1b[38;5;11mtest\x1b[m\x1b(B')
+def test_colouriser():
+    assert_equals(utils.success('test'), u'\x1b[38;5;10mtest\x1b[m\x1b(B')
+    assert_equals(utils.fail('test'), u'\x1b[38;5;9mtest\x1b[m\x1b(B')
+    assert_equals(utils.warn('test'), u'\x1b[38;5;11mtest\x1b[m\x1b(B')
 
 
 class ProjectAction(TestCase):
