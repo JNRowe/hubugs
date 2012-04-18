@@ -43,6 +43,7 @@ import atexit
 import getpass
 import json
 import logging
+import operator
 import os
 # Used by raw_input, when imported
 import readline  # NOQA
@@ -360,15 +361,18 @@ def reopen(args):
 @bugs_arg
 def label(args):
     "labelling bugs"
-    for bug in args.bugs:
+    for bug_no in args.bugs:
+        r = args.req_get(bug_no)
+        bug = models.Issue.from_dict(r.content, is_json=True)
+        labels = map(operator.attrgetter('name'), bug.labels)
+        labels.extend(args.add)
+        for string in args.remove:
+            labels.remove(string)
         try:
-            for string in args.add:
-                args.api("add_label", bug, string)
-            for string in args.remove:
-                args.api("remove_label", bug, string)
+            r = args.req_post(bug_no, data=json.dumps({'labels': labels}))
         except RuntimeError as error:
-            if "Issue #%s not found" % bug in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug)
+            if "Issue #%s not found" % bug_no in error.args[0]:
+                yield utils.fail("Issue %r not found" % bug_no)
             else:
                 raise
 
