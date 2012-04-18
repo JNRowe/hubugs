@@ -48,7 +48,6 @@ import sys
 import webbrowser
 
 import argh
-import httplib2
 import requests
 
 
@@ -57,8 +56,6 @@ logging.basicConfig(level=logging.ERROR,
                     datefmt="%Y-%m-%dT%H:%M:%S")
 atexit.register(logging.shutdown)
 
-
-from github2.request import (HttpError, charset_from_headers)
 
 from . import (models, template, utils)
 
@@ -388,7 +385,7 @@ def main():
     parser.add_argument("-p", "--project", action=utils.ProjectAction,
                         help="GitHub project to operate on",
                         metavar="project")
-    parser.add_argument("-u", "--host-url", default=None,
+    parser.add_argument("-u", "--host-url", default='https://api.github.com',
                         help="GitHub Enterprise host to connect to",
                         metavar="url")
     parser.add_commands(COMMANDS)
@@ -396,9 +393,9 @@ def main():
         parser.dispatch(pre_call=utils.set_api)
     except (EnvironmentError, utils.RepoError) as error:
         parser.error(error)
-    except httplib2.ServerNotFoundError:
+    except requests.ConnectionError:
         raise parser.error("Project lookup failed.  Network or GitHub down?")
-    except HttpError as error:
+    except requests.HTTPError as error:
         if error.code == 404 and "Repository not found" in error.message:
             parser.error("Unknown project")
         else:

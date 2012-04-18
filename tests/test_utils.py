@@ -244,13 +244,3 @@ class SetApi(TestCase):
                                        host_url=None, function=lambda: True)
         utils.set_api(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
-
-    @patch('os.getenv')
-    @patch('github2.request.GithubRequest.raw_request')
-    def test_api(self, raw_request, getenv):
-        raw_request.return_value = {u'issues': []}
-        getenv.side_effect = fake_env
-        namespace = argparse.Namespace(project='JNRowe/misc-overlay',
-                                       host_url=None)
-        utils.set_api(namespace)
-        assert_equals(namespace.api('list'), [])

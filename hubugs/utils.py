@@ -22,13 +22,11 @@ import re
 import subprocess
 
 from collections import namedtuple
+from functools import partial
 
 import argh
 import blessings
 import requests
-
-from github2 import core as ghcore
-from github2.client import Github
 
 
 T = blessings.Terminal()
@@ -56,10 +54,6 @@ def fail(text):
 
 def warn(text):
     return _colourise(text, 'bright yellow')
-
-
-# Use timezone aware datetimes in github2 package
-ghcore.NAIVE = False
 
 
 class RepoError(ValueError):
@@ -212,4 +206,17 @@ def set_api(args):
 
     # We use manual auth when calling setup
     use_auth = not args.function.__name__ == 'setup'
-    args.session = get_github_api(use_auth)
+    session = get_github_api(use_auth)
+
+    def api_method(method, loc, *pargs, **kwargs):
+        func = getattr(session, method)
+        url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
+                                          '/' if loc else '', loc)
+        return func(url, *pargs, **kwargs)
+
+    args.req_get = partial(api_method, 'get')
+    args.req_post = partial(api_method, 'post')
+    args.req_patch = partial(api_method, 'patch')
+    args.req_delete = partial(api_method, 'delete')
+    # Include a direct session object, for non-issues related network access.
+    args.session = session
