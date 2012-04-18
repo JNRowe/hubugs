@@ -244,7 +244,8 @@ def comment(args):
         message = template.edit_text()
     for bug in args.bugs:
         try:
-            args.api("comment", bug, message)
+            args.req_post('%s/comments' % bug,
+                          data=json.dumps({'body': message}))
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
