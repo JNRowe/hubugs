@@ -344,8 +344,9 @@ def reopen(args):
     for bug in args.bugs:
         try:
             if message:
-                args.api("comment", bug, message)
-            args.api("reopen", bug)
+                args.req_post('%s/comments' % bug,
+                              data=json.dumps({'body': message}))
+            args.req_post(bug, data=json.dumps({'state': 'open'}))
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
