@@ -223,9 +223,9 @@ def open_bug(args):
     else:
         title = args.title
         body = args.body
-    bug = args.api("open", title, body)
-    for string in args.add:
-        args.api("add_label", bug.number, string)
+    data = {'title': title, 'body': body, 'labels': args.add}
+    r = args.req_post('', data=json.dumps(data))
+    bug = models.Issue.from_dict(r.content, is_json=True)
     return utils.success("Bug %d opened" % bug.number)
 
 
