@@ -269,7 +269,8 @@ def edit(args):
             text = sys.stdin.readlines()
         elif not args.title:
             try:
-                current = args.api("show", bug)
+                r = args.req_get(bug)
+                current = models.Issue.from_dict(r.content, is_json=True)
             except RuntimeError as error:
                 if "Issue #%s not found" % bug in error.args[0]:
                     yield utils.fail("Issue %r not found" % bug)
@@ -286,7 +287,8 @@ def edit(args):
             body = args.body
 
         try:
-            args.api("edit", bug, title, body)
+            data = {'title': title, 'body': body}
+            args.req_post(bug, data=json.dumps(data))
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
