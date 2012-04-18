@@ -182,7 +182,8 @@ def show(args):
                                     % (args.project, bug_no))
             continue
         try:
-            bug = args.api("show", bug_no)
+            r = args.req_get(bug_no)
+            bug = models.Issue.from_dict(r.content, is_json=True)
         except RuntimeError as error:
             if "Issue #%s not found" % bug_no in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
@@ -190,13 +191,13 @@ def show(args):
             else:
                 raise
 
-        if args.full:
-            comments = args.api("comments", bug.number)
+        if args.full and bug.comments:
+            r = args.req_get('%s/comments' % bug_no)
+            comments = map(models.Comment.from_dict, json.loads(r.content))
         else:
             comments = []
-        if (args.patch or args.patch_only) and bug.pull_request_url:
-            request, body = args._http.request(bug.patch_url)
-            patch = body.decode(charset_from_headers(request))
+        if (args.patch or args.patch_only) and bug.pull_request:
+            patch = args.session.get(bug.pull_request.patch_url).content
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,

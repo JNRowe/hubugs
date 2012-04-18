@@ -45,6 +45,9 @@ class PullRequest(micromodels.Model):
     diff_url = micromodels.CharField()
     html_url = micromodels.CharField()
 
+    def __nonzero__(self):
+        return bool(self.patch_url)
+
 
 class Issue(micromodels.Model):
     updated_at = ISODateTimeField()

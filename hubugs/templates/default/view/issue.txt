@@ -4,8 +4,8 @@
 {%- if not patch_only -%}
 {{ "          Id" | colourise(heading_colour) }}: {{ bug.number }}
 {{ "       Title" | colourise(heading_colour) }}: {{ bug.title }}
-{{ "      Labels" | colourise(heading_colour) }}: {{ bug.labels | join(", ") }}
-{{ "     Created" | colourise(heading_colour) }}: {{ bug.created_at | relative_time }} by {{ bug.user | colourise(user_colour) }}
+{{ "      Labels" | colourise(heading_colour) }}: {{ bug.labels | join(", ", "name") }}
+{{ "     Created" | colourise(heading_colour) }}: {{ bug.created_at | relative_time }} by {{ bug.user.login | colourise(user_colour) }}
 {{ "     Updated" | colourise(heading_colour) }}: {{ bug.updated_at | relative_time }}
 {{ "       State" | colourise(heading_colour) }}: {{ bug.state }}{% if bug.closed_at %} {{ bug.closed_at | relative_time }}{% endif %}
 {{ "    Comments" | colourise(heading_colour) }}: {{ bug.comments }}
@@ -33,7 +33,7 @@
 {% for comment in comments %}
 
 {{ " Comment" | colourise(heading_colour) }}: {{ loop.index }}
-{{ " Created" | colourise(heading_colour) }}: {{ comment.created_at | relative_time }} by {{ comment.user | colourise(user_colour) }}
+{{ " Created" | colourise(heading_colour) }}: {{ comment.created_at | relative_time }} by {{ comment.user.login | colourise(user_colour) }}
 {{ " Updated" | colourise(heading_colour) }}: {{ comment.updated_at | relative_time }}
 
 {{ comment.body | markdown | html2text }}
