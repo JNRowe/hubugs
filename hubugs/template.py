@@ -29,7 +29,6 @@ import html2text as html2
 import jinja2
 import misaka
 
-from dateutil import tz
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
@@ -170,7 +169,7 @@ def relative_time(timestamp):
     ]
     match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
 
-    delta = datetime.datetime.utcnow().replace(tzinfo=tz.tzutc()) - timestamp
+    delta = datetime.datetime.utcnow() - timestamp
     # Switch to delta.total_seconds, if 2.6 support is dropped
     seconds = delta.days * 86400 + delta.seconds
     for scale in matches:
