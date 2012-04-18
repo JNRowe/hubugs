@@ -65,17 +65,6 @@ List bugs for a project
 -o <order>, --order=<order>
    sort order for listing bugs
 
-``search``
-''''''''''
-
-Search bugs reports in a project
-
--s <state>, --state=<state>
-   state of bugs to operate on
-
--o <order>, --order=<order>
-   sort order for listing bugs
-
 ``show``
 ''''''''
 

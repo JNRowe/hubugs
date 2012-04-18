@@ -166,20 +166,6 @@ def list_bugs(args):
 
 
 @command
-@states_arg
-@order_arg
-@argh.arg("term", help="term to search bugs for")
-def search(args):
-    "searching bugs"
-    states = ["open", "closed"] if args.state == "all" else [args.state, ]
-    bugs = []
-    for state in states:
-        bugs.extend(args.api("search", args.term, state))
-    return template.display_bugs(bugs, args.order, term=args.term,
-                                 state=args.state)
-
-
-@command
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("-p", "--patch", default=False,
           help="display patches for pull requests")

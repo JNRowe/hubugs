@@ -91,10 +91,6 @@ View group
 
    The display order
 
-.. data:: term(str)
-
-   The search term being listed, if any
-
 ``issue.txt`` data
 ~~~~~~~~~~~~~~~~~~
 

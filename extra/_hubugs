@@ -50,7 +50,7 @@ _arguments '--help[show help message and exit]' \
     "--version[show program's version number and exit]" \
     '--project=[GitHub project to operate on]:select project:__list_projects' \
     '--host-url=[GitHub Enterprise host to connect to]:select host:__list_hosts' \
-    ':hubugs command:(close comment edit label list open reopen search show)' \
+    ':hubugs command:(close comment edit label list open reopen show)' \
     '*::subcmd:->subcmd' && return 0
 
 ### DGEN_TAG: Generated from hubugs/__init__.py {{{
@@ -89,11 +89,6 @@ case "$words[1]" in
     _arguments '--help[show help message and exit]' \
         '--stdin[read message from standard input]' \
         '--message=[comment text]:message text: '
-    ;;
-(search)
-    _arguments '--help[show help message and exit]' \
-        '--state=[state of bugs to operate on]:select state:(open closed all)' \
-        '--order=[sort order for listing bugs]:select order:(number updated votes)'
     ;;
 (show)
     _arguments '--help[show help message and exit]' \
