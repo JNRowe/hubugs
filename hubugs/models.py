@@ -33,11 +33,17 @@ class User(micromodels.Model):
     avatar_url = micromodels.CharField()
     id = micromodels.IntegerField()
 
+    def __repr__(self):
+        return "<%s %r>" % (self.__class__.__name__, self.login)
+
 
 class Label(micromodels.Model):
     color = micromodels.CharField()
     url = micromodels.CharField()
     name = micromodels.CharField()
+
+    def __repr__(self):
+        return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
 class PullRequest(micromodels.Model):
@@ -47,6 +53,9 @@ class PullRequest(micromodels.Model):
 
     def __nonzero__(self):
         return bool(self.patch_url)
+
+    def __repr__(self):
+        return "<%s %r>" % (self.__class__.__name__, self.patch_url)
 
 
 class Issue(micromodels.Model):
@@ -68,6 +77,10 @@ class Issue(micromodels.Model):
     id = micromodels.IntegerField()
     html_url = micromodels.CharField()
 
+    def __repr__(self):
+        return "<%s %s %r>" % (self.__class__.__name__, self.id,
+                               self.title[:20])
+
 
 class Comment(micromodels.Model):
     user = micromodels.ModelField(User)
@@ -76,6 +89,10 @@ class Comment(micromodels.Model):
     url = micromodels.CharField()
     id = micromodels.IntegerField()
     updated_at = ISODateTimeField()
+
+    def __repr__(self):
+        return "<%s %s %r>" % (self.__class__.__name__, self.id,
+                               self.body[:20])
 
 
 class Application(micromodels.Model):
