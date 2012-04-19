@@ -137,8 +137,8 @@ def setup(args):
         r.raise_for_status()
     except requests.HTTPError:
         raise argh.CommandError("Error generating token: %s"
-                                % json.loads(r.content)['message'])
-    auth = models.Authorisation.from_dict(r.content, is_json=True)
+                                % json.loads(r.text)['message'])
+    auth = models.Authorisation.from_dict(r.text, is_json=True)
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
     yield utils.success('Configuration complete!')
 
@@ -161,7 +161,7 @@ def list_bugs(args):
         _params = params.copy()
         _params['state'] = state
         r = args.req_get('', params=_params)
-        bugs.extend(map(models.Issue.from_dict, json.loads(r.content)))
+        bugs.extend(map(models.Issue.from_dict, json.loads(r.text)))
 
     return template.display_bugs(bugs, args.order, state=args.state)
 
@@ -184,7 +184,7 @@ def show(args):
             continue
         try:
             r = args.req_get(bug_no)
-            bug = models.Issue.from_dict(r.content, is_json=True)
+            bug = models.Issue.from_dict(r.text, is_json=True)
         except RuntimeError as error:
             if "Issue #%s not found" % bug_no in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
@@ -194,11 +194,11 @@ def show(args):
 
         if args.full and bug.comments:
             r = args.req_get('%s/comments' % bug_no)
-            comments = map(models.Comment.from_dict, json.loads(r.content))
+            comments = map(models.Comment.from_dict, json.loads(r.text))
         else:
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
-            patch = args.session.get(bug.pull_request.patch_url).content
+            patch = args.session.get(bug.pull_request.patch_url).text
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,
@@ -226,7 +226,7 @@ def open_bug(args):
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add}
     r = args.req_post('', data=json.dumps(data))
-    bug = models.Issue.from_dict(r.content, is_json=True)
+    bug = models.Issue.from_dict(r.text, is_json=True)
     return utils.success("Bug %d opened" % bug.number)
 
 
@@ -271,7 +271,7 @@ def edit(args):
         elif not args.title:
             try:
                 r = args.req_get(bug)
-                current = models.Issue.from_dict(r.content, is_json=True)
+                current = models.Issue.from_dict(r.text, is_json=True)
             except RuntimeError as error:
                 if "Issue #%s not found" % bug in error.args[0]:
                     yield utils.fail("Issue %r not found" % bug)
@@ -363,7 +363,7 @@ def label(args):
     "labelling bugs"
     for bug_no in args.bugs:
         r = args.req_get(bug_no)
-        bug = models.Issue.from_dict(r.content, is_json=True)
+        bug = models.Issue.from_dict(r.text, is_json=True)
         labels = map(operator.attrgetter('name'), bug.labels)
         labels.extend(args.add)
         for string in args.remove:
