@@ -87,7 +87,7 @@ User-visible changes
 
 * Support for editing an existing bug's title and/or summary
 * Support for re-opening closed bugs
-* GitHub authentication values can be read from the environment using
+* GitHub authorisation values can be read from the environment using
   ``GITHUB_USER`` and ``GITHUB_TOKEN``
 * Labels are now included in list output
 * argh_ is now required

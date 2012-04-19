@@ -94,7 +94,7 @@ def check_output(args, **kwargs):
 def get_github_api(auth=True):
     """Create a GitHub API instance
 
-    :param bool auth: Whether to create authenticated session
+    :param bool auth: Whether to create an authorised session
     :rtype: ``requests.sessions.Session``
     :return: GitHub HTTP session
     """
@@ -102,7 +102,7 @@ def get_github_api(auth=True):
     if auth:
         token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
         if not token:
-            raise EnvironmentError("No hubugs authentication token found!  "
+            raise EnvironmentError("No hubugs authorisation token found!  "
                                    "Run 'hubugs setup' to create a token")
         headers["Authorization"] = "token %s" % token
 

@@ -36,8 +36,8 @@ Before ``hubugs`` can operate on issues you must generate an OAuth_ token.
    You can revoke the generated token at any time from the `GitHub settings`_
    page.
 
-If you wish to set the authentication token from the command line you can
-use the ``HUBUGS_TOKEN`` environment variable.  For example::
+If you wish to set the authorisation token from the command line you can use the
+``HUBUGS_TOKEN`` environment variable.  For example::
 
     $ HUBUGS_TOKEN=xxx hubugs open
 
@@ -50,7 +50,7 @@ I'd like to thank the following people who have contributed to
 Patches
 '''''''
 
-<Your name here?>
+* Matt Leighton
 
 Bug reports
 '''''''''''
@@ -62,7 +62,6 @@ Ideas
 '''''
 
 * James Gray
-* Matt Leighy
 * Jules Marleau
 
 If I've forgotten to include your name I wholeheartedly apologise.  Just

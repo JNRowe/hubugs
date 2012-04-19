@@ -17,8 +17,8 @@ token.  :program:`hubugs` provides functionality to do this:
    You can revoke the generated token at any time from the `GitHub settings`_
    page.
 
-If you wish to set the authentication token from the command line you can
-use the :envvar:`HUBUGS_TOKEN` environment variable.  For example:
+If you wish to set the authorisation token from the command line you can use the
+:envvar:`HUBUGS_TOKEN` environment variable.  For example:
 
 .. code-block:: sh
 
