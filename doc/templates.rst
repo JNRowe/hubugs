@@ -189,24 +189,6 @@ formatters.
 
 This filter converts HTML to a plain text representation using html2text_.
 
-.. _markdown-label:
-
-``markdown``
-''''''''''''
-
-The purpose of this filter is to convert the Markdown_ formatted text from
-a GitHub issue to html.  The excellent misaka_ package is used to provide the
-conversion.
-
-In the default templates it is used to render bug bodies::
-
-    {{ comment.body | markdown | html2text }}
-
-.. note::
-   We ping-pong the conversion from Markdown to HTML as it produces a prettier
-   text representation of the comment.  We benefit from uniform newline usage
-   and clean word wrapping of the output.
-
 ``relative_time``
 '''''''''''''''''
 
@@ -247,4 +229,3 @@ sequences aren't included in the line width calculations for wrapping.
 .. _Pygments: http://pygments.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
 .. _Markdown: http://daringfireball.net/projects/markdown/
-.. _misaka: http://pypi.python.org/pypi/misaka/

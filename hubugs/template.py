@@ -27,7 +27,6 @@ import tempfile
 
 import html2text as html2
 import jinja2
-import misaka
 
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
@@ -128,18 +127,6 @@ def html2text(html, width=80, ascii_replacements=False):
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
     return html2.html2text(html).strip()
-
-
-@jinja_filter
-def markdown(text):
-    """Markdown to HTML renderer
-
-    :param str text: Text to process
-    :rtype: ``str``
-    :return: Rendered HTML
-    """
-    extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
-    return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
 
 
 @jinja_filter

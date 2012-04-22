@@ -17,7 +17,7 @@ Requirements
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
 dependencies outside of the standard library are argh_, blessings_, html2text_,
-Jinja_, micromodels_, misaka_, Pygments_ and requests_.
+Jinja_, micromodels_, Pygments_ and requests_.
 
 Configuration
 -------------
@@ -107,7 +107,6 @@ I can reproduce the problem, or even better a patch!
 .. _Jinja: http://jinja.pocoo.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
 .. _micromodels: http://pypi.python.org/pypi/micromodels/
-.. _misaka: http://pypi.python.org/pypi/misaka/
 .. _Pygments: http://pygments.org/
 .. _requests: http://pypi.python.org/pypi/requests/
 .. _OAuth: http://oauth.net/

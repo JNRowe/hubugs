@@ -10,7 +10,7 @@ _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
 install_requires = ['argh', 'blessings', 'html2text', 'Jinja2>=2',
-                    'micromodels', 'misaka', 'Pygments', 'requests']
+                    'micromodels', 'Pygments', 'requests']
 if sys.version_info[:2] < (2, 7):
     install_requires.append('argparse')
 
