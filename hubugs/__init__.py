@@ -130,7 +130,7 @@ def setup(args):
     }
 
     auth = requests.auth.HTTPBasicAuth(user, password)
-    r = requests.post('https://api.github.com/authorizations', auth=auth,
+    r = args.req_post('https://api.github.com/authorizations', auth=auth,
                       data=data)
     auth = models.Authorisation.from_dict(r.json)
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
