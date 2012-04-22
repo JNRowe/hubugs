@@ -90,6 +90,10 @@ case "$words[1]" in
         '--stdin[read message from standard input]' \
         '--message=[comment text]:message text: '
     ;;
+(setup)
+    _arguments '--help[show help message and exit]' \
+        '--local[set access token for local repository only]'
+    ;;
 (show)
     _arguments '--help[show help message and exit]' \
         '--help[show this help message and exit]' \
