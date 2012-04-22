@@ -23,7 +23,6 @@ Let's start with some basic examples:
          Updated: yesterday
            State: open
         Comments: 0
-           Votes: 0
     Pull request: No
 
     This project deserves some real user documentation, not just a few notes in
@@ -79,7 +78,7 @@ Commands
 ::
 
     hubugs list [-h] [-s {open,closed,all}] [-l label]
-        [-o {number,updated,votes}]
+        [-o {number,updated}]
 
 .. cmdoption:: -s <state>, --state=<state>
 

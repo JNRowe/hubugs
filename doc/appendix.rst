@@ -58,10 +58,6 @@ Appendix
 
    The GitHub username of the user that created the issue.
 
-.. attribute:: Bug.votes(int)
-
-   Number of votes the issue has received.
-
 .. _comment_objects-label:
 
 ``Comment`` objects

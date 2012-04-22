@@ -9,7 +9,6 @@
 {{ "     Updated" | colourise(heading_colour) }}: {{ bug.updated_at | relative_time }}
 {{ "       State" | colourise(heading_colour) }}: {{ bug.state }}{% if bug.closed_at %} {{ bug.closed_at | relative_time }}{% endif %}
 {{ "    Comments" | colourise(heading_colour) }}: {{ bug.comments }}
-{{ "       Votes" | colourise(heading_colour) }}: {{ bug.votes }}
 {{ "Pull request" | colourise(heading_colour) }}: {% if bug.pull_request_url %}{{ bug.pull_request_url }}{% else %}No{% endif %}
 {%- endif -%}
 {% endblock -%}

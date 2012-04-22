@@ -78,7 +78,7 @@ case "$words[1]" in
     _arguments '--help[show help message and exit]' \
         '--state=[state of bugs to operate on]:select state:(open closed all)' \
         '--label=[list bugs with specified label]:select label: ' \
-        '--order=[sort order for listing bugs]:select order:(number updated votes)'
+        '--order=[sort order for listing bugs]:select order:(number updated)'
     ;;
 (open)
     _arguments '--help[show help message and exit]' \

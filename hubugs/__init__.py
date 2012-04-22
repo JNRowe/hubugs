@@ -87,7 +87,7 @@ bugs_arg = argh.arg("bugs", nargs="+", type=int,
 message_arg = argh.arg("-m", "--message", help="comment text")
 
 order_arg = argh.arg("-o", "--order", default="number",
-                     choices=["number", "updated", "votes"],
+                     choices=["number", "updated"],
                      help="sort order for listing bugs")
 
 states_arg = argh.arg("-s", "--state", default="open",
