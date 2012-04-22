@@ -117,6 +117,10 @@ View group
    The content found at the location in :attr:`Bug.patch_url`, if the user
    provided the :option:`hubugs show -p` option
 
+.. data:: patch_only(bool)
+
+   True, if the user provided the :option:`hubugs show -o` option
+
 Edit group
 ''''''''''
 
