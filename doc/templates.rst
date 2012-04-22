@@ -203,23 +203,6 @@ which could produce output such as::
 
     about two months ago
 
-``term_markdown``
-'''''''''''''''''
-
-This filter is a very simple way pretty print Markdown_ formatted text. It only
-handles headings, horizontal rules and emphasis currently.
-
-It is not recommended that you use this filter, but it is available as fallback
-for people who do not wish to use the full :ref:`markdown-label` filter.
-
-An example of its usage could be::
-
-    {{ comment.body | wordwrap(break_long_words=False) | term_markdown }}
-
-Note that we pass the text through Jinja's built-in :func:`jinja:wordwrap`
-filter prior to formatting with ``term_markdown`` so that the terminal escape
-sequences aren't included in the line width calculations for wrapping.
-
 .. _Jinja: http://jinja.pocoo.org/
 .. _Jinja template designer: http://jinja.pocoo.org/docs/templates/
 .. _XDG Base Directory Specification: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -228,4 +211,3 @@ sequences aren't included in the line width calculations for wrapping.
 .. _built-in filters: http://jinja.pocoo.org/docs/templates/#list-of-builtin-filters
 .. _Pygments: http://pygments.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
-.. _Markdown: http://daringfireball.net/projects/markdown/

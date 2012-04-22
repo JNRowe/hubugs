@@ -138,39 +138,3 @@ class RelativeTime(TestCase):
     def test_seconds_ago(self):
         dt = datetime.utcnow() - timedelta(seconds=12)
         assert_equals(template.relative_time(dt), 'about 12 seconds ago')
-
-
-class TermMarkdown(TestCase):
-    @patch('sys.stdout')
-    def test_rule(self, stdout):
-        stdout.encoding = 'UTF-8'
-        assert_equals(template.term_markdown('- - -'),
-                      u'\x1b[38;5;2m- - -\x1b[m\x1b(B')
-        assert_equals(template.term_markdown('- - - - -'),
-                      u'\x1b[38;5;2m- - - - -\x1b[m\x1b(B')
-
-    @patch('sys.stdout')
-    def test_emphasis(self, stdout):
-        stdout.encoding = 'UTF-8'
-        assert_equals(template.term_markdown('this is *emphasis*'),
-                      u'this is \x1b[1memphasis\x1b[m\x1b(B')
-        assert_equals(template.term_markdown('this is _emphasis_'),
-                      u'this is \x1b[1memphasis\x1b[m\x1b(B')
-
-    @patch('sys.stdout')
-    def test_strong_emphasis(self, stdout):
-        stdout.encoding = 'UTF-8'
-        assert_equals(template.term_markdown('this is **strong** emphasis'),
-                      u'this is \x1b[4mstrong\x1b[m\x1b(B emphasis')
-        assert_equals(template.term_markdown('this is __strong__ emphasis'),
-                      u'this is \x1b[4mstrong\x1b[m\x1b(B emphasis')
-
-    @patch('sys.stdout')
-    def test_fancy_bullet(self, stdout):
-        stdout.encoding = 'UTF-8'
-        assert_equals(template.term_markdown('* list item'),
-                      u'\u2022 list item')
-        assert_equals(template.term_markdown('+ list item'),
-                      u'\u2022 list item')
-        assert_equals(template.term_markdown('- list item'),
-                      u'\u2022 list item')

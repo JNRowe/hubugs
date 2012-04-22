@@ -20,7 +20,6 @@
 import datetime
 import operator
 import os
-import re
 import sys
 import subprocess
 import tempfile
@@ -175,43 +174,6 @@ def relative_time(timestamp):
         result = "about %s %s%s ago" % (i if i > 10 else numstr[i], name,
                                         "s" if i > 1 else "")
     return result
-
-
-@jinja_filter
-def term_markdown(text):
-    """Basic Markdown text-based renderer
-
-    Formats headings, horizontal rules and emphasis.
-
-    :param str text: Text to process
-    :rtype: ``str``
-    :return: Rendered text with terminal control sequences
-    """
-    if not utils.T.is_a_tty:
-        return text
-    # For uniform line ending split and rejoin, this saves having to handle \r
-    # and \r\n
-    text = "\n".join(text.splitlines())
-
-    # Compile these REs for Python 2.6 compatibility, as flags isn't supported
-    # as a re.sub keyword argument until 2.7.  The others can take advantage of
-    # the implicit caching.
-    headings_re = re.compile(r"^#+ +(.*)$", re.MULTILINE)
-    rules_re = re.compile(r"^(([*-] *){3,})$", re.MULTILINE)
-    bullets_re = re.compile(r"^( {0,4})[*+-] ", re.MULTILINE)
-    quotes_re = re.compile(r"^> .*$", re.MULTILINE)
-
-    text = headings_re.sub(lambda s: utils.T.underline(s.groups()[0]), text)
-    text = rules_re.sub(lambda s: utils.T.green(s.groups()[0]), text)
-    text = re.sub(r'([\*_]{2})([^ \*]+)\1',
-                  lambda s: utils.T.underline(s.groups()[1]), text)
-    text = quotes_re.sub(lambda s: utils.T.reverse(s.group()), text)
-    text = re.sub(r'([\*_])([^ \*]+)\1',
-                  lambda s: utils.T.bold(s.groups()[1]), text)
-    if sys.stdout.encoding == "UTF-8":
-        text = bullets_re.sub(u"\\1• ", text)
-
-    return text
 
 
 def display_bugs(bugs, order, **extras):
