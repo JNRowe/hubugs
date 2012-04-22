@@ -40,6 +40,7 @@ __doc__ += """.
 """ % parseaddr(__author__)
 
 import atexit
+import errno
 import getpass
 import logging
 import operator
@@ -342,12 +343,15 @@ def main():
     try:
         parser.dispatch(pre_call=utils.set_api)
     except (EnvironmentError, utils.RepoError) as error:
-        parser.error(error)
+        print utils.fail(error.message)
+        return errno.EINVAL
     except requests.ConnectionError:
-        raise parser.error("Project lookup failed.  Network or GitHub down?")
+        print utils.fail("Project lookup failed.  Network or GitHub down?")
+        return errno.ENXIO
     except requests.HTTPError as error:
         print utils.fail("Error from GitHub: %s"
                          % error.response.json['message'])
+        return errno.ENOENT
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
