@@ -45,8 +45,6 @@ import sys
 import webbrowser
 
 import argh
-import httplib2
-
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -55,6 +53,7 @@ atexit.register(logging.shutdown)
 
 
 from github2.request import (HttpError, charset_from_headers)
+from httplib2 import ServerNotFoundError
 
 from . import (template, utils)
 
@@ -382,7 +381,7 @@ def main():
         parser.dispatch(pre_call=utils.set_api)
     except (EnvironmentError, utils.RepoError) as error:
         parser.error(error)
-    except httplib2.ServerNotFoundError:
+    except ServerNotFoundError:
         raise parser.error("Project lookup failed.  Network or GitHub down?")
     except HttpError as error:
         if error.code == 404 and "Repository not found" in error.message:
