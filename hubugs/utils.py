@@ -127,7 +127,8 @@ def get_github_api(auth=True):
     # cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
 
     return requests.session(headers=headers,
-                            hooks={'args': to_json, 'response': from_json})
+                            hooks={'args': to_json, 'response': from_json},
+                            config={'danger_mode': True})
 
 
 def get_git_config_val(key, default=None, local_only=False):
