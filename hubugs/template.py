@@ -272,6 +272,7 @@ def edit_text(edit_type="default", data=None):
     with tempfile.NamedTemporaryFile(prefix="hubugs-", suffix=".mkd") as temp:
         temp.write(template.render(data if data else {}))
         temp.flush()
+        orig_mtime = os.path.getmtime(temp.name)
 
         subprocess.check_call([utils.get_editor(), temp.name])
 
@@ -279,7 +280,9 @@ def edit_text(edit_type="default", data=None):
         text = "".join(filter(lambda s: not s.startswith("#"),
                               temp.readlines())).strip()
 
-    if not text:
-        raise EmptyMessageError("No message given")
+        if not text:
+            raise EmptyMessageError("No message given")
+        elif orig_mtime == os.path.getmtime(temp.name):
+            raise EmptyMessageError("Message not edited")
 
     return text.strip()

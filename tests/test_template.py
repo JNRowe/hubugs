@@ -60,6 +60,14 @@ class Highlight(TestCase):
 
 
 class EditText(TestCase):
+    @staticmethod
+    def getmtime_side_effect(file, response=range(100)):
+        return response.pop()
+
+    @staticmethod
+    def check_call_side_effect(args):
+        open(args[1], 'a').write('Some message')
+
     @patch('subprocess.check_call')
     @raises(template.EmptyMessageError)
     def test_no_message(self, check_call):
@@ -67,20 +75,23 @@ class EditText(TestCase):
         template.edit_text()
 
     @patch('subprocess.check_call')
-    def test_message(self, check_call):
-        def side_effect(args):
-            open(args[1], 'w').write('Some message')
-        check_call.side_effect = side_effect
+    @patch('os.path.getmtime')
+    def test_message(self, getmtime, check_call):
+        getmtime.side_effect = self.getmtime_side_effect
+        check_call.side_effect = self.check_call_side_effect
+
         assert_equals(template.edit_text(), 'Some message')
 
     @patch('subprocess.check_call')
-    def test_message_comments(self, check_call):
-        def side_effect(args):
-            open(args[1], 'w').write('Some message\n#Some comment')
-        check_call.side_effect = side_effect
+    @patch('os.path.getmtime')
+    def test_message_comments(self, getmtime, check_call):
+        getmtime.side_effect = self.getmtime_side_effect
+        check_call.side_effect = self.check_call_side_effect
+
         assert_equals(template.edit_text(), 'Some message')
 
     @patch('subprocess.check_call')
+    @raises(template.EmptyMessageError)
     def test_message_prefill(self, check_call):
         check_call.return_value = True
         assert_equals(template.edit_text('open',
