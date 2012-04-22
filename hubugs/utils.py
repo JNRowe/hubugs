@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import json
 import os
 import re
 import subprocess
@@ -98,6 +99,13 @@ def get_github_api(auth=True):
     :rtype: ``requests.sessions.Session``
     :return: GitHub HTTP session
     """
+
+    def from_json(r):
+        r.json = json.loads(r.text)
+
+    def to_json(r):
+        r['data'] = json.dumps(r['data'])
+
     headers = {}
     if auth:
         token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
@@ -113,7 +121,8 @@ def get_github_api(auth=True):
     # xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
     # cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
 
-    return requests.session(headers=headers)
+    return requests.session(headers=headers,
+                            hooks={'args': to_json, 'response': from_json})
 
 
 def get_git_config_val(key, default=None, local_only=False):

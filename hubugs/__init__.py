@@ -41,7 +41,6 @@ __doc__ += """.
 
 import atexit
 import getpass
-import json
 import logging
 import operator
 import os
@@ -132,13 +131,13 @@ def setup(args):
 
     auth = requests.auth.HTTPBasicAuth(user, password)
     r = requests.post('https://api.github.com/authorizations', auth=auth,
-                      data=json.dumps(data))
+                      data=data)
     try:
         r.raise_for_status()
     except requests.HTTPError:
         raise argh.CommandError("Error generating token: %s"
-                                % json.loads(r.text)['message'])
-    auth = models.Authorisation.from_dict(r.text, is_json=True)
+                                % r.json['message'])
+    auth = models.Authorisation.from_dict(r.json)
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
     yield utils.success('Configuration complete!')
 
@@ -161,7 +160,7 @@ def list_bugs(args):
         _params = params.copy()
         _params['state'] = state
         r = args.req_get('', params=_params)
-        bugs.extend(map(models.Issue.from_dict, json.loads(r.text)))
+        bugs.extend(models.Issue.from_dict(d) for d in r.json)
 
     return template.display_bugs(bugs, args.order, state=args.state)
 
@@ -184,7 +183,7 @@ def show(args):
             continue
         try:
             r = args.req_get(bug_no)
-            bug = models.Issue.from_dict(r.text, is_json=True)
+            bug = models.Issue.from_dict(r.json)
         except RuntimeError as error:
             if "Issue #%s not found" % bug_no in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
@@ -194,7 +193,7 @@ def show(args):
 
         if args.full and bug.comments:
             r = args.req_get('%s/comments' % bug_no)
-            comments = map(models.Comment.from_dict, json.loads(r.text))
+            comments = [models.Comment.from_dict(d) for d in r.json]
         else:
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
@@ -225,8 +224,8 @@ def open_bug(args):
         title = args.title
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add}
-    r = args.req_post('', data=json.dumps(data))
-    bug = models.Issue.from_dict(r.text, is_json=True)
+    r = args.req_post('', data=data)
+    bug = models.Issue.from_dict(r.json)
     return utils.success("Bug %d opened" % bug.number)
 
 
@@ -245,8 +244,7 @@ def comment(args):
         message = template.edit_text()
     for bug in args.bugs:
         try:
-            args.req_post('%s/comments' % bug,
-                          data=json.dumps({'body': message}))
+            args.req_post('%s/comments' % bug, data={'body': message})
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -271,7 +269,7 @@ def edit(args):
         elif not args.title:
             try:
                 r = args.req_get(bug)
-                current = models.Issue.from_dict(r.text, is_json=True)
+                current = models.Issue.from_dict(r.json)
             except RuntimeError as error:
                 if "Issue #%s not found" % bug in error.args[0]:
                     yield utils.fail("Issue %r not found" % bug)
@@ -289,7 +287,7 @@ def edit(args):
 
         try:
             data = {'title': title, 'body': body}
-            args.req_post(bug, data=json.dumps(data))
+            args.req_post(bug, data=data)
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -317,8 +315,8 @@ def close(args):
         try:
             if message:
                 args.req_post('%s/comments' % bug,
-                              data=json.dumps({'body': message}))
-            args.req_post(bug, data=json.dumps({'state': 'closed'}))
+                              data={'body': message})
+            args.req_post(bug, data={'state': 'closed'})
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -346,8 +344,8 @@ def reopen(args):
         try:
             if message:
                 args.req_post('%s/comments' % bug,
-                              data=json.dumps({'body': message}))
-            args.req_post(bug, data=json.dumps({'state': 'open'}))
+                              data={'body': message})
+            args.req_post(bug, data={'state': 'open'})
         except RuntimeError as error:
             if "Issue #%s not found" % bug in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug)
@@ -363,13 +361,13 @@ def label(args):
     "labelling bugs"
     for bug_no in args.bugs:
         r = args.req_get(bug_no)
-        bug = models.Issue.from_dict(r.text, is_json=True)
+        bug = models.Issue.from_dict(r.json)
         labels = map(operator.attrgetter('name'), bug.labels)
         labels.extend(args.add)
         for string in args.remove:
             labels.remove(string)
         try:
-            r = args.req_post(bug_no, data=json.dumps({'labels': labels}))
+            r = args.req_post(bug_no, data={'labels': labels})
         except RuntimeError as error:
             if "Issue #%s not found" % bug_no in error.args[0]:
                 yield utils.fail("Issue %r not found" % bug_no)
