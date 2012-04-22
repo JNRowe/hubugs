@@ -109,7 +109,7 @@ def get_github_api(auth=True):
         r['data'] = json.dumps(r['data'])
 
     headers = {
-        'Accept': 'application/vnd.github.beta+json',
+        'Accept': 'application/vnd.github.beta.full+json',
         'User-Agent': 'hubugs/%s' % _version.dotted,
     }
     if auth:
