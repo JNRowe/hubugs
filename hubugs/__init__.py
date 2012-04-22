@@ -340,6 +340,31 @@ def label(args):
                 raise
 
 
+@command
+@argh.wrap_errors(template.EmptyMessageError)
+def report_bug(args):
+    "report a new bug against hubugs"
+    local = args.project == 'JNRowe/hubugs'
+    args.project = 'JNRowe/hubugs'
+
+    import blessings, github2, html2text, jinja2, misaka, pygments  # NOQA
+    versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
+                     for m in argh, blessings, github2, html2text, jinja2,
+                        misaka, pygments])
+    data = {
+        'local': local,
+        'sys': sys,
+        'version': _version.dotted,
+        'versions': versions,
+    }
+    text = template.edit_text("hubugs_report", data).splitlines()
+    title = text[0]
+    body = "\n".join(text[1:])
+    bug = args.api("open", title, body)
+    args.api("add_label", bug.number, 'bug')
+    return utils.success("Bug %d opened against hubugs, thanks!" % bug.number)
+
+
 def main():
     """Main script"""
     description = __doc__.splitlines()[0].split("-", 1)[1]

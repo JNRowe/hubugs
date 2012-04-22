@@ -1,0 +1,26 @@
+{%- if not local -%}
+# NOTE: This command is for reporting bugs against hubugs, if that is not your
+# intention close this file without saving to cancel!
+{%- endif -%}
+{{ title }}
+
+{{ body }}
+
+---
+
+Information useful for `hubugs` bug reports, *please* do not remove any of the
+data below.
+
+* `hubugs` version: {{ version }}
+* Dependency versions:
+{%- for key, value in versions | dictsort %}
+    * `{{ key }}`: {{ value }}
+{%- endfor %}
+
+* System versions:
+    * `Python`: {{ sys.version }}
+    * Operating system: {{ sys.platform }}
+
+# Please enter the content for your new bug, the first line will be used for
+# the title.  Lines beginning with '#' will be ignored
+
