@@ -29,6 +29,8 @@ import argh
 import blessings
 import requests
 
+from . import _version
+
 
 T = blessings.Terminal()
 
@@ -106,7 +108,10 @@ def get_github_api(auth=True):
     def to_json(r):
         r['data'] = json.dumps(r['data'])
 
-    headers = {}
+    headers = {
+        'Accept': 'application/vnd.github.beta+json',
+        'User-Agent': 'hubugs/%s' % _version.dotted,
+    }
     if auth:
         token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
         if not token:
