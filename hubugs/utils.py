@@ -126,7 +126,13 @@ def get_github_api(auth=True):
     # xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
     # cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
 
-    return requests.session(headers=headers,
+    # We have to invert the default cert selection behaviour, as requests
+    # ignores the system configuration out of the box.  Shouldn't have to
+    # resort to this, but…
+    certs = requests.utils.get_os_ca_bundle_path() \
+        or requests.utils.CERTIFI_BUNDLE_PATH
+
+    return requests.session(headers=headers, verify=certs,
                             hooks={'args': to_json, 'response': from_json},
                             config={'danger_mode': True})
 
