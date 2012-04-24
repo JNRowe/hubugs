@@ -39,6 +39,13 @@ __doc__ += """.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
+# This is here to workaround UserWarning messages caused by path fiddling in
+# dependencies
+try:
+    import pkg_resources  # NOQA
+except ImportError:
+    pass
+
 import atexit
 import errno
 import getpass
