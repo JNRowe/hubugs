@@ -110,6 +110,9 @@ body_arg = argh.arg("body", help="body for the new bug", nargs="?")
 
 label_add_arg = argh.arg("-a", "--add", action="append", default=[],
                          help="add label to issue", metavar="label")
+label_create_arg = argh.arg("-c", "--create", action="append", default=[],
+                            help="create new label and add to issue",
+                            metavar="label")
 label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
                             help="remove label from issue", metavar="label")
 # pylint: enable-msg=C0103
@@ -205,12 +208,19 @@ def show(args):
 @command
 @argh.alias("open")
 @label_add_arg
+@label_create_arg
 @stdin_arg
 @title_arg
 @body_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
+    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
+    r = args.session.get(labels_url)
+    label_names = map(operator.itemgetter('name'), r.json)
+    for label in args.add:
+        if label not in label_names:
+            raise ValueError('No such label %r' % label)
     if args.stdin:
         text = sys.stdin.readlines()
     elif not args.title:
@@ -221,7 +231,13 @@ def open_bug(args):
     else:
         title = args.title
         body = args.body
-    data = {'title': title, 'body': body, 'labels': args.add}
+    for label in args.create:
+        if label in label_names:
+            print utils.warn('%r label already exists' % label)
+        else:
+            data = {'name': label, 'color': '000000'}
+            r = args.session.post(labels_url, data=data)
+    data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r = args.req_post('', data=data)
     bug = models.Issue.from_dict(r.json)
     return utils.success("Bug %d opened" % bug.number)
@@ -322,15 +338,31 @@ def reopen(args):
 
 @command
 @label_add_arg
+@label_create_arg
 @label_remove_arg
 @bugs_arg
 def label(args):
     "labelling bugs"
+    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
+    r = args.session.get(labels_url)
+    label_names = map(operator.itemgetter('name'), r.json)
+    for label in args.add:
+        if label not in label_names:
+            raise ValueError('No such label %r' % label)
+    for label in args.create:
+        if label in label_names:
+            print utils.warn('%r label already exists' % label)
+        else:
+            data = {'name': label, 'color': '000000'}
+            r = args.session.post(labels_url, data=data)
+
     for bug_no in args.bugs:
         r = args.req_get(bug_no)
         bug = models.Issue.from_dict(r.json)
         labels = map(operator.attrgetter('name'), bug.labels)
         labels.extend(args.add)
+        labels.extend(args.create)
+
         for string in args.remove:
             labels.remove(string)
         r = args.req_post(bug_no, data={'labels': labels})
@@ -351,7 +383,7 @@ def main():
     parser.add_commands(COMMANDS)
     try:
         parser.dispatch(pre_call=utils.setup_environment)
-    except (EnvironmentError, utils.RepoError) as error:
+    except (EnvironmentError, utils.RepoError, ValueError) as error:
         print utils.fail(error.message)
         return errno.EINVAL
     except requests.ConnectionError:
