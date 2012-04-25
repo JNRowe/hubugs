@@ -340,12 +340,19 @@ def reopen(args):
 @label_add_arg
 @label_create_arg
 @label_remove_arg
-@bugs_arg
+@argh.arg("-l", "--list", default=False, help="list available labels")
+@argh.arg("bugs", nargs="*", type=int,
+          help="bug number(s) to operate on")
 def label(args):
     "labelling bugs"
     labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
     r = args.session.get(labels_url)
     label_names = map(operator.itemgetter('name'), r.json)
+
+    if args.list:
+        print ", ".join(label_names)
+        return
+
     for label in args.add:
         if label not in label_names:
             raise ValueError('No such label %r' % label)
