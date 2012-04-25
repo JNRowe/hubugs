@@ -255,3 +255,5 @@ def setup_environment(args):
             if e.response.status_code == 404:
                 raise RepoError('Invalid project %r' % args.project)
             raise
+        if not args.repo_obj.has_issues:
+            raise RepoError("Issues aren't enabled for %r" % args.project)

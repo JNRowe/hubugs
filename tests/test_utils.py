@@ -231,7 +231,9 @@ class SetApi(TestCase):
         json = {}
 
         def get(self, *args):
-            return self
+            new = self.__class__()
+            new.json = {'has_issues': True}
+            return new
 
     @patch('os.getenv')
     @patch('hubugs.utils.get_repo')
