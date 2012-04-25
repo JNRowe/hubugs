@@ -217,8 +217,8 @@ def get_term_size():
     return namedtuple('Tty', 'lines columns')(lines, columns)
 
 
-def set_api(args):
-    """Add HTTP session object to args namespace
+def setup_environment(args):
+    """Configure execution environment for commands dispatch
 
     :param argparse.Namespace args: argparse namespace to operate on
     """

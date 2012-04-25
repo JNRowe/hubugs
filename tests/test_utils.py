@@ -234,7 +234,7 @@ class SetApi(TestCase):
         getenv.side_effect = fake_env
         namespace = argparse.Namespace(project=None, host_url=None,
                                        function=lambda: True)
-        utils.set_api(namespace)
+        utils.setup_environment(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
 
     @patch('os.getenv')
@@ -242,5 +242,5 @@ class SetApi(TestCase):
         getenv.side_effect = fake_env
         namespace = argparse.Namespace(project='JNRowe/misc-overlay',
                                        host_url=None, function=lambda: True)
-        utils.set_api(namespace)
+        utils.setup_environment(namespace)
         assert_equals(namespace.project, 'JNRowe/misc-overlay')

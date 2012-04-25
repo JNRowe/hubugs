@@ -348,7 +348,7 @@ def main():
                         metavar="url")
     parser.add_commands(COMMANDS)
     try:
-        parser.dispatch(pre_call=utils.set_api)
+        parser.dispatch(pre_call=utils.setup_environment)
     except (EnvironmentError, utils.RepoError) as error:
         print utils.fail(error.message)
         return errno.EINVAL
