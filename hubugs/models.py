@@ -119,3 +119,38 @@ class Authorisation(micromodels.Model):
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
                                self.note[:20])
+
+
+class Organization(micromodels.Model):
+    login = micromodels.CharField()
+    url = micromodels.CharField()
+    gravatar_id = micromodels.CharField()
+    avatar_url = micromodels.CharField()
+    id = micromodels.IntegerField()
+    type = micromodels.CharField()
+
+
+class Repository(micromodels.Model):
+    id = micromodels.IntegerField()
+    clone_url = micromodels.CharField()
+    created_at = ISODateTimeField()
+    description = micromodels.CharField()
+    fork = micromodels.BooleanField()
+    forks = micromodels.IntegerField()
+    git_url = micromodels.CharField()
+    has_downloads = micromodels.BooleanField()
+    has_issues = micromodels.BooleanField()
+    has_wiki = micromodels.BooleanField()
+    homepage = micromodels.CharField()
+    html_url = micromodels.CharField()
+    language = micromodels.CharField()
+    master_branch = micromodels.CharField()
+    mirror_url = micromodels.CharField()
+    name = micromodels.CharField()
+    open_issues = micromodels.IntegerField()
+    owner = micromodels.ModelField(User)
+    private = micromodels.BooleanField()
+    pushed_at = ISODateTimeField()
+    size = micromodels.IntegerField()
+    url = micromodels.CharField()
+    watchers = micromodels.IntegerField()

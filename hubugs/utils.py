@@ -29,7 +29,7 @@ import argh
 import blessings
 import requests
 
-from . import _version
+from . import (_version, models)
 
 
 T = blessings.Terminal()
@@ -225,8 +225,10 @@ def setup_environment(args):
     if not args.project:
         args.project = get_repo()
 
+    command = args.function.__name__
+
     # We use manual auth when calling setup
-    use_auth = not args.function.__name__ == 'setup'
+    use_auth = not command == 'setup'
     session = get_github_api(use_auth)
 
     def api_method(method, loc, *pargs, **kwargs):
@@ -241,3 +243,15 @@ def setup_environment(args):
     args.req_delete = partial(api_method, 'delete')
     # Include a direct session object, for non-issues related network access.
     args.session = session
+
+    # Make the repository information available, if it will be useful
+    # Note: We skip this step for `show -b' for speed, see #20
+    if not command == 'setup' \
+        and not (command == 'show' and args.browse == True):
+        try:
+            r = session.get('%s/repos/%s' % (args.host_url, args.project))
+            args.repo_obj = models.Repository.from_dict(r.json)
+        except requests.HTTPError as e:
+            if e.response.status_code == 404:
+                raise RepoError('Invalid project %r' % args.project)
+            raise

@@ -227,9 +227,17 @@ def test_get_term_size(check_output):
 
 
 class SetApi(TestCase):
+    class API_Object():
+        json = {}
+
+        def get(self, *args):
+            return self
+
     @patch('os.getenv')
     @patch('hubugs.utils.get_repo')
-    def test_no_project(self, get_repo, getenv):
+    @patch('hubugs.utils.get_github_api')
+    def test_no_project(self, get_github_api, get_repo, getenv):
+        get_github_api.return_value = self.API_Object()
         get_repo.return_value = 'JNRowe/misc-overlay'
         getenv.side_effect = fake_env
         namespace = argparse.Namespace(project=None, host_url=None,
@@ -238,7 +246,9 @@ class SetApi(TestCase):
         assert_equals(namespace.project, 'JNRowe/misc-overlay')
 
     @patch('os.getenv')
-    def test_project(self, getenv):
+    @patch('hubugs.utils.get_github_api')
+    def test_project(self, get_github_api, getenv):
+        get_github_api.return_value = self.API_Object()
         getenv.side_effect = fake_env
         namespace = argparse.Namespace(project='JNRowe/misc-overlay',
                                        host_url=None, function=lambda: True)

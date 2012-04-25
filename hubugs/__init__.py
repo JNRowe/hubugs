@@ -165,7 +165,8 @@ def list_bugs(args):
         r = args.req_get('', params=_params)
         bugs.extend(models.Issue.from_dict(d) for d in r.json)
 
-    return template.display_bugs(bugs, args.order, state=args.state)
+    return template.display_bugs(bugs, args.order, state=args.state,
+                                 project=args.repo_obj)
 
 
 @command
@@ -197,7 +198,8 @@ def show(args):
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,
-                          patch=patch, patch_only=args.patch_only)
+                          patch=patch, patch_only=args.patch_only,
+                          project=args.repo_obj)
 
 
 @command
