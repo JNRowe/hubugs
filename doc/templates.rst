@@ -74,6 +74,10 @@ View group
 ``list.txt`` data
 ~~~~~~~~~~~~~~~~~
 
+.. data:: project(Repository)
+
+   The current project's repository data.  See :ref:`repo_objects-label`.
+
 .. data:: bugs(list)
 
    Contains the sorted list of bugs to display, if any.  See
@@ -94,6 +98,10 @@ View group
 ``issue.txt`` data
 ~~~~~~~~~~~~~~~~~~
 
+.. data:: project(Repository)
+
+   The current project's repository data.  See :ref:`repo_objects-label`.
+
 .. data:: bug(list)
 
    Contains the sorted list of bugs to display, if any.  See
@@ -112,6 +120,10 @@ View group
 
    The content found at the location in :attr:`Bug.patch_url`, if the user
    provided the :option:`hubugs show -p` option
+
+.. data:: patch_only(bool)
+
+   True, if the user provided the :option:`hubugs show -o` option
 
 Edit group
 ''''''''''
