@@ -17,9 +17,10 @@ data below.
     * `{{ key }}`: {{ value }}
 {%- endfor %}
 
-* System versions:
+* System:
     * `Python`: {{ sys.version }}
     * Operating system: {{ sys.platform }}
+    * Certificates: {{ certificates }}
 
 # Please enter the content for your new bug, the first line will be used for
 # the title.  Lines beginning with '#' will be ignored

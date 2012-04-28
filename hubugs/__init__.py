@@ -394,6 +394,7 @@ def report_bug(args):
         'sys': sys,
         'version': _version.dotted,
         'versions': versions,
+        'certs': os.path.realpath(requests.utils.DEFAULT_CA_BUNDLE_PATH),
     }
     text = template.edit_text("hubugs_report", data).splitlines()
     title = text[0]
