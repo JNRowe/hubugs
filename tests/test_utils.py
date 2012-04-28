@@ -217,14 +217,6 @@ class GetRepo(TestCase):
         utils.get_repo()
 
 
-@patch('hubugs.utils.check_output')
-def test_get_term_size(check_output):
-    check_output.return_value = '62 118'
-    term = utils.get_term_size()
-    assert_equals(term.lines, 62)
-    assert_equals(term.columns, 118)
-
-
 class SetApi(TestCase):
     class API_Object():
         json = {}

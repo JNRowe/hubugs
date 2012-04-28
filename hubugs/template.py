@@ -195,7 +195,8 @@ def display_bugs(bugs, order, **extras):
 
     bugs = sorted(bugs, key=operator.attrgetter(attr))
 
-    columns = utils.get_term_size().columns
+    # Default to 80 columns, when stdout is not a tty
+    columns = utils.T.width if utils.T.width else 80
 
     template = get_template('view', 'list.txt')
 

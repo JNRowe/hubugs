@@ -22,7 +22,6 @@ import os
 import re
 import subprocess
 
-from collections import namedtuple
 from functools import partial
 
 import argh
@@ -205,16 +204,6 @@ def get_repo():
         return match.groups()[0]
     else:
         raise RepoError("Unknown project, specify with `--project' option")
-
-
-def get_term_size():
-    """Fetch the current terminal size
-
-    :rtype: ``namedtuple``
-    :return: Number of lines and columns in current terminal
-    """
-    lines, columns = map(int, check_output(["stty", "size"]).split())
-    return namedtuple('Tty', 'lines columns')(lines, columns)
 
 
 def setup_environment(args):
