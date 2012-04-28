@@ -384,10 +384,11 @@ def report_bug(args):
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
-    import blessings, github2, html2text, jinja2, misaka, pygments  # NOQA
+    import argh, blessings, html2text, jinja2, micromodels, pygments, \
+        requests  # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in argh, blessings, github2, html2text, jinja2,
-                        misaka, pygments])
+                     for m in argh, blessings, html2text, jinja2, micromodels,
+                        pygments, requests])
     data = {
         'local': local,
         'sys': sys,
