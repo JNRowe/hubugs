@@ -31,8 +31,8 @@ steps::
 
 * :pypi:`argh` an excellent package for building command line tools in Python
 * :pypi:`blessings` for terminal formatting including colourisation
-* :pypi:`github2` for wrapping access to the GitHub API
 * :pypi:`html2text` is used formatting HTML for the terminal
 * :pypi:`Jinja2` for templating
-* :pypi:`misaka` is used for converting issue text to HTML
+* :pypi:`micromodels` is used for representing remote objects
 * :pypi:`Pygments` for syntax highlighting in template output
+* :pypi:`requests` for HTTP communications

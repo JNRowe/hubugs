@@ -11,7 +11,7 @@
 {%- block body %}
 {%- for bug in bugs %}
 {%- if bug.labels %}
-{%- set formatted_labels = " [" + bug.labels | join(", ") | colourise("magenta") + "]" %}
+{%- set formatted_labels = " [" + bug.labels | join(", ", "name") | colourise("magenta") + "]" %}
 {% else %}
 {%- set formatted_labels = "" %}
 {% endif -%}
@@ -20,5 +20,5 @@
 {% endblock -%}
 
 {%- block footer %}
-{{ bugs | length | string | colourise(heading_colour) }} {{ state }} bug{% if bugs | length != 1 %}s{% endif %} found{% if term %} matching {{ term | colourise(heading_colour) }}{% endif %}
+{{ bugs | length | string | colourise(heading_colour) }} {{ state }} bug{% if bugs | length != 1 %}s{% endif %} found
 {%- endblock %}

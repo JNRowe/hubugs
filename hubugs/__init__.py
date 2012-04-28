@@ -39,12 +39,27 @@ __doc__ += """.
 .. moduleauthor:: `%s <mailto:%s>`__
 """ % parseaddr(__author__)
 
+# This is here to workaround UserWarning messages caused by path fiddling in
+# dependencies
+try:
+    import pkg_resources  # NOQA
+except ImportError:
+    pass
+
 import atexit
+import errno
+import getpass
 import logging
+import operator
+import os
+# Used by raw_input, when imported
+import readline  # NOQA
 import sys
 import webbrowser
 
 import argh
+import requests
+
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -52,10 +67,7 @@ logging.basicConfig(level=logging.ERROR,
 atexit.register(logging.shutdown)
 
 
-from github2.request import (HttpError, charset_from_headers)
-from httplib2 import ServerNotFoundError
-
-from . import (template, utils)
+from . import (models, template, utils)
 
 
 COMMANDS = []
@@ -83,7 +95,7 @@ bugs_arg = argh.arg("bugs", nargs="+", type=int,
 message_arg = argh.arg("-m", "--message", help="comment text")
 
 order_arg = argh.arg("-o", "--order", default="number",
-                     choices=["number", "updated", "votes"],
+                     choices=["number", "updated"],
                      help="sort order for listing bugs")
 
 states_arg = argh.arg("-s", "--state", default="open",
@@ -98,9 +110,44 @@ body_arg = argh.arg("body", help="body for the new bug", nargs="?")
 
 label_add_arg = argh.arg("-a", "--add", action="append", default=[],
                          help="add label to issue", metavar="label")
+label_create_arg = argh.arg("-c", "--create", action="append", default=[],
+                            help="create new label and add to issue",
+                            metavar="label")
 label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
                             help="remove label from issue", metavar="label")
 # pylint: enable-msg=C0103
+
+
+@command
+@argh.arg('--local', default=False,
+          help='set access token for local repository only')
+def setup(args):
+    "setup GitHub access token"
+    if args.session.verify == requests.utils.CERTIFI_BUNDLE_PATH:
+        yield utils.warn('Falling back on bundled certificates')
+    default_user = os.getenv("GITHUB_USER",
+                             utils.get_git_config_val("github.user",
+                                                      getpass.getuser()))
+    try:
+        user = raw_input('GitHub user? [%s] ' % default_user)
+        if not user:
+            user = default_user
+        password = getpass.getpass('GitHub password? ')
+    except KeyboardInterrupt:
+        return
+    private = argh.confirm('Support private repositories', default=True)
+    data = {
+        'scopes': ['repo' if private else 'public_repo'],
+        'note': 'hubugs',
+        'note_url': 'https://github.com/JNRowe/hubugs'
+    }
+
+    auth = requests.auth.HTTPBasicAuth(user, password)
+    r = args.req_post('https://api.github.com/authorizations', auth=auth,
+                      data=data)
+    auth = models.Authorisation.from_dict(r.json)
+    utils.set_git_config_val('hubugs.token', auth.token, args.local)
+    yield utils.success('Configuration complete!')
 
 
 @command
@@ -111,30 +158,20 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
 @order_arg
 def list_bugs(args):
     "listing bugs"
-    if args.label:
-        bugs = args.api("list_by_label", args.label)
-        if not args.state == "all":
-            bugs = filter(lambda x: x.state == args.state, bugs)
-    else:
-        bugs = []
-        states = ["open", "closed"] if args.state == "all" else [args.state, ]
-        for state in states:
-            bugs.extend(args.api("list", state))
-    return template.display_bugs(bugs, args.order, state=args.state)
-
-
-@command
-@states_arg
-@order_arg
-@argh.arg("term", help="term to search bugs for")
-def search(args):
-    "searching bugs"
-    states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
+    params = {}
+    if args.label:
+        params['labels'] = args.label
+
+    states = ["open", "closed"] if args.state == "all" else [args.state, ]
     for state in states:
-        bugs.extend(args.api("search", args.term, state))
-    return template.display_bugs(bugs, args.order, term=args.term,
-                                 state=args.state)
+        _params = params.copy()
+        _params['state'] = state
+        r = args.req_get('', params=_params)
+        bugs.extend(models.Issue.from_dict(d) for d in r.json)
+
+    return template.display_bugs(bugs, args.order, state=args.state,
+                                 project=args.repo_obj)
 
 
 @command
@@ -153,37 +190,39 @@ def show(args):
             webbrowser.open_new_tab("https://github.com/%s/issues/%d"
                                     % (args.project, bug_no))
             continue
-        try:
-            bug = args.api("show", bug_no)
-        except RuntimeError as error:
-            if "Issue #%s not found" % bug_no in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug_no)
-                break
-            else:
-                raise
+        r = args.req_get(bug_no)
+        bug = models.Issue.from_dict(r.json)
 
-        if args.full:
-            comments = args.api("comments", bug.number)
+        if args.full and bug.comments:
+            r = args.req_get('%s/comments' % bug_no)
+            comments = [models.Comment.from_dict(d) for d in r.json]
         else:
             comments = []
-        if (args.patch or args.patch_only) and bug.pull_request_url:
-            request, body = args._http.request(bug.patch_url)
-            patch = body.decode(charset_from_headers(request))
+        if (args.patch or args.patch_only) and bug.pull_request:
+            patch = args.session.get(bug.pull_request.patch_url).text
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,
-                          patch=patch, patch_only=args.patch_only)
+                          patch=patch, patch_only=args.patch_only,
+                          project=args.repo_obj)
 
 
 @command
 @argh.alias("open")
 @label_add_arg
+@label_create_arg
 @stdin_arg
 @title_arg
 @body_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
+    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
+    r = args.session.get(labels_url)
+    label_names = map(operator.itemgetter('name'), r.json)
+    for label in args.add:
+        if label not in label_names:
+            raise ValueError('No such label %r' % label)
     if args.stdin:
         text = sys.stdin.readlines()
     elif not args.title:
@@ -194,9 +233,15 @@ def open_bug(args):
     else:
         title = args.title
         body = args.body
-    bug = args.api("open", title, body)
-    for string in args.add:
-        args.api("add_label", bug.number, string)
+    for label in args.create:
+        if label in label_names:
+            print utils.warn('%r label already exists' % label)
+        else:
+            data = {'name': label, 'color': '000000'}
+            r = args.session.post(labels_url, data=data)
+    data = {'title': title, 'body': body, 'labels': args.add + args.create}
+    r = args.req_post('', data=data)
+    bug = models.Issue.from_dict(r.json)
     return utils.success("Bug %d opened" % bug.number)
 
 
@@ -214,13 +259,7 @@ def comment(args):
     else:
         message = template.edit_text()
     for bug in args.bugs:
-        try:
-            args.api("comment", bug, message)
-        except RuntimeError as error:
-            if "Issue #%s not found" % bug in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug)
-            else:
-                raise
+        args.req_post('%s/comments' % bug, data={'body': message})
 
 
 @command
@@ -238,14 +277,8 @@ def edit(args):
         if args.stdin:
             text = sys.stdin.readlines()
         elif not args.title:
-            try:
-                current = args.api("show", bug)
-            except RuntimeError as error:
-                if "Issue #%s not found" % bug in error.args[0]:
-                    yield utils.fail("Issue %r not found" % bug)
-                    continue
-                else:
-                    raise
+            r = args.req_get(bug)
+            current = models.Issue.from_dict(r.json)
             current_data = {"title": current.title, "body": current.body}
             text = template.edit_text("open", current_data).splitlines()
         if args.stdin or not args.title:
@@ -255,13 +288,8 @@ def edit(args):
             title = args.title
             body = args.body
 
-        try:
-            args.api("edit", bug, title, body)
-        except RuntimeError as error:
-            if "Issue #%s not found" % bug in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug)
-            else:
-                raise
+        data = {'title': title, 'body': body}
+        args.req_post(bug, data=data)
 
 
 @command
@@ -281,15 +309,10 @@ def close(args):
     else:
         message = args.message
     for bug in args.bugs:
-        try:
-            if message:
-                args.api("comment", bug, message)
-            args.api("close", bug)
-        except RuntimeError as error:
-            if "Issue #%s not found" % bug in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug)
-            else:
-                raise
+        if message:
+            args.req_post('%s/comments' % bug,
+                            data={'body': message})
+        args.req_post(bug, data={'state': 'closed'})
 
 
 @command
@@ -309,34 +332,49 @@ def reopen(args):
     else:
         message = args.message
     for bug in args.bugs:
-        try:
-            if message:
-                args.api("comment", bug, message)
-            args.api("reopen", bug)
-        except RuntimeError as error:
-            if "Issue #%s not found" % bug in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug)
-            else:
-                raise
+        if message:
+            args.req_post('%s/comments' % bug,
+                            data={'body': message})
+        args.req_post(bug, data={'state': 'open'})
 
 
 @command
 @label_add_arg
+@label_create_arg
 @label_remove_arg
-@bugs_arg
+@argh.arg("-l", "--list", default=False, help="list available labels")
+@argh.arg("bugs", nargs="*", type=int,
+          help="bug number(s) to operate on")
 def label(args):
     "labelling bugs"
-    for bug in args.bugs:
-        try:
-            for string in args.add:
-                args.api("add_label", bug, string)
-            for string in args.remove:
-                args.api("remove_label", bug, string)
-        except RuntimeError as error:
-            if "Issue #%s not found" % bug in error.args[0]:
-                yield utils.fail("Issue %r not found" % bug)
-            else:
-                raise
+    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
+    r = args.session.get(labels_url)
+    label_names = map(operator.itemgetter('name'), r.json)
+
+    if args.list:
+        print ", ".join(label_names)
+        return
+
+    for label in args.add:
+        if label not in label_names:
+            raise ValueError('No such label %r' % label)
+    for label in args.create:
+        if label in label_names:
+            print utils.warn('%r label already exists' % label)
+        else:
+            data = {'name': label, 'color': '000000'}
+            r = args.session.post(labels_url, data=data)
+
+    for bug_no in args.bugs:
+        r = args.req_get(bug_no)
+        bug = models.Issue.from_dict(r.json)
+        labels = map(operator.attrgetter('name'), bug.labels)
+        labels.extend(args.add)
+        labels.extend(args.create)
+
+        for string in args.remove:
+            labels.remove(string)
+        r = args.req_post(bug_no, data={'labels': labels})
 
 
 @command
@@ -373,21 +411,22 @@ def main():
     parser.add_argument("-p", "--project", action=utils.ProjectAction,
                         help="GitHub project to operate on",
                         metavar="project")
-    parser.add_argument("-u", "--host-url", default=None,
+    parser.add_argument("-u", "--host-url", default='https://api.github.com',
                         help="GitHub Enterprise host to connect to",
                         metavar="url")
     parser.add_commands(COMMANDS)
     try:
-        parser.dispatch(pre_call=utils.set_api)
-    except (EnvironmentError, utils.RepoError) as error:
-        parser.error(error)
-    except ServerNotFoundError:
-        raise parser.error("Project lookup failed.  Network or GitHub down?")
-    except HttpError as error:
-        if error.code == 404 and "Repository not found" in error.message:
-            parser.error("Unknown project")
-        else:
-            parser.error(error.message)
+        parser.dispatch(pre_call=utils.setup_environment)
+    except (EnvironmentError, utils.RepoError, ValueError) as error:
+        print utils.fail(error.message)
+        return errno.EINVAL
+    except requests.ConnectionError:
+        print utils.fail("Project lookup failed.  Network or GitHub down?")
+        return errno.ENXIO
+    except requests.HTTPError as error:
+        print utils.fail("Error from GitHub: %s"
+                         % error.response.json['message'])
+        return errno.ENOENT
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

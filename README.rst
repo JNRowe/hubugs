@@ -6,38 +6,40 @@ Introduction
 
 ``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
 
+.. important::
+
+   This package is in a *rapid* state of flux right now, as support for version
+   3 of the `GitHub API`_ is added.  Be aware there may be some significant
+   changes to the user interface coming soon!
+
 Requirements
 ------------
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
-dependencies outside of the standard library are argh_, blessings_, github2_
-v0.6 or newer, html2text_, Jinja_, misaka_ and Pygments_.
+dependencies outside of the standard library are argh_, blessings_, html2text_,
+Jinja_, micromodels_, Pygments_ and requests_.
 
 Configuration
 -------------
 
-Before using ``hubugs`` you must declare your authentication settings, so that
-we can access the API.
+Before ``hubugs`` can operate on issues you must generate an OAuth_ token.
+``hubugs`` provides functionality to do this::
 
-You first need to define your GitHub user name::
-
-    $ git config --global github.user username
-
-And then you need to define your GitHub API token, this can be found in the
-`account admin`_ tab of your GitHub `account page`_::
-
-    $ git config --global github.token token
+    $ hubugs setup
+    GitHub user? [JNRowe]
+    GitHub password? <password>
+    Support private repositories? (Y/n) y
+    Configuration complete!
 
 .. note::
 
-   If you change your GitHub password your ``github.token`` setting will be
-   invalid, and you must set it again.
+   You can revoke the generated token at any time from the `GitHub settings`_
+   page.
 
-If you wish to set the authentication information from the command line you can
-use the ``GITHUB_USER`` and ``GITHUB_TOKEN`` environment variables.  For
-example::
+If you wish to set the authorisation token from the command line you can use the
+``HUBUGS_TOKEN`` environment variable.  For example::
 
-    $ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx hubugs open
+    $ HUBUGS_TOKEN=xxx hubugs open
 
 Contributors
 ------------
@@ -48,7 +50,8 @@ I'd like to thank the following people who have contributed to
 Patches
 '''''''
 
-<Your name here?>
+* Ben Griffiths
+* Matt Leighton
 
 Bug reports
 '''''''''''
@@ -60,7 +63,6 @@ Ideas
 '''''
 
 * James Gray
-* Matt Leighy
 * Jules Marleau
 
 If I've forgotten to include your name I wholeheartedly apologise.  Just
@@ -94,16 +96,17 @@ If you've found a problem please attempt to include a minimal testcase so
 I can reproduce the problem, or even better a patch!
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
+.. _GitHub API: http://developer.github.com/v3/
 .. _Python: http://www.python.org/
 .. _argh: http://pypi.python.org/pypi/argh/
 .. _blessings: http://pypi.python.org/pypi/blessings/
-.. _github2: http://pypi.python.org/pypi/github2/
 .. _Jinja: http://jinja.pocoo.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
-.. _misaka: http://pypi.python.org/pypi/misaka/
+.. _micromodels: http://pypi.python.org/pypi/micromodels/
 .. _Pygments: http://pygments.org/
-.. _account admin: https://github.com/account/admin
-.. _account page: https://github.com/account
+.. _requests: http://pypi.python.org/pypi/requests/
+.. _OAuth: http://oauth.net/
+.. _GitHub settings: https://github.com/settings/applications/
 .. _pull requests: http://github.com/JNRowe/hubugs/issues
 .. _PEP 8: http://www.python.org/dev/peps/pep-0008/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html

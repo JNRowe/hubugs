@@ -1,34 +1,28 @@
 Configuration
 =============
 
-Before using :program:`hubugs` you must declare your authentication settings to
-enable access to the GitHub API.
-
-You first need to define your GitHub user name:
+Before :program:`hubugs` can operate on issues you must generate an OAuth_
+token.  :program:`hubugs` provides functionality to do this:
 
 .. code-block:: sh
 
-    ▶ git config --global github.user '<username>'
-
-And then you need to define your GitHub API token, this can be found in the
-`account admin`_ tab of your GitHub `account page`_:
-
-.. code-block:: sh
-
-    ▶ git config --global github.token '<token>'
+    ▶ hubugs setup
+    GitHub user? [JNRowe]
+    GitHub password? <password>
+    Support private repositories? (Y/n) y
+    Configuration complete!
 
 .. note::
 
-   If you change your GitHub password your ``github.token`` setting will be
-   invalid, and you must set it again.
+   You can revoke the generated token at any time from the `GitHub settings`_
+   page.
 
-If you wish to set the authentication information from the command line you can
-use the :envvar:`GITHUB_USER` and :envvar:`GITHUB_TOKEN` environment variables.
-For example:
+If you wish to set the authorisation token from the command line you can use the
+:envvar:`HUBUGS_TOKEN` environment variable.  For example:
 
 .. code-block:: sh
 
-    ▶ GITHUB_USER=jnrowe GITHUB_TOKEN=xxx hubugs open
+    ▶ HUBUGS_TOKEN=xxx hubugs open
 
-.. _account admin: https://github.com/account/admin
-.. _account page: https://github.com/account
+.. _OAuth: http://oauth.net/
+.. _GitHub settings: https://github.com/settings/applications/

@@ -20,16 +20,13 @@
 import datetime
 import operator
 import os
-import re
 import sys
 import subprocess
 import tempfile
 
 import html2text as html2
 import jinja2
-import misaka
 
-from dateutil import tz
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
@@ -132,18 +129,6 @@ def html2text(html, width=80, ascii_replacements=False):
 
 
 @jinja_filter
-def markdown(text):
-    """Markdown to HTML renderer
-
-    :param str text: Text to process
-    :rtype: ``str``
-    :return: Rendered HTML
-    """
-    extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
-    return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
-
-
-@jinja_filter
 def relative_time(timestamp):
     """Format a relative time
 
@@ -170,7 +155,7 @@ def relative_time(timestamp):
     ]
     match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
 
-    delta = datetime.datetime.utcnow().replace(tzinfo=tz.tzutc()) - timestamp
+    delta = datetime.datetime.utcnow() - timestamp
     # Switch to delta.total_seconds, if 2.6 support is dropped
     seconds = delta.days * 86400 + delta.seconds
     for scale in matches:
@@ -191,47 +176,10 @@ def relative_time(timestamp):
     return result
 
 
-@jinja_filter
-def term_markdown(text):
-    """Basic Markdown text-based renderer
-
-    Formats headings, horizontal rules and emphasis.
-
-    :param str text: Text to process
-    :rtype: ``str``
-    :return: Rendered text with terminal control sequences
-    """
-    if not utils.T.is_a_tty:
-        return text
-    # For uniform line ending split and rejoin, this saves having to handle \r
-    # and \r\n
-    text = "\n".join(text.splitlines())
-
-    # Compile these REs for Python 2.6 compatibility, as flags isn't supported
-    # as a re.sub keyword argument until 2.7.  The others can take advantage of
-    # the implicit caching.
-    headings_re = re.compile(r"^#+ +(.*)$", re.MULTILINE)
-    rules_re = re.compile(r"^(([*-] *){3,})$", re.MULTILINE)
-    bullets_re = re.compile(r"^( {0,4})[*+-] ", re.MULTILINE)
-    quotes_re = re.compile(r"^> .*$", re.MULTILINE)
-
-    text = headings_re.sub(lambda s: utils.T.underline(s.groups()[0]), text)
-    text = rules_re.sub(lambda s: utils.T.green(s.groups()[0]), text)
-    text = re.sub(r'([\*_]{2})([^ \*]+)\1',
-                  lambda s: utils.T.underline(s.groups()[1]), text)
-    text = quotes_re.sub(lambda s: utils.T.reverse(s.group()), text)
-    text = re.sub(r'([\*_])([^ \*]+)\1',
-                  lambda s: utils.T.bold(s.groups()[1]), text)
-    if sys.stdout.encoding == "UTF-8":
-        text = bullets_re.sub(u"\\1• ", text)
-
-    return text
-
-
 def display_bugs(bugs, order, **extras):
     """Display bugs to users
 
-    :type bugs: ``list` of ``github2.issues.Issue``
+    :type bugs: ``list` of ``models.Issue``
     :param bugs: Bugs to display
     :param str order: Sorting order for displaying bugs
     :param dict extras: Additional values to pass to templates

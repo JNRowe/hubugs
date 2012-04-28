@@ -43,6 +43,14 @@ OPTIONS
 Commands
 --------
 
+``setup``
+'''''''''
+
+Generate a new GitHub access token
+
+--local
+   set access token for local repository only
+
 ``list``
 ''''''''
 
@@ -53,17 +61,6 @@ List bugs for a project
 
 -l <label>, --label=<label>
    list bugs with specified label
-
--o <order>, --order=<order>
-   sort order for listing bugs
-
-``search``
-''''''''''
-
-Search bugs reports in a project
-
--s <state>, --state=<state>
-   state of bugs to operate on
 
 -o <order>, --order=<order>
    sort order for listing bugs

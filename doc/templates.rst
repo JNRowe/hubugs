@@ -74,6 +74,10 @@ View group
 ``list.txt`` data
 ~~~~~~~~~~~~~~~~~
 
+.. data:: project(Repository)
+
+   The current project's repository data.  See :ref:`repo_objects-label`.
+
 .. data:: bugs(list)
 
    Contains the sorted list of bugs to display, if any.  See
@@ -91,12 +95,12 @@ View group
 
    The display order
 
-.. data:: term(str)
-
-   The search term being listed, if any
-
 ``issue.txt`` data
 ~~~~~~~~~~~~~~~~~~
+
+.. data:: project(Repository)
+
+   The current project's repository data.  See :ref:`repo_objects-label`.
 
 .. data:: bug(list)
 
@@ -197,24 +201,6 @@ formatters.
 
 This filter converts HTML to a plain text representation using html2text_.
 
-.. _markdown-label:
-
-``markdown``
-''''''''''''
-
-The purpose of this filter is to convert the Markdown_ formatted text from
-a GitHub issue to html.  The excellent misaka_ package is used to provide the
-conversion.
-
-In the default templates it is used to render bug bodies::
-
-    {{ comment.body | markdown | html2text }}
-
-.. note::
-   We ping-pong the conversion from Markdown to HTML as it produces a prettier
-   text representation of the comment.  We benefit from uniform newline usage
-   and clean word wrapping of the output.
-
 ``relative_time``
 '''''''''''''''''
 
@@ -229,23 +215,6 @@ which could produce output such as::
 
     about two months ago
 
-``term_markdown``
-'''''''''''''''''
-
-This filter is a very simple way pretty print Markdown_ formatted text. It only
-handles headings, horizontal rules and emphasis currently.
-
-It is not recommended that you use this filter, but it is available as fallback
-for people who do not wish to use the full :ref:`markdown-label` filter.
-
-An example of its usage could be::
-
-    {{ comment.body | wordwrap(break_long_words=False) | term_markdown }}
-
-Note that we pass the text through Jinja's built-in :func:`jinja:wordwrap`
-filter prior to formatting with ``term_markdown`` so that the terminal escape
-sequences aren't included in the line width calculations for wrapping.
-
 .. _Jinja: http://jinja.pocoo.org/
 .. _Jinja template designer: http://jinja.pocoo.org/docs/templates/
 .. _XDG Base Directory Specification: http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
@@ -254,5 +223,3 @@ sequences aren't included in the line width calculations for wrapping.
 .. _built-in filters: http://jinja.pocoo.org/docs/templates/#list-of-builtin-filters
 .. _Pygments: http://pygments.org/
 .. _html2text: http://pypi.python.org/pypi/html2text/
-.. _Markdown: http://daringfireball.net/projects/markdown/
-.. _misaka: http://pypi.python.org/pypi/misaka/

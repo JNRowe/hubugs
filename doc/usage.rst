@@ -15,12 +15,6 @@ Let's start with some basic examples:
 
     3 open bugs found
 
-    ▶ hubugs search markdown  # Search for bugs matching markdown
-    Id Title
-     5 Handle some GitHub markdown extensions [feature]
-
-    1 open bug found matching markdown
-
     ▶ hubugs show 6  # Show bug number 6
               Id: 6
            Title: Sphinx documentation tree
@@ -29,7 +23,6 @@ Let's start with some basic examples:
          Updated: yesterday
            State: open
         Comments: 0
-           Votes: 0
     Pull request: No
 
     This project deserves some real user documentation, not just a few notes in
@@ -63,6 +56,20 @@ Options
 Commands
 --------
 
+``setup`` - Generate a new GitHub access token
+''''''''''''''''''''''''''''''''''''''''''''''
+
+.. program:: hubugs setup
+
+::
+
+    hubugs.py setup [-h] [--local]
+
+.. cmdoption:: --local
+
+   set access token for local repository only
+
+
 ``list`` - List bugs for a project
 ''''''''''''''''''''''''''''''''''
 
@@ -71,7 +78,7 @@ Commands
 ::
 
     hubugs list [-h] [-s {open,closed,all}] [-l label]
-        [-o {number,updated,votes}]
+        [-o {number,updated}]
 
 .. cmdoption:: -s <state>, --state=<state>
 
@@ -80,25 +87,6 @@ Commands
 .. cmdoption:: -l <label>, --label=<label>
 
    list bugs with specified label
-
-.. cmdoption:: -o <order>, --order=<order>
-
-   sort order for listing bugs
-
-``search`` - Search bugs reports in a project
-'''''''''''''''''''''''''''''''''''''''''''''
-
-.. program:: hubugs search
-
-::
-
-    hubugs search [-h] [-s {open,closed,all}]
-        [-o {number,updated,votes}]
-        term
-
-.. cmdoption:: -s <state>, --state=<state>
-
-   state of bugs to operate on
 
 .. cmdoption:: -o <order>, --order=<order>
 
