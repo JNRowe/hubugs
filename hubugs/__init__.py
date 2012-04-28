@@ -123,6 +123,8 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
           help='set access token for local repository only')
 def setup(args):
     "setup GitHub access token"
+    if args.session.verify == requests.utils.CERTIFI_BUNDLE_PATH:
+        yield utils.warn('Falling back on bundled certificates')
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
