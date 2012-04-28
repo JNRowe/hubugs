@@ -27,11 +27,11 @@ class ISODateTimeField(micromodels.DateTimeField):
 
 
 class User(micromodels.Model):
+    id = micromodels.IntegerField()
+    avatar_url = micromodels.CharField()
+    gravatar_id = micromodels.CharField()
     login = micromodels.CharField()
     url = micromodels.CharField()
-    gravatar_id = micromodels.CharField()
-    avatar_url = micromodels.CharField()
-    id = micromodels.IntegerField()
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.login)
@@ -39,17 +39,17 @@ class User(micromodels.Model):
 
 class Label(micromodels.Model):
     color = micromodels.CharField()
-    url = micromodels.CharField()
     name = micromodels.CharField()
+    url = micromodels.CharField()
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
 class PullRequest(micromodels.Model):
-    patch_url = micromodels.CharField()
     diff_url = micromodels.CharField()
     html_url = micromodels.CharField()
+    patch_url = micromodels.CharField()
 
     def __nonzero__(self):
         return bool(self.patch_url)
@@ -59,24 +59,24 @@ class PullRequest(micromodels.Model):
 
 
 class Issue(micromodels.Model):
-    updated_at = ISODateTimeField()
-    comments = micromodels.IntegerField()
+    id = micromodels.IntegerField()
     assignee = micromodels.ModelField(User)
-    state = micromodels.CharField()
-    closed_at = ISODateTimeField()
-    milestone = micromodels.CharField()
-    url = micromodels.CharField()
-    user = micromodels.ModelField(User)
-    closed_by = micromodels.ModelField(User)
-    title = micromodels.CharField()
-    created_at = ISODateTimeField()
-    labels = micromodels.ModelCollectionField(Label)
-    number = micromodels.IntegerField()
     body = micromodels.CharField()
     body_html = micromodels.CharField()
-    pull_request = micromodels.ModelField(PullRequest)
-    id = micromodels.IntegerField()
+    closed_at = ISODateTimeField()
+    closed_by = micromodels.ModelField(User)
+    comments = micromodels.IntegerField()
+    created_at = ISODateTimeField()
     html_url = micromodels.CharField()
+    labels = micromodels.ModelCollectionField(Label)
+    milestone = micromodels.CharField()
+    number = micromodels.IntegerField()
+    pull_request = micromodels.ModelField(PullRequest)
+    state = micromodels.CharField()
+    title = micromodels.CharField()
+    updated_at = ISODateTimeField()
+    url = micromodels.CharField()
+    user = micromodels.ModelField(User)
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
@@ -84,13 +84,13 @@ class Issue(micromodels.Model):
 
 
 class Comment(micromodels.Model):
-    user = micromodels.ModelField(User)
-    created_at = ISODateTimeField()
+    id = micromodels.IntegerField()
     body = micromodels.CharField()
     body_html = micromodels.CharField()
-    url = micromodels.CharField()
-    id = micromodels.IntegerField()
+    created_at = ISODateTimeField()
     updated_at = ISODateTimeField()
+    url = micromodels.CharField()
+    user = micromodels.ModelField(User)
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
@@ -98,8 +98,8 @@ class Comment(micromodels.Model):
 
 
 class Application(micromodels.Model):
-    url = micromodels.CharField()
     name = micromodels.CharField()
+    url = micromodels.CharField()
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.name)
@@ -107,14 +107,14 @@ class Application(micromodels.Model):
 
 class Authorisation(micromodels.Model):
     id = micromodels.IntegerField()
-    url = micromodels.CharField()
-    scopes = micromodels.FieldCollectionField(micromodels.CharField())
-    token = micromodels.CharField()
     app = micromodels.ModelField(Application)
+    created_at = ISODateTimeField()
     note = micromodels.CharField()
     note_url = micromodels.CharField()
-    created_at = ISODateTimeField()
+    scopes = micromodels.FieldCollectionField(micromodels.CharField())
+    token = micromodels.CharField()
     updated_at = ISODateTimeField()
+    url = micromodels.CharField()
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
@@ -122,12 +122,12 @@ class Authorisation(micromodels.Model):
 
 
 class Organization(micromodels.Model):
-    login = micromodels.CharField()
-    url = micromodels.CharField()
-    gravatar_id = micromodels.CharField()
-    avatar_url = micromodels.CharField()
     id = micromodels.IntegerField()
+    avatar_url = micromodels.CharField()
+    gravatar_id = micromodels.CharField()
+    login = micromodels.CharField()
     type = micromodels.CharField()
+    url = micromodels.CharField()
 
 
 class Repository(micromodels.Model):
