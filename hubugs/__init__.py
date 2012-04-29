@@ -50,7 +50,6 @@ import atexit
 import errno
 import getpass
 import logging
-import operator
 import os
 # Used by raw_input, when imported
 import readline  # NOQA
@@ -217,12 +216,7 @@ def show(args):
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
     "opening new bugs"
-    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
-    r = args.session.get(labels_url)
-    label_names = map(operator.itemgetter('name'), r.json)
-    for label in args.add:
-        if label not in label_names:
-            raise ValueError('No such label %r' % label)
+    utils.sync_labels(args)
     if args.stdin:
         text = sys.stdin.readlines()
     elif not args.title:
@@ -233,12 +227,6 @@ def open_bug(args):
     else:
         title = args.title
         body = args.body
-    for label in args.create:
-        if label in label_names:
-            print utils.warn('%r label already exists' % label)
-        else:
-            data = {'name': label, 'color': '000000'}
-            r = args.session.post(labels_url, data=data)
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r = args.req_post('', data=data)
     bug = models.Issue.from_dict(r.json)
@@ -347,28 +335,16 @@ def reopen(args):
           help="bug number(s) to operate on")
 def label(args):
     "labelling bugs"
-    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
-    r = args.session.get(labels_url)
-    label_names = map(operator.itemgetter('name'), r.json)
+    label_names = utils.sync_labels(args)
 
     if args.list:
         print ", ".join(label_names)
         return
 
-    for label in args.add:
-        if label not in label_names:
-            raise ValueError('No such label %r' % label)
-    for label in args.create:
-        if label in label_names:
-            print utils.warn('%r label already exists' % label)
-        else:
-            data = {'name': label, 'color': '000000'}
-            r = args.session.post(labels_url, data=data)
-
     for bug_no in args.bugs:
         r = args.req_get(bug_no)
         bug = models.Issue.from_dict(r.json)
-        labels = map(operator.attrgetter('name'), bug.labels)
+        labels = [label.name for label in bug.labels]
         labels.extend(args.add)
         labels.extend(args.create)
 

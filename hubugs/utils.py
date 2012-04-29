@@ -246,3 +246,26 @@ def setup_environment(args):
             raise
         if not args.repo_obj.has_issues:
             raise RepoError("Issues aren't enabled for %r" % args.project)
+
+
+def sync_labels(args):
+    """Manage labels for a project
+
+    :param argparse.Namespace args: argparse namespace to operate on
+    :rtype: ``list``
+    :return: List of project's label names
+    """
+    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
+    r = args.session.get(labels_url)
+    label_names = [label['name'] for label in r.json]
+
+    for label in args.add:
+        if label not in label_names:
+            raise ValueError('No such label %r' % label)
+    for label in args.create:
+        if label in label_names:
+            print warn('%r label already exists' % label)
+        else:
+            data = {'name': label, 'color': '000000'}
+            r = args.session.post(labels_url, data=data)
+    return label_names + args.add + args.create
