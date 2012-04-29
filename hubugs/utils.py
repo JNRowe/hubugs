@@ -36,36 +36,61 @@ T = blessings.Terminal()
 
 # Set up informational message functions
 def _colourise(text, colour):
-    """Colour text, if possible
+    """Colour text, if possible.
 
     :param str text: Text to colourise
     :param str colour: Colour to display text in
-    :rtype: str
+    :rtype: ``str``
     :return: Colourised text, if possible
+
     """
     return getattr(T, colour.replace(' ', '_'))(text)
 
 
 def success(text):
+    """Output a success message.
+
+    :param str text:  Text to format
+    :rtype: ``str`
+    :return: Bright green text, if possible
+
+    """
     return _colourise(text, 'bright green')
 
 
 def fail(text):
+    """Output a failure message.
+
+    :param str text:  Text to format
+    :rtype: ``str`
+    :return: Bright red text, if possible
+
+    """
     return _colourise(text, 'bright red')
 
 
 def warn(text):
+    """Output a warning message.
+
+    :param str text:  Text to format
+    :rtype: ``str`
+    :return: Bright yellow text, if possible
+
+    """
     return _colourise(text, 'bright yellow')
 
 
 class RepoError(ValueError):
-    """Error raised for invalid repository values"""
+
+    """Error raised for invalid repository values."""
 
 
 class ProjectAction(argh.utils.argparse.Action):
-    """argparse action class for setting project"""
+
+    """argparse action class for setting project."""
+
     def __call__(self, parser, namespace, project, option_string=None):
-        "Set fully qualified GitHub project name"
+        """Set fully qualified GitHub project name."""
         if not "/" in project:
             user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
             if not user:
@@ -75,12 +100,13 @@ class ProjectAction(argh.utils.argparse.Action):
 
 
 def check_output(args, **kwargs):
-    """Simple check_output implementation for Python 2.6 compatibililty
+    """Simple check_output implementation for Python 2.6 compatibility.
 
     :param list args: Command and arguments to call
-    :rtype: str:
+    :rtype: ``str``
     :return: Command output
     :raise subprocess.CalledProcessError: If command execution fails
+
     """
     try:
         return subprocess.check_output(args, **kwargs)
@@ -94,11 +120,12 @@ def check_output(args, **kwargs):
 
 
 def get_github_api(auth=True):
-    """Create a GitHub API instance
+    """Create a GitHub API instance.
 
     :param bool auth: Whether to create an authorised session
     :rtype: ``requests.sessions.Session``
     :return: GitHub HTTP session
+
     """
 
     def from_json(r):
@@ -137,11 +164,14 @@ def get_github_api(auth=True):
 
 
 def get_git_config_val(key, default=None, local_only=False):
-    """Fetch a git configuration value
+    """Fetch a git configuration value.
 
     :param str key: Configuration value to fetch
     :param str default: Default value to use, if key isn't set
     :param bool local_only: Fetch configuration values from repo config only
+    :rtype: ``str``
+    :return: Git config value, if set
+
     """
     cmd = ['git', 'config', ]
     if local_only:
@@ -155,11 +185,12 @@ def get_git_config_val(key, default=None, local_only=False):
 
 
 def set_git_config_val(key, value, local_only=False):
-    """Set a git configuration value
+    """Set a git configuration value.
 
     :param str key: Configuration value to fetch
     :param str value: Value to set
     :param bool local_only: Set configuration values from repo config only
+
     """
     cmd = ['git', 'config', ]
     if not local_only:
@@ -172,12 +203,14 @@ def set_git_config_val(key, value, local_only=False):
 
 
 def get_editor():
-    """Choose a suitable editor
+    """Choose a suitable editor.
 
     This follows the method defined in :manpage:`git-var(1)`
 
     :rtype: ``str``
-    :return: Users chosen editor, or ``vi`` if not set"""
+    :return: Users chosen editor, or ``vi`` if not set
+
+    """
     # Match git for editor preferences
     editor = os.getenv("GIT_EDITOR")
     if not editor:
@@ -188,7 +221,12 @@ def get_editor():
 
 
 def get_repo():
-    "Extract GitHub project name from config"
+    """Extract GitHub project name from git config.
+
+    :rtype: ``str``
+    :return: GitHub project name, including user
+
+    """
     data = get_git_config_val("remote.origin.url", local_only=True)
     if not data:
         raise RepoError("No `origin' remote found")
@@ -207,9 +245,10 @@ def get_repo():
 
 
 def setup_environment(args):
-    """Configure execution environment for commands dispatch
+    """Configure execution environment for commands dispatch.
 
     :param argparse.Namespace args: argparse namespace to operate on
+
     """
     if not args.project:
         args.project = get_repo()
@@ -249,11 +288,12 @@ def setup_environment(args):
 
 
 def sync_labels(args):
-    """Manage labels for a project
+    """Manage labels for a project.
 
     :param argparse.Namespace args: argparse namespace to operate on
     :rtype: ``list``
     :return: List of project's label names
+
     """
     labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
     r = args.session.get(labels_url)

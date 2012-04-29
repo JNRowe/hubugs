@@ -73,14 +73,15 @@ COMMANDS = []
 
 
 def command(func):
-    """Simple decorator to add function to ``COMMANDS`` list
+    """Simple decorator to add function to ``COMMANDS`` list.
 
     The purpose of this decorator is to make the definition of commands simpler
     by reducing duplication, it is purely a convenience.
 
     :param func func: Function to wrap
-    :rtype: func
+    :rtype: ``func``
     :returns: Original function
+
     """
     COMMANDS.append(func)
     return func
@@ -121,7 +122,7 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
 @argh.arg('--local', default=False,
           help='set access token for local repository only')
 def setup(args):
-    "setup GitHub access token"
+    """setup GitHub access token"""
     if args.session.verify == requests.utils.CERTIFI_BUNDLE_PATH:
         yield utils.warn('Falling back on bundled certificates')
     default_user = os.getenv("GITHUB_USER",
@@ -156,7 +157,7 @@ def setup(args):
           metavar="label")
 @order_arg
 def list_bugs(args):
-    "listing bugs"
+    """listing bugs"""
     bugs = []
     params = {}
     if args.label:
@@ -169,8 +170,8 @@ def list_bugs(args):
         r = args.req_get('', params=_params)
         bugs.extend(models.Issue.from_dict(d) for d in r.json)
 
-    return template.display_bugs(bugs, args.order, state=args.state,
-                                 project=args.repo_obj)
+    yield template.display_bugs(bugs, args.order, state=args.state,
+                                project=args.repo_obj)
 
 
 @command
@@ -182,7 +183,7 @@ def list_bugs(args):
 @argh.arg("-b", "--browse", default=False, help="open bug in web browser")
 @bugs_arg
 def show(args):
-    "displaying bugs"
+    """displaying bugs"""
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
         if args.browse:
@@ -215,7 +216,7 @@ def show(args):
 @body_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
-    "opening new bugs"
+    """opening new bugs"""
     utils.sync_labels(args)
     if args.stdin:
         text = sys.stdin.readlines()
@@ -230,7 +231,7 @@ def open_bug(args):
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r = args.req_post('', data=data)
     bug = models.Issue.from_dict(r.json)
-    return utils.success("Bug %d opened" % bug.number)
+    yield utils.success("Bug %d opened" % bug.number)
 
 
 @command
@@ -239,7 +240,7 @@ def open_bug(args):
 @bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
-    "commenting on bugs"
+    """commenting on bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif args.message:
@@ -257,7 +258,7 @@ def comment(args):
 @bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
-    "editing bugs"
+    """editing bugs"""
     if (args.title or args.stdin) and len(args.bugs) > 1:
         raise argh.CommandError("Can not use --stdin or command line "
                                 "title/body with multiple bugs")
@@ -285,7 +286,7 @@ def edit(args):
 @message_arg
 @bugs_arg
 def close(args):
-    "closing bugs"
+    """closing bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -308,7 +309,7 @@ def close(args):
 @message_arg
 @bugs_arg
 def reopen(args):
-    "reopening closed bugs"
+    """reopening closed bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -334,7 +335,7 @@ def reopen(args):
 @argh.arg("bugs", nargs="*", type=int,
           help="bug number(s) to operate on")
 def label(args):
-    "labelling bugs"
+    """labelling bugs"""
     label_names = utils.sync_labels(args)
 
     if args.list:
@@ -356,7 +357,7 @@ def label(args):
 @command
 @argh.wrap_errors(template.EmptyMessageError)
 def report_bug(args):
-    "report a new bug against hubugs"
+    """report a new bug against hubugs"""
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
@@ -377,11 +378,16 @@ def report_bug(args):
     body = "\n".join(text[1:])
     bug = args.api("open", title, body)
     args.api("add_label", bug.number, 'bug')
-    return utils.success("Bug %d opened against hubugs, thanks!" % bug.number)
+    yield utils.success("Bug %d opened against hubugs, thanks!" % bug.number)
 
 
 def main():
-    """Main script"""
+    """Main command-line entry point.
+
+    :rtype: ``int``
+    :return: Exit code
+
+    """
     description = __doc__.splitlines()[0].split("-", 1)[1]
     epilog = "Please report bugs to the JNRowe/hubugs project"
     parser = argh.ArghParser(description=description, epilog=epilog,

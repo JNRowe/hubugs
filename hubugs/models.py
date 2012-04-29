@@ -21,12 +21,18 @@ import micromodels
 
 
 class ISODateTimeField(micromodels.DateTimeField):
+
+    """ISO-8601 compliant date and time field."""
+
     def __init__(self, **kwargs):
         super(ISODateTimeField, self).__init__(format='%Y-%m-%dT%H:%M:%SZ',
                                                **kwargs)
 
 
 class User(micromodels.Model):
+
+    """GitHub user model."""
+
     id = micromodels.IntegerField()
     avatar_url = micromodels.CharField()
     gravatar_id = micromodels.CharField()
@@ -38,6 +44,9 @@ class User(micromodels.Model):
 
 
 class Label(micromodels.Model):
+
+    """GitHub issue label model."""
+
     color = micromodels.CharField()
     name = micromodels.CharField()
     url = micromodels.CharField()
@@ -47,6 +56,9 @@ class Label(micromodels.Model):
 
 
 class PullRequest(micromodels.Model):
+
+    """GitHub issue pull request data model."""
+
     diff_url = micromodels.CharField()
     html_url = micromodels.CharField()
     patch_url = micromodels.CharField()
@@ -59,6 +71,9 @@ class PullRequest(micromodels.Model):
 
 
 class Issue(micromodels.Model):
+
+    """GitHub issue model."""
+
     id = micromodels.IntegerField()
     assignee = micromodels.ModelField(User)
     body = micromodels.CharField()
@@ -84,6 +99,9 @@ class Issue(micromodels.Model):
 
 
 class Comment(micromodels.Model):
+
+    """GitHub issue comment model."""
+
     id = micromodels.IntegerField()
     body = micromodels.CharField()
     body_html = micromodels.CharField()
@@ -98,6 +116,9 @@ class Comment(micromodels.Model):
 
 
 class Application(micromodels.Model):
+
+    """GitHub OAuth application model."""
+
     name = micromodels.CharField()
     url = micromodels.CharField()
 
@@ -106,6 +127,9 @@ class Application(micromodels.Model):
 
 
 class Authorisation(micromodels.Model):
+
+    """GitHub OAuth authorisation model."""
+
     id = micromodels.IntegerField()
     app = micromodels.ModelField(Application)
     created_at = ISODateTimeField()
@@ -122,6 +146,9 @@ class Authorisation(micromodels.Model):
 
 
 class Organization(micromodels.Model):
+
+    """GitHub issue organisation model."""
+
     id = micromodels.IntegerField()
     avatar_url = micromodels.CharField()
     gravatar_id = micromodels.CharField()
@@ -131,6 +158,9 @@ class Organization(micromodels.Model):
 
 
 class Repository(micromodels.Model):
+
+    """GitHub repository model."""
+
     id = micromodels.IntegerField()
     clone_url = micromodels.CharField()
     created_at = ISODateTimeField()

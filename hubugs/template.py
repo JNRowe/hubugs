@@ -52,24 +52,33 @@ ENV.loader.loaders.append(jinja2.PackageLoader("hubugs", "templates"))
 
 
 class EmptyMessageError(ValueError):
-    """Error to raise when the user provides an empty message"""
+
+    """Error to raise when the user provides an empty message."""
+
     pass
 
 
 def get_template(group, name):
-    """Fetch a Jinja template instance
+    """Fetch a Jinja template instance.
 
-    :param str group: Template group indentifier
+    :param str group: Template group identifier
     :param str name: Template name
-    :rtype: jinja2.environment.Template
+    :rtype: ``jinja2.environment.Template``
     :return: Jinja template instance
+
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
     return ENV.get_template("%s/%s/%s" % (template_set, group, name))
 
 
 def jinja_filter(func):
-    "Simple decorator to add function to Jinja filters"
+    """Simple decorator to add a new filter to Jinja environment.
+
+    :param func func: Function to add to Jinja environment
+    :rtype: ``func``
+    :returns: Unmodified function
+
+    """
     ENV.filters[func.__name__] = func
 
     return func
@@ -77,7 +86,7 @@ def jinja_filter(func):
 
 @jinja_filter
 def colourise(text, formatting):
-    """Colourise text using blessings
+    """Colourise text using blessings.
 
     Returns text untouched if colour output is not enabled
 
@@ -87,6 +96,7 @@ def colourise(text, formatting):
     :param str formatting: Formatting to apply to text
     :rtype: ``str``
     :return: Colourised text, when possible
+
     """
     return getattr(utils.T, formatting.replace(' ', '_'))(text)
 # American spelling, just for Brandon Cady ;)
@@ -95,15 +105,16 @@ ENV.filters["colorize"] = ENV.filters["colourise"]
 
 @jinja_filter
 def highlight(text, lexer="diff", formatter="terminal"):
-    """Highlight text with pygments
+    """Highlight text with pygments.
 
     Returns text untouched if colour output is not enabled
 
     :param str text: Text to highlight
     :param str lexer: Jinja lexer to use
-    :param str formatter:
+    :param str formatter: Jinja formatter to use
     :rtype: ``str``
     :return: Syntax highlighted output, when possible
+
     """
     if utils.T.is_a_tty:
         lexer = get_lexer_by_name(lexer)
@@ -115,13 +126,14 @@ def highlight(text, lexer="diff", formatter="terminal"):
 
 @jinja_filter
 def html2text(html, width=80, ascii_replacements=False):
-    """HTML to plain text renderer
+    """HTML to plain text renderer.
 
     :param str text: Text to process
     :param int width: Paragraph width
     :param bool ascii_replacements: Use psuedo-ascii replacements for Unicode
     :rtype: ``str``
     :return: Rendered text
+
     """
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
@@ -130,7 +142,7 @@ def html2text(html, width=80, ascii_replacements=False):
 
 @jinja_filter
 def relative_time(timestamp):
-    """Format a relative time
+    """Format a relative time.
 
     Taken from bleeter_.  Duplication is evil, I know.
 
@@ -140,6 +152,7 @@ def relative_time(timestamp):
     :return: Human readable date and time offset
 
     .. _bleeter: http://jnrowe.github.com/bleeter/
+
     """
 
     numstr = ". a two three four five six seven eight nine ten".split()
@@ -177,12 +190,15 @@ def relative_time(timestamp):
 
 
 def display_bugs(bugs, order, **extras):
-    """Display bugs to users
+    """Display bugs to users.
 
     :type bugs: ``list` of ``models.Issue``
     :param bugs: Bugs to display
     :param str order: Sorting order for displaying bugs
     :param dict extras: Additional values to pass to templates
+    :rtype: ``str``
+    :return: Rendered template output
+
     """
     if not bugs:
         return utils.success("No bugs found!")
@@ -209,13 +225,14 @@ def display_bugs(bugs, order, **extras):
 
 
 def edit_text(edit_type="default", data=None):
-    """Edit data with external editor
+    """Edit data with external editor.
 
     :param str edit_type: Template to use in editor
     :param dict data: Information to pass to template
     :rtype: ``str``
     :return: User supplied text
     :raise EmptyMessageError: No message given
+
     """
     template = get_template('edit', '%s.mkd' % edit_type)
     with tempfile.NamedTemporaryFile(prefix="hubugs-", suffix=".mkd") as temp:
