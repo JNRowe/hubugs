@@ -9,8 +9,8 @@ from setuptools import setup
 _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
-install_requires = ['argh', 'blessings', 'html2text', 'Jinja2>=2',
-                    'micromodels', 'Pygments', 'requests>=0.11.2']
+install_requires = ['argh', 'blessings', 'html2text', 'httplib2>=0.7.4',
+                    'Jinja2>=2', 'micromodels', 'Pygments']
 if sys.version_info[:2] < (2, 7):
     install_requires.append('argparse')
 

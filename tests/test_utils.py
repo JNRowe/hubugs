@@ -63,22 +63,6 @@ class ProjectAction(TestCase):
         self.action(self.parser, self.namespace, 'misc-overlay')
 
 
-class GetGithubApi(TestCase):
-    @patch('os.getenv')
-    @patch('os.mkdir')
-    def test_api_builder(self, mkdir, getenv):
-        mkdir.return_value = True
-        getenv.side_effect = fake_env
-        api = utils.get_github_api()
-        assert_equals(api.headers['Authorization'], 'token xxx')
-
-    @patch('os.getenv')
-    @raises(EnvironmentError)
-    def test_invalid_auth(self, getenv):
-        getenv.return_value = None
-        utils.get_github_api()
-
-
 class GetGitConfigVal(TestCase):
     @patch('hubugs.utils.check_output')
     def test_valid_key(self, check_output):
@@ -215,35 +199,3 @@ class GetRepo(TestCase):
     def test_invalid_url(self, get_git_config_val):
         get_git_config_val.return_value = 'http://example.com/dog.git'
         utils.get_repo()
-
-
-class SetApi(TestCase):
-    class API_Object():
-        json = {}
-
-        def get(self, *args):
-            new = self.__class__()
-            new.json = {'has_issues': True}
-            return new
-
-    @patch('os.getenv')
-    @patch('hubugs.utils.get_repo')
-    @patch('hubugs.utils.get_github_api')
-    def test_no_project(self, get_github_api, get_repo, getenv):
-        get_github_api.return_value = self.API_Object()
-        get_repo.return_value = 'JNRowe/misc-overlay'
-        getenv.side_effect = fake_env
-        namespace = argparse.Namespace(project=None, host_url=None,
-                                       function=lambda: True)
-        utils.setup_environment(namespace)
-        assert_equals(namespace.project, 'JNRowe/misc-overlay')
-
-    @patch('os.getenv')
-    @patch('hubugs.utils.get_github_api')
-    def test_project(self, get_github_api, getenv):
-        get_github_api.return_value = self.API_Object()
-        getenv.side_effect = fake_env
-        namespace = argparse.Namespace(project='JNRowe/misc-overlay',
-                                       host_url=None, function=lambda: True)
-        utils.setup_environment(namespace)
-        assert_equals(namespace.project, 'JNRowe/misc-overlay')

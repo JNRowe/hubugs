@@ -25,10 +25,10 @@ view over time.  Therefore:
 Data display must be fast, and require the minimum possible network access.
 Therefore:
 
-    Network data must be streamlined_ as possible
+    Network data must be `cached and compressed`_ where possible
 
 .. _GitHub: https://github.com/
 .. _thoroughly documented API: http://developer.github.com/v3/
 .. _command line interface: http://pypi.python.org/pypi/argh/
 .. _templates: http://jinja.pocoo.org/
-.. _streamlined: http://pypi.python.org/pypi/requests
+.. _cached and compressed: http://code.google.com/p/httplib2/

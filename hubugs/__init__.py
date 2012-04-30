@@ -56,8 +56,10 @@ import readline  # NOQA
 import sys
 import webbrowser
 
+from base64 import b64encode
+
 import argh
-import requests
+import httplib2
 
 
 logging.basicConfig(level=logging.ERROR,
@@ -123,8 +125,6 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
           help='set access token for local repository only')
 def setup(args):
     """setup GitHub access token"""
-    if args.session.verify == requests.utils.CERTIFI_BUNDLE_PATH:
-        yield utils.warn('Falling back on bundled certificates')
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
@@ -142,10 +142,14 @@ def setup(args):
         'note_url': 'https://github.com/JNRowe/hubugs'
     }
 
-    auth = requests.auth.HTTPBasicAuth(user, password)
-    r = args.req_post('https://api.github.com/authorizations', auth=auth,
-                      data=data)
-    auth = models.Authorisation.from_dict(r.json)
+    # Unfortunately, we need to forcibly define the header to workaround
+    # GitHub sending a 404(in an effort to stop information leakage)
+    header = {
+        'Authorization': 'Basic ' + b64encode(":".join([user, password]))
+    }
+    r, c = args.req_post('https://api.github.com/authorizations', body=data,
+                         headers=header)
+    auth = models.Authorisation.from_dict(c)
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
     yield utils.success('Configuration complete!')
 
@@ -167,8 +171,8 @@ def list_bugs(args):
     for state in states:
         _params = params.copy()
         _params['state'] = state
-        r = args.req_get('', params=_params)
-        bugs.extend(models.Issue.from_dict(d) for d in r.json)
+        r, c = args.req_get('', params=_params)
+        bugs.extend(models.Issue.from_dict(d) for d in c)
 
     yield template.display_bugs(bugs, args.order, state=args.state,
                                 project=args.repo_obj)
@@ -190,16 +194,17 @@ def show(args):
             webbrowser.open_new_tab("https://github.com/%s/issues/%d"
                                     % (args.project, bug_no))
             continue
-        r = args.req_get(bug_no)
-        bug = models.Issue.from_dict(r.json)
+        r, c = args.req_get(bug_no)
+        bug = models.Issue.from_dict(c)
 
         if args.full and bug.comments:
-            r = args.req_get('%s/comments' % bug_no)
-            comments = [models.Comment.from_dict(d) for d in r.json]
+            r, c = args.req_get('%s/comments' % bug_no)
+            comments = [models.Comment.from_dict(d) for d in c]
         else:
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
-            patch = args.session.get(bug.pull_request.patch_url).text
+            r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
+            patch = c.decode('utf-8')
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,
@@ -229,8 +234,8 @@ def open_bug(args):
         title = args.title
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
-    r = args.req_post('', data=data)
-    bug = models.Issue.from_dict(r.json)
+    r, c = args.req_post('', body=data)
+    bug = models.Issue.from_dict(c)
     yield utils.success("Bug %d opened" % bug.number)
 
 
@@ -248,7 +253,7 @@ def comment(args):
     else:
         message = template.edit_text()
     for bug in args.bugs:
-        args.req_post('%s/comments' % bug, data={'body': message})
+        args.req_post('%s/comments' % bug, body={'body': message})
 
 
 @command
@@ -266,8 +271,8 @@ def edit(args):
         if args.stdin:
             text = sys.stdin.readlines()
         elif not args.title:
-            r = args.req_get(bug)
-            current = models.Issue.from_dict(r.json)
+            r, c = args.req_get(bug)
+            current = models.Issue.from_dict(c)
             current_data = {"title": current.title, "body": current.body}
             text = template.edit_text("open", current_data).splitlines()
         if args.stdin or not args.title:
@@ -278,7 +283,7 @@ def edit(args):
             body = args.body
 
         data = {'title': title, 'body': body}
-        args.req_post(bug, data=data)
+        args.req_post(bug, body=data)
 
 
 @command
@@ -299,9 +304,8 @@ def close(args):
         message = args.message
     for bug in args.bugs:
         if message:
-            args.req_post('%s/comments' % bug,
-                            data={'body': message})
-        args.req_post(bug, data={'state': 'closed'})
+            args.req_post('%s/comments' % bug, body={'body': message})
+        args.req_post(bug, body={'state': 'closed'})
 
 
 @command
@@ -322,9 +326,8 @@ def reopen(args):
         message = args.message
     for bug in args.bugs:
         if message:
-            args.req_post('%s/comments' % bug,
-                            data={'body': message})
-        args.req_post(bug, data={'state': 'open'})
+            args.req_post('%s/comments' % bug, body={'body': message})
+        args.req_post(bug, body={'state': 'open'})
 
 
 @command
@@ -343,15 +346,15 @@ def label(args):
         return
 
     for bug_no in args.bugs:
-        r = args.req_get(bug_no)
-        bug = models.Issue.from_dict(r.json)
+        r, c = args.req_get(bug_no)
+        bug = models.Issue.from_dict(c)
         labels = [label.name for label in bug.labels]
         labels.extend(args.add)
         labels.extend(args.create)
 
         for string in args.remove:
             labels.remove(string)
-        r = args.req_post(bug_no, data={'labels': labels})
+        args.req_post(bug_no, body={'labels': labels})
 
 
 @command
@@ -361,23 +364,24 @@ def report_bug(args):
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
-    import argh, blessings, html2text, jinja2, micromodels, pygments, \
-        requests  # NOQA
+    import argh, blessings, html2text, httplib2, jinja2, micromodels, \
+        pygments  # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in argh, blessings, html2text, jinja2, micromodels,
-                        pygments, requests])
+                     for m in argh, blessings, html2text, httplib2, jinja2,
+                        micromodels, pygments])
     data = {
         'local': local,
         'sys': sys,
         'version': _version.dotted,
         'versions': versions,
-        'certs': os.path.realpath(requests.utils.DEFAULT_CA_BUNDLE_PATH),
     }
     text = template.edit_text("hubugs_report", data).splitlines()
     title = text[0]
     body = "\n".join(text[1:])
-    bug = args.api("open", title, body)
-    args.api("add_label", bug.number, 'bug')
+
+    data = {'title': title, 'body': body, 'labels': args.add + args.create}
+    r, c = args.req_post('', body=data)
+    bug = models.Issue.from_dict(c)
     yield utils.success("Bug %d opened against hubugs, thanks!" % bug.number)
 
 
@@ -404,13 +408,9 @@ def main():
     except (EnvironmentError, utils.RepoError, ValueError) as error:
         print utils.fail(error.message)
         return errno.EINVAL
-    except requests.ConnectionError:
+    except httplib2.ServerNotFoundError:
         print utils.fail("Project lookup failed.  Network or GitHub down?")
         return errno.ENXIO
-    except requests.HTTPError as error:
-        print utils.fail("Error from GitHub: %s"
-                         % error.response.json['message'])
-        return errno.ENOENT
 
 if __name__ == '__main__':
     sys.exit(main())

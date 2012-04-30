@@ -21,12 +21,14 @@ import json
 import os
 import re
 import subprocess
+import sys
+import urllib
 
 from functools import partial
 
 import argh
 import blessings
-import requests
+import httplib2
 
 from . import (_version, models)
 
@@ -80,6 +82,16 @@ def warn(text):
     return _colourise(text, 'bright yellow')
 
 
+class HttpClientError(ValueError):
+
+    """Error raised for client error status codes."""
+
+    def __init__(self, message, response, content):
+        super(HttpClientError, self).__init__(message)
+        self.response = response
+        self.content = content
+
+
 class RepoError(ValueError):
 
     """Error raised for invalid repository values."""
@@ -119,48 +131,21 @@ def check_output(args, **kwargs):
         return output
 
 
-def get_github_api(auth=True):
+def get_github_api():
     """Create a GitHub API instance.
 
-    :param bool auth: Whether to create an authorised session
-    :rtype: ``requests.sessions.Session``
+    :rtype: ``httplib2.Http``
     :return: GitHub HTTP session
 
     """
+    if sys.platform == 'darwin':
+        user_cache_dir = os.path.expanduser("~/Library/Caches")
+    else:
+        user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
+    xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
+    cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
 
-    def from_json(r):
-        r.json = json.loads(r.text)
-
-    def to_json(r):
-        r['data'] = json.dumps(r['data'])
-
-    headers = {
-        'Accept': 'application/vnd.github.beta.full+json',
-        'User-Agent': 'hubugs/%s' % _version.dotted,
-    }
-    if auth:
-        token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
-        if not token:
-            raise EnvironmentError("No hubugs authorisation token found!  "
-                                   "Run 'hubugs setup' to create a token")
-        headers["Authorization"] = "token %s" % token
-
-    # if sys.platform == 'darwin':
-    #     user_cache_dir = os.path.expanduser("~/Library/Caches")
-    # else:
-    #     user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
-    # xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
-    # cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
-
-    # We have to invert the default cert selection behaviour, as requests
-    # ignores the system configuration out of the box.  Shouldn't have to
-    # resort to this, but…
-    certs = requests.utils.get_os_ca_bundle_path() \
-        or requests.utils.CERTIFI_BUNDLE_PATH
-
-    return requests.session(headers=headers, verify=certs,
-                            hooks={'args': to_json, 'response': from_json},
-                            config={'danger_mode': True})
+    return httplib2.Http(cache_dir)
 
 
 def get_git_config_val(key, default=None, local_only=False):
@@ -255,34 +240,56 @@ def setup_environment(args):
 
     command = args.function.__name__
 
+    http = get_github_api()
+
+    HEADERS = {
+        'Accept': 'application/vnd.github.beta.full+json',
+        'User-Agent': 'hubugs/%s' % _version.dotted,
+    }
+
     # We use manual auth when calling setup
     use_auth = not command == 'setup'
-    session = get_github_api(use_auth)
+    if use_auth:
+        token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
+        if not token:
+            raise EnvironmentError("No hubugs authorisation token found!  "
+                                   "Run 'hubugs setup' to create a token")
+        HEADERS["Authorization"] = "token %s" % token
 
-    def api_method(method, loc, *pargs, **kwargs):
-        func = getattr(session, method)
-        url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
-                                          '/' if loc else '', loc)
-        return func(url, *pargs, **kwargs)
+    def http_method(url, method='GET', params=None, body=None, headers=None,
+                    is_json=True):
+        if headers:
+            headers.update(HEADERS)
+        else:
+            headers = HEADERS
+        if not isinstance(url, basestring) or not url.startswith('http'):
+            url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
+                                              '/' if url else '', url)
+        if params:
+            url += '?' + urllib.urlencode(params)
+        if is_json and body:
+            body = json.dumps(body)
+        r, c = http.request(url, method=method, body=body, headers=headers)
+        if is_json:
+            c = json.loads(c)
+        if str(r.status)[0] == '4':
+            raise HttpClientError(str(r.status), r, c)
+        return r, c
 
-    args.req_get = partial(api_method, 'get')
-    args.req_post = partial(api_method, 'post')
-    args.req_patch = partial(api_method, 'patch')
-    args.req_delete = partial(api_method, 'delete')
-    # Include a direct session object, for non-issues related network access.
-    args.session = session
+    args.req_get = http_method
+    args.req_post = partial(http_method, method='POST')
 
     # Make the repository information available, if it will be useful
     # Note: We skip this step for `show -b' for speed, see #20
     if not command == 'setup' \
         and not (command == 'show' and args.browse == True):
         try:
-            r = session.get('%s/repos/%s' % (args.host_url, args.project))
-            args.repo_obj = models.Repository.from_dict(r.json)
-        except requests.HTTPError as e:
-            if e.response.status_code == 404:
+            r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project))
+        except HttpClientError as e:
+            if e.content['message'] == 'Not Found':
                 raise RepoError('Invalid project %r' % args.project)
             raise
+        args.repo_obj = models.Repository.from_dict(c)
         if not args.repo_obj.has_issues:
             raise RepoError("Issues aren't enabled for %r" % args.project)
 
@@ -296,8 +303,8 @@ def sync_labels(args):
 
     """
     labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
-    r = args.session.get(labels_url)
-    label_names = [label['name'] for label in r.json]
+    r, c = args.req_get(labels_url)
+    label_names = [label['name'] for label in c]
 
     for label in args.add:
         if label not in label_names:
@@ -307,5 +314,5 @@ def sync_labels(args):
             print warn('%r label already exists' % label)
         else:
             data = {'name': label, 'color': '000000'}
-            r = args.session.post(labels_url, data=data)
+            args.req_post(labels_url, body=data)
     return label_names + args.add + args.create
