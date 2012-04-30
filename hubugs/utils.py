@@ -35,6 +35,27 @@ from . import (_version, models)
 
 T = blessings.Terminal()
 
+SYSTEM_CERTS = \
+    not httplib2.CA_CERTS.startswith(os.path.dirname(httplib2.__file__))
+CURL_CERTS = False
+if not SYSTEM_CERTS and sys.platform.startswith('linux'):
+    for cert_file in ['/etc/ssl/certs/ca-certificates.crt',
+                      '/etc/pki/tls/certs/ca-bundle.crt']:
+        if os.path.exists(cert_file):
+            CA_CERTS = cert_file
+            SYSTEM_CERTS = True
+            break
+elif not SYSTEM_CERTS and sys.platform.startswith('freebsd'):
+    if os.path.exists('/usr/local/share/certs/ca-root-nss.crt'):
+        CA_CERTS = '/usr/local/share/certs/ca-root-nss.crt'
+        SYSTEM_CERTS = True
+elif os.path.exists(os.getenv('CURL_CA_BUNDLE', '')):
+    CA_CERTS = os.getenv('CURL_CA_BUNDLE')
+    CURL_CERTS = True
+if not SYSTEM_CERTS and not CURL_CERTS:
+    CA_CERTS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "GitHub_certs.crt")
+
 
 # Set up informational message functions
 def _colourise(text, colour):
@@ -145,7 +166,7 @@ def get_github_api():
     xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
     cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
 
-    return httplib2.Http(cache_dir)
+    return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
 
 
 def get_git_config_val(key, default=None, local_only=False):

@@ -125,6 +125,10 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
           help='set access token for local repository only')
 def setup(args):
     """setup GitHub access token"""
+    if not utils.SYSTEM_CERTS:
+        yield utils.warn('Falling back on bundled certificates')
+    if utils.CURL_CERTS:
+        yield utils.warn('Using certs specified in $CURL_CERTS')
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
@@ -374,6 +378,7 @@ def report_bug(args):
         'sys': sys,
         'version': _version.dotted,
         'versions': versions,
+        'certs': utils.CA_CERTS,
     }
     text = template.edit_text("hubugs_report", data).splitlines()
     title = text[0]
