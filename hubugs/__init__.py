@@ -339,7 +339,7 @@ def label(args):
     label_names = utils.sync_labels(args)
 
     if args.list:
-        print ", ".join(label_names)
+        print ", ".join(sorted(label_names))
         return
 
     for bug_no in args.bugs:
