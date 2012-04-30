@@ -239,5 +239,6 @@ man_pages = [
 intersphinx_mapping = {
     'jinja': ('http://jinja.pocoo.org/docs/',
               os.getenv('SPHINX_JINJA_OBJECTS')),
-    'python': ('http://docs.python.org/', os.getenv('SPHINX_PYTHON_OBJECTS')),
+    'python': ('http://docs.python.org/',
+               os.getenv('SPHINX_PYTHON_OBJECTS')),
 }
