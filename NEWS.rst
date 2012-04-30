@@ -3,6 +3,24 @@ User-visible changes
 
 .. contents::
 
+0.14.0 - 2012-04-30
+-------------------
+
+* Support for `GitHub API v3`_, you need to generate an access token with
+  ``hubugs setup``
+* Custom templates *will* require updating to work with this version
+* New ``report-bug`` subcommand to report bugs you find in ``hubugs``
+* The ``term_markdown`` and ``markdown`` filters have been removed
+* httplib2_ is now required, but was soft dependency via `github2` before
+* micromodels_ is now required
+* github2_ and misaka_ are no longer required
+
+.. _GitHub API v3: http://developer.github.com/v3/
+.. _httplib2: http://pypi.python.org/pypi/httplib2
+.. _github2: http://pypi.python.org/pypi/github2/
+.. _micromodels: http://pypi.python.org/pypi/micromodels/
+.. _misaka: http://pypi.python.org/pypi/misaka/
+
 0.13.1 - 2012-02-28
 -------------------
 
