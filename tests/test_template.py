@@ -8,6 +8,8 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
+from utils import skip_check
+
 
 # We only test forced styling output of blessings, as blessings handles the
 # sys.stdout.isatty() flipping
@@ -15,17 +17,21 @@ template.utils.T = template.utils.blessings.Terminal(force_styling=True)
 
 
 class Colourise(TestCase):
+    @skip_check
     def test_color(self):
         assert_equals(template.colourise('s', 'red'),
                       u'\x1b[38;5;1ms\x1b[m\x1b(B')
 
+    @skip_check
     def test_background_color(self):
         assert_equals(template.colourise('s', 'on blue'),
                                          u'\x1b[48;5;4ms\x1b[m\x1b(B')
 
+    @skip_check
     def test_attribute(self):
         assert_equals(template.colourise('s', 'bold'), u'\x1b[1ms\x1b[m\x1b(B')
 
+    @skip_check
     @raises(TypeError)
     def test_invalid_colour(self):
         assert_equals(template.colourise('s', 'mauve with a hint of green'),
