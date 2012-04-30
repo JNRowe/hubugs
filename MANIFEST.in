@@ -3,6 +3,7 @@ include COPYING *.rst
 include doc/*.rst
 include doc/conf.py
 
+include hubugs/*.crt
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
 

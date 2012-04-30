@@ -27,7 +27,7 @@ setup(
     keywords="github bugs cli",
     packages=['hubugs', ],
     include_package_data=True,
-    package_data={'': ['templates/*/*.mkd', "templates/*/*.txt"], },
+    package_data={'': ['templates/*/*.mkd', "templates/*/*.txt", '*.crt'], },
     entry_points={'console_scripts': ['hubugs = hubugs:main', ]},
     install_requires=install_requires,
     zip_safe=False,
