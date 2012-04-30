@@ -401,7 +401,7 @@ def main():
     parser.add_commands(COMMANDS)
     try:
         parser.dispatch(pre_call=utils.setup_environment)
-    except (EnvironmentError, utils.RepoError, ValueError) as error:
+    except (utils.RepoError, EnvironmentError, ValueError) as error:
         print utils.fail(error.message)
         return errno.EINVAL
     except requests.ConnectionError:
