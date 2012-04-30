@@ -68,7 +68,7 @@ logging.basicConfig(level=logging.ERROR,
 atexit.register(logging.shutdown)
 
 
-from . import (models, template, utils)
+from . import (template, utils)
 
 
 COMMANDS = []
@@ -151,9 +151,8 @@ def setup(args):
     header = {
         'Authorization': 'Basic ' + b64encode(":".join([user, password]))
     }
-    r, c = args.req_post('https://api.github.com/authorizations', body=data,
-                         headers=header)
-    auth = models.Authorisation.from_dict(c)
+    r, auth = args.req_post('https://api.github.com/authorizations', body=data,
+                            headers=header, model='Authorisation')
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
     yield utils.success('Configuration complete!')
 
@@ -175,8 +174,8 @@ def list_bugs(args):
     for state in states:
         _params = params.copy()
         _params['state'] = state
-        r, c = args.req_get('', params=_params)
-        bugs.extend(models.Issue.from_dict(d) for d in c)
+        r, _bugs = args.req_get('', params=_params, model=['Issue', ])
+        bugs.extend(_bugs)
 
     yield template.display_bugs(bugs, args.order, state=args.state,
                                 project=args.repo_obj)
@@ -198,12 +197,11 @@ def show(args):
             webbrowser.open_new_tab("https://github.com/%s/issues/%d"
                                     % (args.project, bug_no))
             continue
-        r, c = args.req_get(bug_no)
-        bug = models.Issue.from_dict(c)
+        r, bug = args.req_get(bug_no, model='Issue')
 
         if args.full and bug.comments:
-            r, c = args.req_get('%s/comments' % bug_no)
-            comments = [models.Comment.from_dict(d) for d in c]
+            r, comments = args.req_get('%s/comments' % bug_no,
+                                       model=['Comment', ])
         else:
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
@@ -238,8 +236,7 @@ def open_bug(args):
         title = args.title
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
-    r, c = args.req_post('', body=data)
-    bug = models.Issue.from_dict(c)
+    r, bug = args.req_post('', body=data, model='Issue')
     yield utils.success("Bug %d opened" % bug.number)
 
 
@@ -275,8 +272,7 @@ def edit(args):
         if args.stdin:
             text = sys.stdin.readlines()
         elif not args.title:
-            r, c = args.req_get(bug)
-            current = models.Issue.from_dict(c)
+            r, current = args.req_get(bug, model='Issue')
             current_data = {"title": current.title, "body": current.body}
             text = template.edit_text("open", current_data).splitlines()
         if args.stdin or not args.title:
@@ -350,11 +346,9 @@ def label(args):
         return
 
     for bug_no in args.bugs:
-        r, c = args.req_get(bug_no)
-        bug = models.Issue.from_dict(c)
+        r, bug = args.req_get(bug_no, model='Issue')
         labels = [label.name for label in bug.labels]
-        labels.extend(args.add)
-        labels.extend(args.create)
+        labels.extend(args.add + args.create)
 
         for string in args.remove:
             labels.remove(string)
@@ -384,8 +378,7 @@ def report_bug(args):
     body = "\n".join(text[1:])
 
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
-    r, c = args.req_post('', body=data)
-    bug = models.Issue.from_dict(c)
+    r, bug = args.req_post('', body=data, model='Issue')
     yield utils.success("Bug %d opened against hubugs, thanks!" % bug.number)
 
 

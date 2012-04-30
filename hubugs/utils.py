@@ -278,7 +278,7 @@ def setup_environment(args):
         HEADERS["Authorization"] = "token %s" % token
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
-                    is_json=True):
+                    model=None, is_json=True):
         if headers:
             headers.update(HEADERS)
         else:
@@ -295,6 +295,12 @@ def setup_environment(args):
             c = json.loads(c)
         if str(r.status)[0] == '4':
             raise HttpClientError(str(r.status), r, c)
+        if model:
+            if isinstance(model, list):
+                creator = getattr(models, model[0]).from_dict
+                c = [creator(d) for d in c]
+            else:
+                c = getattr(models, model).from_dict(c)
         return r, c
 
     args.req_get = http_method
