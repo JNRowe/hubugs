@@ -20,5 +20,5 @@
 {% endblock -%}
 
 {%- block footer %}
-{{ bugs | length | string | colourise(heading_colour) }} {{ state }} bug{% if bugs | length != 1 %}s{% endif %} found
+{{ bugs | length | string | colourise(heading_colour) }} {{ state }} bug{% if bugs | length != 1 %}s{% endif %} found{% if term %} matching {{ term | colourise(heading_colour) }}{% endif %}
 {%- endblock %}

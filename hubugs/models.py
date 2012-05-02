@@ -17,6 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import datetime
+
 import micromodels
 
 
@@ -96,6 +98,49 @@ class Issue(micromodels.Model):
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
                                self.title[:20])
+
+    @classmethod
+    def from_search(cls, d):
+        """Support legacy API search results as API v3 issues(-ish)
+
+        This is an awful hack to workaround the lack of search support in API
+        v3.  It needs to be removed at the first possible opportunity.
+
+        """
+
+        d['id'] = '<from search>'
+        d['user'] = {
+            'avatar_url': "https://secure.gravatar.com/avatar/%s?d=https://a248.e.akamai.net/assets.github.com%%2Fimages%%2Fgravatars%%2Fgravatar-140.png" % d['gravatar_id'],
+            'gravatar_id': d['gravatar_id'],
+            'login': d['user'],
+            'url': 'https://api.github.com/users/%s' % d['user'],
+        }
+        if 'closed_by' in d:
+            d['closed_by'] = {
+                'avatar_url': "https://secure.gravatar.com/avatar/%s?d=https://a248.e.akamai.net/assets.github.com%%2Fimages%%2Fgravatars%%2Fgravatar-140.png" % d['closed_by'],
+                'gravatar_id': d['gravatar_id'],
+                'login': d['user'],
+                'url': 'https://api.github.com/users/%s' % d['user'],
+            }
+            d['closed_at'] = cls._v2_conv_timestamp(d['closed_at'])
+        d['created_at'] = cls._v2_conv_timestamp(d['created_at'])
+        d['updated_at'] = cls._v2_conv_timestamp(d['updated_at'])
+        if d['labels']:
+            labels = []
+            for name in d['labels']:
+                labels.append({
+                    'color': '000000',
+                    'name': name,
+                    'url': 'https://api.github.com/repos/%s/%s/labels/%s' % tuple(d['html_url'].split('/')[3:5] + [name, ])
+                })
+            d['labels'] = labels
+        return cls.from_dict(d)
+
+    @staticmethod
+    def _v2_conv_timestamp(s):
+        zone = datetime.timedelta(hours=int(s[-5:-2]))
+        stamp = datetime.datetime.strptime(s[:-6], '%Y/%m/%d %H:%M:%S')
+        return (stamp - zone).isoformat() + 'Z'
 
 
 class Comment(micromodels.Model):

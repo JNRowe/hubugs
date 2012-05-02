@@ -15,6 +15,12 @@ Let's start with some basic examples:
 
     3 open bugs found
 
+    ▶ hubugs search markdown  # Search for bugs matching markdown
+    Id Title
+     5 Handle some GitHub markdown extensions [feature]
+
+    1 open bug found matching markdown
+
     ▶ hubugs show 6  # Show bug number 6
               Id: 6
            Title: Sphinx documentation tree
@@ -87,6 +93,25 @@ Commands
 .. cmdoption:: -l <label>, --label=<label>
 
    list bugs with specified label
+
+.. cmdoption:: -o <order>, --order=<order>
+
+   sort order for listing bugs
+
+``search`` - Search bugs reports in a project
+'''''''''''''''''''''''''''''''''''''''''''''
+
+.. program:: hubugs search
+
+::
+
+    hubugs search [-h] [-s {open,closed,all}]
+        [-o {number,updated}]
+        term
+
+.. cmdoption:: -s <state>, --state=<state>
+
+   state of bugs to operate on
 
 .. cmdoption:: -o <order>, --order=<order>
 

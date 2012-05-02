@@ -182,6 +182,27 @@ def list_bugs(args):
 
 
 @command
+@states_arg
+@order_arg
+@argh.arg("term", help="term to search bugs for")
+def search(args):
+    "searching bugs"
+    # This chunk of code is horrific, as is the Issue.from_search() that is
+    # required to support it.  However, without search support in API v3 there
+    # is realistic way around it.
+    from .models import Issue
+    search_url = 'https://api.github.com/legacy/issues/search/%s/%s/%s'
+    states = ["open", "closed"] if args.state == "all" else [args.state, ]
+    bugs = []
+    for state in states:
+        r, c = args.req_get(search_url % (args.project, state, args.term))
+        _bugs = [Issue.from_search(d) for d in c['issues']]
+        bugs.extend(_bugs)
+    return template.display_bugs(bugs, args.order, term=args.term,
+                                 state=args.state, project=args.repo_obj)
+
+
+@command
 @argh.arg("-f", "--full", default=False, help="show bug including comments")
 @argh.arg("-p", "--patch", default=False,
           help="display patches for pull requests")
