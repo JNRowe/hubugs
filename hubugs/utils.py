@@ -35,8 +35,10 @@ from . import (_version, models)
 
 T = blessings.Terminal()
 
+_HTTPLIB2_BUNDLE = os.path.realpath(os.path.dirname(httplib2.CA_CERTS))
 SYSTEM_CERTS = \
-    not httplib2.CA_CERTS.startswith(os.path.dirname(httplib2.__file__))
+    not _HTTPLIB2_BUNDLE.startswith(os.path.dirname(httplib2.__file__))
+CA_CERTS = None
 CURL_CERTS = False
 if not SYSTEM_CERTS and sys.platform.startswith('linux'):
     for cert_file in ['/etc/ssl/certs/ca-certificates.crt',
