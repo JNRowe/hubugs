@@ -1,6 +1,9 @@
 hubugs - Simple client for GitHub issues
 ========================================
 
+.. image:: https://secure.travis-ci.org/JNRowe/hubugs.png?branch=master
+   :target: http://travis-ci.org/JNRowe/hubugs
+
 Introduction
 ------------
 
