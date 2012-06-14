@@ -24,8 +24,8 @@ For information on the usage of :envvar:`XDG_DATA_HOME` and
 :envvar:`XDG_DATA_DIRS` read `XDG Base Directory Specification`_.
 
 .. note::
-   For OS X users there is a fallback to ``~/Library/Application Support`` if
-   :envvar:`XDG_DATA_HOME` is unset.
+   For OS X users there is a fallback to ``~/Library/Application Support``,
+   if :envvar:`XDG_DATA_HOME` is unset.
 
 Precedence
 ----------
