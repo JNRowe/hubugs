@@ -236,20 +236,24 @@ def edit_text(edit_type="default", data=None):
 
     """
     template = get_template('edit', '%s.mkd' % edit_type)
-    with tempfile.NamedTemporaryFile(prefix="hubugs-", suffix=".mkd") as temp:
-        temp.write(template.render(data if data else {}))
-        temp.flush()
-        orig_mtime = os.path.getmtime(temp.name)
 
-        subprocess.check_call(utils.get_editor() + [temp.name, ])
+    fd, name = tempfile.mkstemp(prefix="hubugs-", suffix=".mkd")
+    try:
+        with os.fdopen(fd, "w") as f:
+            f.write(template.render(data if data else {}))
 
-        temp.seek(0)
+        orig_mtime = os.path.getmtime(name)
+        subprocess.check_call(utils.get_editor() + [name, ])
+        new_mtime = os.path.getmtime(name)
+
         text = "".join(filter(lambda s: not s.startswith("#"),
-                              temp.readlines())).strip()
+                              open(name).readlines())).strip()
+    finally:
+        os.unlink(name)
 
-        if not text:
-            raise EmptyMessageError("No message given")
-        elif orig_mtime == os.path.getmtime(temp.name):
-            raise EmptyMessageError("Message not edited")
+    if not text:
+        raise EmptyMessageError("No message given")
+    elif orig_mtime == new_mtime:
+        raise EmptyMessageError("Message not edited")
 
     return text.strip()
