@@ -240,7 +240,7 @@ def edit_text(edit_type="default", data=None):
         temp.flush()
         orig_mtime = os.path.getmtime(temp.name)
 
-        subprocess.check_call([utils.get_editor(), temp.name])
+        subprocess.check_call(utils.get_editor() + [temp.name, ])
 
         temp.seek(0)
         text = "".join(filter(lambda s: not s.startswith("#"),

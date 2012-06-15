@@ -215,7 +215,7 @@ def get_editor():
 
     This follows the method defined in :manpage:`git-var(1)`
 
-    :rtype: ``str``
+    :rtype: ``list`` of ``str``
     :return: Users chosen editor, or ``vi`` if not set
 
     """
@@ -225,7 +225,7 @@ def get_editor():
         editor = get_git_config_val("core.editor")
         if not editor:
             editor = os.getenv("VISUAL", os.getenv("EDITOR", "vi"))
-    return editor
+    return editor.split()
 
 
 def get_repo():

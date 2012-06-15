@@ -86,14 +86,14 @@ class GetEditor(TestCase):
     @patch('os.getenv')
     def test_git_editor_envvar(self, getenv):
         getenv.return_value = 'custom git editor'
-        assert_equals(utils.get_editor(), 'custom git editor')
+        assert_equals(utils.get_editor(), ['custom', 'git', 'editor'])
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
     def test_git_editor_config(self, getenv, get_git_config_val):
         getenv.return_value = None
         get_git_config_val.return_value = 'custom config editor'
-        assert_equals(utils.get_editor(), 'custom config editor')
+        assert_equals(utils.get_editor(), ['custom', 'config', 'editor'])
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
@@ -102,7 +102,7 @@ class GetEditor(TestCase):
             return {'VISUAL': 'visual'}.get(key)
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
-        assert_equals(utils.get_editor(), 'visual')
+        assert_equals(utils.get_editor(), ['visual', ])
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
@@ -111,7 +111,7 @@ class GetEditor(TestCase):
             return {'EDITOR': 'editor'}.get(key, default)
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
-        assert_equals(utils.get_editor(), 'editor')
+        assert_equals(utils.get_editor(), ['editor', ])
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
@@ -120,7 +120,7 @@ class GetEditor(TestCase):
             return default
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
-        assert_equals(utils.get_editor(), 'vi')
+        assert_equals(utils.get_editor(), ['vi', ])
 
 
 class GetRepo(TestCase):
