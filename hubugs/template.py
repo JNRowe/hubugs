@@ -232,6 +232,7 @@ def edit_text(edit_type="default", data=None):
     :rtype: ``str``
     :return: User supplied text
     :raise EmptyMessageError: No message given
+    :raise EmptyMessageError: Message not edited
 
     """
     template = get_template('edit', '%s.mkd' % edit_type)
