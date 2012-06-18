@@ -1,12 +1,14 @@
 from os import getenv
 
-from nose.plugins.skip import SkipTest
+
+class HostError(EnvironmentError):
+    """Error to raise when test can not be run on given host"""
 
 
 def skip_check(f):
     def wrapper(*args):
         if getenv('TRAVIS'):
-            raise SkipTest("Test %s is skipped" % f.__name__)
+            raise HostError("Test %s is skipped" % f.__name__)
         else:
             return f(*args)
     wrapper.__name__ = f.__name__
