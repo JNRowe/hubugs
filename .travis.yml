@@ -3,7 +3,7 @@ python:
   - 2.6
   - 2.7
 install:
-  - pip install --use-mirrors expecter nose mock coverage
+  - pip install --use-mirrors expecter mock nose2 nose2-cov
   - pip install --use-mirrors .
 script:
-  - nosetests
+  - nose2 tests
