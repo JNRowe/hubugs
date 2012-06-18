@@ -3,8 +3,8 @@ import argparse
 from subprocess import CalledProcessError
 from unittest import TestCase
 
+from expecter import expect
 from mock import (Mock, patch)
-from nose.tools import (assert_equals, raises)
 
 from hubugs import utils
 
@@ -27,9 +27,9 @@ def fake_env(key, default=None):
 
 @skip_check
 def test_colouriser():
-    assert_equals(utils.success('test'), u'\x1b[38;5;10mtest\x1b[m\x1b(B')
-    assert_equals(utils.fail('test'), u'\x1b[38;5;9mtest\x1b[m\x1b(B')
-    assert_equals(utils.warn('test'), u'\x1b[38;5;11mtest\x1b[m\x1b(B')
+    expect(utils.success('test')) == u'\x1b[38;5;10mtest\x1b[m\x1b(B'
+    expect(utils.fail('test')) == u'\x1b[38;5;9mtest\x1b[m\x1b(B'
+    expect(utils.warn('test')) == u'\x1b[38;5;11mtest\x1b[m\x1b(B'
 
 
 class ProjectAction(TestCase):
@@ -48,52 +48,52 @@ class ProjectAction(TestCase):
         get_git_config_val.return_value = 'JNRowe'
 
         self.action(self.parser, self.namespace, 'misc-overlay')
-        assert_equals(self.namespace.project, 'JNRowe/misc-overlay')
+        expect(self.namespace.project) == 'JNRowe/misc-overlay'
 
         self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
-        assert_equals(self.namespace.project, 'JNRowe/misc-overlay')
+        expect(self.namespace.project) == 'JNRowe/misc-overlay'
 
         self.action(self.parser, self.namespace, 'ask/python-github2')
-        assert_equals(self.namespace.project, 'ask/python-github2')
+        expect(self.namespace.project) == 'ask/python-github2'
 
     @patch('hubugs.utils.get_github_api')
     @patch('hubugs.utils.get_git_config_val')
-    @raises(SystemExit)
     def test_no_user(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = None
-        self.action(self.parser, self.namespace, 'misc-overlay')
+        with expect.raises(SystemExit):
+            self.action(self.parser, self.namespace, 'misc-overlay')
 
 
 class GetGitConfigVal(TestCase):
     @patch('hubugs.utils.check_output')
     def test_valid_key(self, check_output):
         check_output.return_value = 'JNRowe'
-        assert_equals(utils.get_git_config_val('github.user'), 'JNRowe')
+        expect(utils.get_git_config_val('github.user')) == 'JNRowe'
 
     @patch('hubugs.utils.check_output')
     def test_invalid_key(self, check_output):
         check_output.return_value = ''
-        assert_equals(utils.get_git_config_val('no_such_key'), '')
+        expect(utils.get_git_config_val('no_such_key')) == ''
 
     @patch('hubugs.utils.check_output')
     def test_command_error(self, check_output):
         check_output.side_effect = CalledProcessError('255', 'cmd')
-        assert_equals(utils.get_git_config_val('github.user'), None)
+        expect(utils.get_git_config_val('github.user')) == None
 
 
 class GetEditor(TestCase):
     @patch('os.getenv')
     def test_git_editor_envvar(self, getenv):
         getenv.return_value = 'custom git editor'
-        assert_equals(utils.get_editor(), ['custom', 'git', 'editor'])
+        expect(utils.get_editor()) == ['custom', 'git', 'editor']
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
     def test_git_editor_config(self, getenv, get_git_config_val):
         getenv.return_value = None
         get_git_config_val.return_value = 'custom config editor'
-        assert_equals(utils.get_editor(), ['custom', 'config', 'editor'])
+        expect(utils.get_editor()) == ['custom', 'config', 'editor']
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
@@ -102,7 +102,7 @@ class GetEditor(TestCase):
             return {'VISUAL': 'visual'}.get(key)
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
-        assert_equals(utils.get_editor(), ['visual', ])
+        expect(utils.get_editor()) == ['visual', ]
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
@@ -111,7 +111,7 @@ class GetEditor(TestCase):
             return {'EDITOR': 'editor'}.get(key, default)
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
-        assert_equals(utils.get_editor(), ['editor', ])
+        expect(utils.get_editor()) == ['editor', ]
 
     @patch('hubugs.utils.get_git_config_val')
     @patch('os.getenv')
@@ -120,7 +120,7 @@ class GetEditor(TestCase):
             return default
         getenv.side_effect = fake_env
         get_git_config_val.return_value = None
-        assert_equals(utils.get_editor(), ['vi', ])
+        expect(utils.get_editor()) == ['vi', ]
 
 
 class GetRepo(TestCase):
@@ -128,76 +128,76 @@ class GetRepo(TestCase):
     def test_ssh_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git@github.com:JNRowe/misc-overlay.git'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_ssh_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git@github.com:JNRowe/misc-overlay'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_git_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git://github.com/JNRowe/misc-overlay.git'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_git_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'git://github.com/JNRowe/misc-overlay'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_https_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'https://JNRowe@github.com/JNRowe/misc-overlay.git'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_https_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'https://JNRowe@github.com/JNRowe/misc-overlay'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_http_url(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://JNRowe@github.com/JNRowe/misc-overlay.git'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_http_url_no_suffix(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://JNRowe@github.com/JNRowe/misc-overlay'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_http_url_no_auth(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://github.com/JNRowe/misc-overlay.git'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
     def test_http_url_no_suffix_no_auth(self, get_git_config_val):
         get_git_config_val.return_value = \
             'http://github.com/JNRowe/misc-overlay'
-        assert_equals(utils.get_repo(), 'JNRowe/misc-overlay')
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @patch('hubugs.utils.get_git_config_val')
-    @raises(ValueError)
     def test_broken_url(self, get_git_config_val):
         get_git_config_val.return_value = 'git://github.com/misc-overlay.git'
-        utils.get_repo()
+        with expect.raises(ValueError):
+            utils.get_repo()
 
     @patch('hubugs.utils.get_git_config_val')
-    @raises(ValueError)
     def test_no_url(self, get_git_config_val):
         get_git_config_val.return_value = None
-        utils.get_repo()
+        with expect.raises(ValueError):
+            utils.get_repo()
 
     @patch('hubugs.utils.get_git_config_val')
-    @raises(ValueError)
     def test_invalid_url(self, get_git_config_val):
         get_git_config_val.return_value = 'http://example.com/dog.git'
-        utils.get_repo()
+        with expect.raises(ValueError):
+            utils.get_repo()
