@@ -267,7 +267,7 @@ def setup_environment(args):
 
     HEADERS = {
         'Accept': 'application/vnd.github.beta.full+json',
-        'User-Agent': 'hubugs/%s' % _version.dotted,
+        'User-Agent': _version.web,
     }
 
     # We use manual auth when calling setup
