@@ -5,6 +5,7 @@ from unittest import TestCase
 
 from expecter import expect
 from mock import (Mock, patch)
+from nose2.tools import params
 
 from hubugs import utils
 
@@ -25,11 +26,14 @@ def fake_env(key, default=None):
     return fake_data[key]
 
 
+@params(
+    (utils.success, u'\x1b[38;5;10mtest\x1b[m\x1b(B'),
+    (utils.fail, u'\x1b[38;5;9mtest\x1b[m\x1b(B'),
+    (utils.warn, u'\x1b[38;5;11mtest\x1b[m\x1b(B'),
+)
 @skip_check
-def test_colouriser():
-    expect(utils.success('test')) == u'\x1b[38;5;10mtest\x1b[m\x1b(B'
-    expect(utils.fail('test')) == u'\x1b[38;5;9mtest\x1b[m\x1b(B'
-    expect(utils.warn('test')) == u'\x1b[38;5;11mtest\x1b[m\x1b(B'
+def test_colouriser(f, result):
+    expect(f('test')) == result
 
 
 class ProjectAction(TestCase):
@@ -41,20 +45,20 @@ class ProjectAction(TestCase):
         self.namespace = argparse.Namespace()
         self.action = utils.ProjectAction([], '')
 
+    @params(
+        ('misc-overlay', 'JNRowe/misc-overlay'),
+        ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
+        ('ask/python-github2', 'ask/python-github2'),
+    )
     @patch('hubugs.utils.get_github_api')
     @patch('hubugs.utils.get_git_config_val')
-    def test_repo_name(self, get_git_config_val, get_github_api):
+    def test_repo_name(self, repo, expected, get_git_config_val,
+                       get_github_api):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = 'JNRowe'
 
-        self.action(self.parser, self.namespace, 'misc-overlay')
-        expect(self.namespace.project) == 'JNRowe/misc-overlay'
-
-        self.action(self.parser, self.namespace, 'JNRowe/misc-overlay')
-        expect(self.namespace.project) == 'JNRowe/misc-overlay'
-
-        self.action(self.parser, self.namespace, 'ask/python-github2')
-        expect(self.namespace.project) == 'ask/python-github2'
+        self.action(self.parser, self.namespace, repo)
+        expect(self.namespace.project) == expected
 
     @patch('hubugs.utils.get_github_api')
     @patch('hubugs.utils.get_git_config_val')
@@ -124,80 +128,30 @@ class GetEditor(TestCase):
 
 
 class GetRepo(TestCase):
+    @params(
+        'git@github.com:JNRowe/misc-overlay.git',
+        'git@github.com:JNRowe/misc-overlay',
+        'git://github.com/JNRowe/misc-overlay.git',
+        'git://github.com/JNRowe/misc-overlay',
+        'https://JNRowe@github.com/JNRowe/misc-overlay.git',
+        'https://JNRowe@github.com/JNRowe/misc-overlay',
+        'http://JNRowe@github.com/JNRowe/misc-overlay.git',
+        'http://JNRowe@github.com/JNRowe/misc-overlay',
+        'http://github.com/JNRowe/misc-overlay.git',
+        'http://github.com/JNRowe/misc-overlay',
+    )
     @patch('hubugs.utils.get_git_config_val')
-    def test_ssh_url(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'git@github.com:JNRowe/misc-overlay.git'
+    def test_repo_url(self, repo, get_git_config_val):
+        get_git_config_val.return_value = repo
         expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
+    @params(
+        'git://github.com/misc-overlay.git',
+        None,
+        'http://example.com/dog.git',
+    )
     @patch('hubugs.utils.get_git_config_val')
-    def test_ssh_url_no_suffix(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'git@github.com:JNRowe/misc-overlay'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_git_url(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'git://github.com/JNRowe/misc-overlay.git'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_git_url_no_suffix(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'git://github.com/JNRowe/misc-overlay'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_https_url(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'https://JNRowe@github.com/JNRowe/misc-overlay.git'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_https_url_no_suffix(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'https://JNRowe@github.com/JNRowe/misc-overlay'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_http_url(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'http://JNRowe@github.com/JNRowe/misc-overlay.git'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_http_url_no_suffix(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'http://JNRowe@github.com/JNRowe/misc-overlay'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_http_url_no_auth(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'http://github.com/JNRowe/misc-overlay.git'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_http_url_no_suffix_no_auth(self, get_git_config_val):
-        get_git_config_val.return_value = \
-            'http://github.com/JNRowe/misc-overlay'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_broken_url(self, get_git_config_val):
-        get_git_config_val.return_value = 'git://github.com/misc-overlay.git'
-        with expect.raises(ValueError):
-            utils.get_repo()
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_no_url(self, get_git_config_val):
-        get_git_config_val.return_value = None
-        with expect.raises(ValueError):
-            utils.get_repo()
-
-    @patch('hubugs.utils.get_git_config_val')
-    def test_invalid_url(self, get_git_config_val):
-        get_git_config_val.return_value = 'http://example.com/dog.git'
+    def test_broken_url(self, repo, get_git_config_val):
+        get_git_config_val.return_value = repo
         with expect.raises(ValueError):
             utils.get_repo()

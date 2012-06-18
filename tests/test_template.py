@@ -4,6 +4,7 @@ from unittest import TestCase
 from datetime import (datetime, timedelta)
 from expecter import expect
 from mock import patch
+from nose2.tools import params
 from pygments import (formatters, lexers)
 
 from hubugs import template
@@ -17,18 +18,14 @@ template.utils.T = template.utils.blessings.Terminal(force_styling=True)
 
 
 class Colourise(TestCase):
+    @params(
+        ('red', u'\x1b[38;5;1ms\x1b[m\x1b(B'),
+        ('on blue', u'\x1b[48;5;4ms\x1b[m\x1b(B'),
+        ('bold', u'\x1b[1ms\x1b[m\x1b(B'),
+    )
     @skip_check
-    def test_color(self):
-        expect(template.colourise('s', 'red')) == u'\x1b[38;5;1ms\x1b[m\x1b(B'
-
-    @skip_check
-    def test_background_color(self):
-        expect(template.colourise('s', 'on blue')) \
-            == u'\x1b[48;5;4ms\x1b[m\x1b(B'
-
-    @skip_check
-    def test_attribute(self):
-        expect(template.colourise('s', 'bold')) == u'\x1b[1ms\x1b[m\x1b(B'
+    def test_color(self, attribute, result):
+        expect(template.colourise('s', attribute)) == result
 
     @skip_check
     def test_invalid_colour(self):
@@ -112,43 +109,18 @@ class Html2Text(TestCase):
         expect(template.html2text(para, width=20).count('\n')) == 5
 
 
-class RelativeTime(TestCase):
-    def test_last_year(self):
-        dt = datetime.utcnow() - timedelta(days=365)
-        expect(template.relative_time(dt)) == 'last year'
-
-    def test_months_ago(self):
-        dt = datetime.utcnow() - timedelta(days=70)
-        expect(template.relative_time(dt)) == 'about two months ago'
-
-    def test_month_ago(self):
-        dt = datetime.utcnow() - timedelta(days=30)
-        expect(template.relative_time(dt)) == 'last month'
-
-    def test_weeks_ago(self):
-        dt = datetime.utcnow() - timedelta(days=21)
-        expect(template.relative_time(dt)) == 'about three weeks ago'
-
-    def test_days_ago(self):
-        dt = datetime.utcnow() - timedelta(days=4)
-        expect(template.relative_time(dt)) == 'about four days ago'
-
-    def test_yesterday(self):
-        dt = datetime.utcnow() - timedelta(days=1)
-        expect(template.relative_time(dt)) == 'yesterday'
-
-    def test_hours_ago(self):
-        dt = datetime.utcnow() - timedelta(hours=5)
-        expect(template.relative_time(dt)) == 'about five hours ago'
-
-    def test_hour_ago(self):
-        dt = datetime.utcnow() - timedelta(hours=1)
-        expect(template.relative_time(dt)) == 'about an hour ago'
-
-    def test_minutes_ago(self):
-        dt = datetime.utcnow() - timedelta(minutes=6)
-        expect(template.relative_time(dt)) == 'about six minutes ago'
-
-    def test_seconds_ago(self):
-        dt = datetime.utcnow() - timedelta(seconds=12)
-        expect(template.relative_time(dt)) == 'about 12 seconds ago'
+@params(
+    ({'days': 365, }, 'last year'),
+    ({'days': 70, }, 'about two months ago'),
+    ({'days': 30, }, 'last month'),
+    ({'days': 21, }, 'about three weeks ago'),
+    ({'days': 4, }, 'about four days ago'),
+    ({'days': 1, }, 'yesterday'),
+    ({'hours': 5, }, 'about five hours ago'),
+    ({'hours': 1, }, 'about an hour ago'),
+    ({'minutes': 6, }, 'about six minutes ago'),
+    ({'seconds': 12, }, 'about 12 seconds ago'),
+)
+def test_relative_time(delta, result):
+    dt = datetime.utcnow() - timedelta(**delta)
+    expect(template.relative_time(dt)) == result
