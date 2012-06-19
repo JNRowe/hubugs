@@ -124,3 +124,13 @@ class Html2Text(TestCase):
 def test_relative_time(delta, result):
     dt = datetime.utcnow() - timedelta(**delta)
     expect(template.relative_time(dt)) == result
+
+
+@params(
+    ('edit', 'default.mkd'),
+    ('view', 'issue.txt'),
+)
+def test_get_template(group, name):
+    t = template.get_template(group, name)
+    expect(t.filename.endswith('/templates/default/%s/%s' % (group, name))) \
+        == True
