@@ -27,7 +27,9 @@ class ISODateTimeField(micromodels.DateTimeField):
     """ISO-8601 compliant date and time field."""
 
     def __init__(self, **kwargs):
-        super(ISODateTimeField, self).__init__(format='%Y-%m-%dT%H:%M:%SZ',
+        dt_format = '%Y-%m-%dT%H:%M:%SZ'
+        super(ISODateTimeField, self).__init__(format=dt_format,
+                                               serial_format=dt_format,
                                                **kwargs)
 
 
