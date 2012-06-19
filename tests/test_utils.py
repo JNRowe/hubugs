@@ -9,7 +9,7 @@ from nose2.tools import params
 
 from hubugs import utils
 
-from utils import skip_check
+from utils import no_travis
 
 # We only test forced styling output of blessings, as blessings handles the
 # sys.stdout.isatty() flipping
@@ -31,7 +31,7 @@ def fake_env(key, default=None):
     (utils.fail, u'\x1b[38;5;9mtest\x1b[m\x1b(B'),
     (utils.warn, u'\x1b[38;5;11mtest\x1b[m\x1b(B'),
 )
-@skip_check
+@no_travis
 def test_colouriser(f, result):
     expect(f('test')) == result
 

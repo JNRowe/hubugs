@@ -9,7 +9,7 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
-from utils import skip_check
+from utils import no_travis
 
 
 # We only test forced styling output of blessings, as blessings handles the
@@ -23,11 +23,11 @@ class Colourise(TestCase):
         ('on blue', u'\x1b[48;5;4ms\x1b[m\x1b(B'),
         ('bold', u'\x1b[1ms\x1b[m\x1b(B'),
     )
-    @skip_check
+    @no_travis
     def test_color(self, attribute, result):
         expect(template.colourise('s', attribute)) == result
 
-    @skip_check
+    @no_travis
     def test_invalid_colour(self):
         with expect.raises(TypeError):
             template.colourise('s', 'mauve with a hint of green')
