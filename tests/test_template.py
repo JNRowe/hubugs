@@ -134,3 +134,14 @@ def test_get_template(group, name):
     t = template.get_template(group, name)
     expect(t.filename.endswith('/templates/default/%s/%s' % (group, name))) \
         == True
+
+
+@patch('hubugs.template.ENV')
+def test_jinja_filter(env):
+    env.filters = {}
+
+    def null_func():
+        pass
+
+    template.jinja_filter(null_func)
+    expect(template.ENV.filters['null_func']) == null_func
