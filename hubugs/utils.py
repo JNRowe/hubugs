@@ -213,19 +213,13 @@ def set_git_config_val(key, value, local_only=False):
 def get_editor():
     """Choose a suitable editor.
 
-    This follows the method defined in :manpage:`git-var(1)`
+    See :manpage:`git-var(1)` for details.
 
     :rtype: ``list`` of ``str``
     :return: Users chosen editor, or ``vi`` if not set
 
     """
-    # Match git for editor preferences
-    editor = os.getenv("GIT_EDITOR")
-    if not editor:
-        editor = get_git_config_val("core.editor")
-        if not editor:
-            editor = os.getenv("VISUAL", os.getenv("EDITOR", "vi"))
-    return editor.split()
+    return check_output(['git', 'var', 'GIT_EDITOR']).strip().split()
 
 
 def get_repo():
