@@ -181,7 +181,7 @@ Written by `James Rowe <mailto:jnrowe@gmail.com>`__
 RESOURCES
 ---------
 
-Home page, containing full documentation: http://jnrowe.github.com/hubugs/
+Home page, containing full documentation: http://hubugs.rtfd.org/
 
 Issue tracker: https://github.com/JNRowe/hubugs/issues/
 
