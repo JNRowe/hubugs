@@ -161,14 +161,14 @@ def setup(args):
 @argh.alias("list")
 @states_arg
 @argh.arg("-l", "--label", help="list bugs with specified label",
-          metavar="label")
+          metavar="label", action="append")
 @order_arg
 def list_bugs(args):
     """listing bugs"""
     bugs = []
     params = {}
     if args.label:
-        params['labels'] = args.label
+        params['labels'] = ",".join(args.label)
 
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     for state in states:
