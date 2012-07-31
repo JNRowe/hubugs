@@ -1,0 +1,7 @@
+argh
+blessings
+html2text
+httplib2>=0.7.4
+Jinja2>=2
+micromodels
+Pygments
