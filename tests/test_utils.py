@@ -17,7 +17,7 @@ utils.T = utils.blessings.Terminal(force_styling=True)
 
 
 def fake_env(key, default=None):
-    """Fake environment settings used for os.getenv mocking"""
+    """Fake environment settings used for os.getenv mocking."""
     fake_data = {
         'HUBUGS_TOKEN': 'xxx',
         'HOME': '/home/JNRowe',
