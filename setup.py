@@ -10,7 +10,7 @@ _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
 install_requires = ['argh', 'blessings', 'html2text', 'httplib2>=0.7.4',
-                    'Jinja2>=2', 'micromodels', 'Pygments']
+                    'Jinja2>=2', 'kitchen', 'micromodels', 'Pygments']
 if sys.version_info[:2] < (2, 7):
     install_requires.append('argparse')
 
@@ -27,7 +27,8 @@ setup(
     keywords="github bugs cli",
     packages=['hubugs', ],
     include_package_data=True,
-    package_data={'': ['templates/*/*.mkd', "templates/*/*.txt", '*.crt'], },
+    package_data={'': ['*.crt', 'hubugs/locale/*/LC_MESSAGES/*.mo',
+                       'templates/*/*.mkd', "templates/*/*.txt"], },
     entry_points={'console_scripts': ['hubugs = hubugs:main', ]},
     install_requires=install_requires,
     zip_safe=False,
