@@ -31,8 +31,6 @@ setup(
     entry_points={'console_scripts': ['hubugs = hubugs:main', ]},
     install_requires=install_requires,
     zip_safe=False,
-    test_suite="nose.collector",
-    tests_require=['nose', 'mock'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         "Environment :: Console",
