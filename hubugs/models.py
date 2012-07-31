@@ -110,16 +110,23 @@ class Issue(micromodels.Model):
 
         """
 
+        avatar_url = ("https://secure.gravatar.com/avatar/%s?d="
+                      "https://a248.e.akamai.net/assets.github.com%%2F"
+                      "images%%2Fgravatars%%2Fgravatar-140.png")
+        label_url = 'https://api.github.com/repos/%s/%s/labels/%s'
+
+        owner, project = d['html_url'].split('/')[3:5]
+
         d['id'] = '<from search>'
         d['user'] = {
-            'avatar_url': "https://secure.gravatar.com/avatar/%s?d=https://a248.e.akamai.net/assets.github.com%%2Fimages%%2Fgravatars%%2Fgravatar-140.png" % d['gravatar_id'],
+            'avatar_url': avatar_url % d['gravatar_id'],
             'gravatar_id': d['gravatar_id'],
             'login': d['user'],
             'url': 'https://api.github.com/users/%s' % d['user'],
         }
         if 'closed_by' in d:
             d['closed_by'] = {
-                'avatar_url': "https://secure.gravatar.com/avatar/%s?d=https://a248.e.akamai.net/assets.github.com%%2Fimages%%2Fgravatars%%2Fgravatar-140.png" % d['closed_by'],
+                'avatar_url': avatar_url % d['closed_by'],
                 'gravatar_id': d['gravatar_id'],
                 'login': d['user'],
                 'url': 'https://api.github.com/users/%s' % d['user'],
@@ -133,7 +140,7 @@ class Issue(micromodels.Model):
                 labels.append({
                     'color': '000000',
                     'name': name,
-                    'url': 'https://api.github.com/repos/%s/%s/labels/%s' % tuple(d['html_url'].split('/')[3:5] + [name, ])
+                    'url': label_url % (owner, project, name)
                 })
             d['labels'] = labels
         return cls.from_dict(d)
