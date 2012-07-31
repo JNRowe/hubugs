@@ -140,8 +140,8 @@ class Issue(micromodels.Model):
 
     @staticmethod
     def _v2_conv_timestamp(s):
-        zone = datetime.timedelta(hours=int(s[-5:-2]))
-        stamp = datetime.datetime.strptime(s[:-6], '%Y/%m/%d %H:%M:%S')
+        zone = datetime.timedelta(hours=int(s[-5:-3]))
+        stamp = datetime.datetime.strptime(s[:-6], '%Y-%m-%dT%H:%M:%S')
         return (stamp - zone).isoformat() + 'Z'
 
 
