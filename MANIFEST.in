@@ -4,6 +4,8 @@ include doc/*.rst
 include doc/conf.py
 
 include hubugs/*.crt
+include hubugs/locale/hubugs.po
+include hubugs/locale/*/LC_MESSAGES/*.mo
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
 

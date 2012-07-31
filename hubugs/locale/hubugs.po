@@ -1,0 +1,208 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: hubugs 0.14.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-31 20:25+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: hubugs/__init__.py:98
+msgid "bug number(s) to operate on"
+msgstr ""
+
+#: hubugs/__init__.py:100
+msgid "comment text"
+msgstr ""
+
+#: hubugs/__init__.py:104
+msgid "sort order for listing bugs"
+msgstr ""
+
+#: hubugs/__init__.py:108
+msgid "state of bugs to operate on"
+msgstr ""
+
+#: hubugs/__init__.py:111
+msgid "read message from standard input"
+msgstr ""
+
+#: hubugs/__init__.py:113
+msgid "title for the new bug"
+msgstr ""
+
+#: hubugs/__init__.py:114
+msgid "body for the new bug"
+msgstr ""
+
+#: hubugs/__init__.py:117
+msgid "add label to issue"
+msgstr ""
+
+#: hubugs/__init__.py:119
+msgid "create new label and add to issue"
+msgstr ""
+
+#: hubugs/__init__.py:122
+msgid "remove label from issue"
+msgstr ""
+
+#: hubugs/__init__.py:131
+msgid "Falling back on bundled certificates"
+msgstr ""
+
+#: hubugs/__init__.py:133
+msgid "Using certs specified in $CURL_CERTS"
+msgstr ""
+
+#: hubugs/__init__.py:159
+msgid "Configuration complete!"
+msgstr ""
+
+#: hubugs/__init__.py:160
+msgid "setup GitHub access token"
+msgstr ""
+
+#: hubugs/__init__.py:166
+msgid "list bugs with specified label"
+msgstr ""
+
+#: hubugs/__init__.py:184
+msgid "listing bugs"
+msgstr ""
+
+#: hubugs/__init__.py:190
+msgid "term to search bugs for"
+msgstr ""
+
+#: hubugs/__init__.py:206
+msgid "searching bugs"
+msgstr ""
+
+#: hubugs/__init__.py:210
+msgid "show bug including comments"
+msgstr ""
+
+#: hubugs/__init__.py:212
+msgid "display patches for pull requests"
+msgstr ""
+
+#: hubugs/__init__.py:214
+msgid "display only the patch content of pull requests"
+msgstr ""
+
+#: hubugs/__init__.py:215
+msgid "open bug in web browser"
+msgstr ""
+
+#: hubugs/__init__.py:239
+msgid "displaying bugs"
+msgstr ""
+
+#: hubugs/__init__.py:264
+#, python-format
+msgid "Bug %d opened"
+msgstr ""
+
+#: hubugs/__init__.py:265
+msgid "opening new bugs"
+msgstr ""
+
+#: hubugs/__init__.py:282
+msgid "commenting on bugs"
+msgstr ""
+
+#: hubugs/__init__.py:293
+msgid "Can not use --stdin or command line title/body with multiple bugs"
+msgstr ""
+
+#: hubugs/__init__.py:311
+msgid "editing bugs"
+msgstr ""
+
+#: hubugs/__init__.py:333
+msgid "closing bugs"
+msgstr ""
+
+#: hubugs/__init__.py:355
+msgid "reopening closed bugs"
+msgstr ""
+
+#: hubugs/__init__.py:380
+msgid "labelling bugs"
+msgstr ""
+
+#: hubugs/__init__.py:406
+#, python-format
+msgid "Bug %d opened against hubugs, thanks!"
+msgstr ""
+
+#: hubugs/__init__.py:408
+msgid "report a new bug against hubugs"
+msgstr ""
+
+#: hubugs/__init__.py:419
+msgid "Please report bugs to the JNRowe/hubugs project"
+msgstr ""
+
+#: hubugs/__init__.py:423
+msgid "GitHub project to operate on"
+msgstr ""
+
+#: hubugs/__init__.py:435
+msgid "Project lookup failed.  Network or GitHub down?"
+msgstr ""
+
+#: hubugs/template.py:205
+msgid "No bugs found!"
+msgstr ""
+
+#: hubugs/template.py:256
+msgid "No message given"
+msgstr ""
+
+#: hubugs/template.py:258
+msgid "Message not edited"
+msgstr ""
+
+#: hubugs/utils.py:134
+msgid "No GitHub user setting!"
+msgstr ""
+
+#: hubugs/utils.py:236
+msgid "No `origin' remote found"
+msgstr ""
+
+#: hubugs/utils.py:248
+msgid "Unknown project, specify with `--project' option"
+msgstr ""
+
+#: hubugs/utils.py:274
+msgid ""
+"No hubugs authorisation token found!  Run 'hubugs setup' to create a token"
+msgstr ""
+
+#: hubugs/utils.py:315
+#, python-format
+msgid "Invalid project %r"
+msgstr ""
+
+#: hubugs/utils.py:336
+#, python-format
+msgid "No such label %r"
+msgstr ""
+
+#: hubugs/utils.py:339
+#, python-format
+msgid "%r label already exists"
+msgstr ""

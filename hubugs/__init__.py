@@ -61,6 +61,8 @@ from base64 import b64encode
 import argh
 import httplib2
 
+from kitchen.text.converters import to_unicode
+
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -69,6 +71,7 @@ atexit.register(logging.shutdown)
 
 
 from . import (template, utils)
+from .i18n import _
 
 
 COMMANDS = []
@@ -92,31 +95,31 @@ def command(func):
 # Convenience wrappers for defining command arguments
 # pylint: disable-msg=C0103
 bugs_arg = argh.arg("bugs", nargs="+", type=int,
-                    help="bug number(s) to operate on")
+                    help=_("bug number(s) to operate on"))
 
-message_arg = argh.arg("-m", "--message", help="comment text")
+message_arg = argh.arg("-m", "--message", help=_("comment text"))
 
 order_arg = argh.arg("-o", "--order", default="number",
                      choices=["number", "updated"],
-                     help="sort order for listing bugs")
+                     help=_("sort order for listing bugs"))
 
 states_arg = argh.arg("-s", "--state", default="open",
                       choices=["open", "closed", "all"],
-                      help="state of bugs to operate on")
+                      help=_("state of bugs to operate on"))
 
 stdin_arg = argh.arg("--stdin", default=False,
-                     help="read message from standard input")
+                     help=_("read message from standard input"))
 
-title_arg = argh.arg("title", help="title for the new bug", nargs="?")
-body_arg = argh.arg("body", help="body for the new bug", nargs="?")
+title_arg = argh.arg("title", help=_("title for the new bug"), nargs="?")
+body_arg = argh.arg("body", help=_("body for the new bug"), nargs="?")
 
 label_add_arg = argh.arg("-a", "--add", action="append", default=[],
-                         help="add label to issue", metavar="label")
+                         help=_("add label to issue"), metavar="label")
 label_create_arg = argh.arg("-c", "--create", action="append", default=[],
-                            help="create new label and add to issue",
+                            help=_("create new label and add to issue"),
                             metavar="label")
 label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
-                            help="remove label from issue", metavar="label")
+                            help=_("remove label from issue"), metavar="label")
 # pylint: enable-msg=C0103
 
 
@@ -124,11 +127,10 @@ label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
 @argh.arg('--local', default=False,
           help='set access token for local repository only')
 def setup(args):
-    """setup GitHub access token"""
     if not utils.SYSTEM_CERTS:
-        yield utils.warn('Falling back on bundled certificates')
+        yield utils.warn(_('Falling back on bundled certificates'))
     if utils.CURL_CERTS:
-        yield utils.warn('Using certs specified in $CURL_CERTS')
+        yield utils.warn(_('Using certs specified in $CURL_CERTS'))
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
@@ -154,17 +156,17 @@ def setup(args):
     r, auth = args.req_post('https://api.github.com/authorizations', body=data,
                             headers=header, model='Authorisation')
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
-    yield utils.success('Configuration complete!')
+    yield utils.success(_('Configuration complete!'))
+setup.__doc__ = _("setup GitHub access token")
 
 
 @command
 @argh.alias("list")
 @states_arg
-@argh.arg("-l", "--label", help="list bugs with specified label",
+@argh.arg("-l", "--label", help=_("list bugs with specified label"),
           metavar="label", action="append")
 @order_arg
 def list_bugs(args):
-    """listing bugs"""
     bugs = []
     params = {}
     if args.label:
@@ -179,14 +181,14 @@ def list_bugs(args):
 
     yield template.display_bugs(bugs, args.order, state=args.state,
                                 project=args.repo_obj)
+list_bugs.__doc__ = _("listing bugs")
 
 
 @command
 @states_arg
 @order_arg
-@argh.arg("term", help="term to search bugs for")
+@argh.arg("term", help=_("term to search bugs for"))
 def search(args):
-    "searching bugs"
     # This chunk of code is horrific, as is the Issue.from_search() that is
     # required to support it.  However, without search support in API v3 there
     # is realistic way around it.
@@ -201,17 +203,18 @@ def search(args):
     return template.display_bugs(bugs, args.order, term=args.term,
                                  state=args.state, project=args.repo_obj)
 
+search.__doc__ = _("searching bugs")
+
 
 @command
-@argh.arg("-f", "--full", default=False, help="show bug including comments")
+@argh.arg("-f", "--full", default=False, help=_("show bug including comments"))
 @argh.arg("-p", "--patch", default=False,
-          help="display patches for pull requests")
+          help=_("display patches for pull requests"))
 @argh.arg("-o", "--patch-only", default=False,
-          help="display only the patch content of pull requests")
-@argh.arg("-b", "--browse", default=False, help="open bug in web browser")
+          help=_("display only the patch content of pull requests"))
+@argh.arg("-b", "--browse", default=False, help=_("open bug in web browser"))
 @bugs_arg
 def show(args):
-    """displaying bugs"""
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
         if args.browse:
@@ -227,12 +230,13 @@ def show(args):
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
             r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
-            patch = c.decode('utf-8')
+            patch = to_unicode(c)
         else:
             patch = None
         yield tmpl.render(bug=bug, comments=comments, full=True,
                           patch=patch, patch_only=args.patch_only,
                           project=args.repo_obj)
+show.__doc__ = _("displaying bugs")
 
 
 @command
@@ -244,7 +248,6 @@ def show(args):
 @body_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
-    """opening new bugs"""
     utils.sync_labels(args)
     if args.stdin:
         text = sys.stdin.readlines()
@@ -258,7 +261,8 @@ def open_bug(args):
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    yield utils.success("Bug %d opened" % bug.number)
+    yield utils.success(_("Bug %d opened") % bug.number)
+open_bug.__doc__ = _("opening new bugs")
 
 
 @command
@@ -267,7 +271,6 @@ def open_bug(args):
 @bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
-    """commenting on bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif args.message:
@@ -276,6 +279,7 @@ def comment(args):
         message = template.edit_text()
     for bug in args.bugs:
         args.req_post('%s/comments' % bug, body={'body': message})
+comment.__doc__ = _("commenting on bugs")
 
 
 @command
@@ -285,10 +289,9 @@ def comment(args):
 @bugs_arg
 @argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
-    """editing bugs"""
     if (args.title or args.stdin) and len(args.bugs) > 1:
-        raise argh.CommandError("Can not use --stdin or command line "
-                                "title/body with multiple bugs")
+        raise argh.CommandError(_("Can not use --stdin or command line "
+                                  "title/body with multiple bugs"))
     for bug in args.bugs:
         if args.stdin:
             text = sys.stdin.readlines()
@@ -305,6 +308,7 @@ def edit(args):
 
         data = {'title': title, 'body': body}
         args.req_post(bug, body=data)
+edit.__doc__ = _("editing bugs")
 
 
 @command
@@ -312,7 +316,6 @@ def edit(args):
 @message_arg
 @bugs_arg
 def close(args):
-    """closing bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -327,6 +330,7 @@ def close(args):
         if message:
             args.req_post('%s/comments' % bug, body={'body': message})
         args.req_post(bug, body={'state': 'closed'})
+close.__doc__ = _("closing bugs")
 
 
 @command
@@ -334,7 +338,6 @@ def close(args):
 @message_arg
 @bugs_arg
 def reopen(args):
-    """reopening closed bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -349,6 +352,7 @@ def reopen(args):
         if message:
             args.req_post('%s/comments' % bug, body={'body': message})
         args.req_post(bug, body={'state': 'open'})
+reopen.__doc__ = _("reopening closed bugs")
 
 
 @command
@@ -359,7 +363,6 @@ def reopen(args):
 @argh.arg("bugs", nargs="*", type=int,
           help="bug number(s) to operate on")
 def label(args):
-    """labelling bugs"""
     label_names = utils.sync_labels(args)
 
     if args.list:
@@ -374,12 +377,12 @@ def label(args):
         for string in args.remove:
             labels.remove(string)
         args.req_post(bug_no, body={'labels': labels})
+label.__doc__ = _("labelling bugs")
 
 
 @command
 @argh.wrap_errors(template.EmptyMessageError)
 def report_bug(args):
-    """report a new bug against hubugs"""
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
@@ -400,7 +403,9 @@ def report_bug(args):
 
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    yield utils.success("Bug %d opened against hubugs, thanks!" % bug.number)
+    yield utils.success(_("Bug %d opened against hubugs, thanks!")
+                        % bug.number)
+report_bug.__doc__ = _("report a new bug against hubugs")
 
 
 def main():
@@ -411,11 +416,11 @@ def main():
 
     """
     description = __doc__.splitlines()[0].split("-", 1)[1]
-    epilog = "Please report bugs to the JNRowe/hubugs project"
+    epilog = _("Please report bugs to the JNRowe/hubugs project")
     parser = argh.ArghParser(description=description, epilog=epilog,
                              version="%%(prog)s %s" % __version__)
     parser.add_argument("-p", "--project", action=utils.ProjectAction,
-                        help="GitHub project to operate on",
+                        help=_("GitHub project to operate on"),
                         metavar="project")
     parser.add_argument("-u", "--host-url", default='https://api.github.com',
                         help="GitHub Enterprise host to connect to",
@@ -427,7 +432,7 @@ def main():
         print utils.fail(error.message)
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        print utils.fail("Project lookup failed.  Network or GitHub down?")
+        print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
         return errno.ENXIO
 
 if __name__ == '__main__':
