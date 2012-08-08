@@ -1,12 +1,18 @@
-include COPYING *.rst
+include COPYING
+include *.rst
 
 include doc/*.rst
 include doc/conf.py
+
+include extra/_hubugs
+include extra/requirements*.txt
 
 include hubugs/*.crt
 include hubugs/locale/hubugs.po
 include hubugs/locale/*/LC_MESSAGES/*.mo
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
+
+include nose2.cfg
 
 include tests/*.py
