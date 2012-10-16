@@ -22,7 +22,7 @@ import datetime
 from schematics.models import Model
 from schematics.types import (BooleanType, DateTimeType, IntType, StringType,
                               URLType)
-from schematics.types.compound import (ListType, ModelType)
+from schematics.types.compound import (ListType, ModelType, SortedListType)
 
 
 class User(Model):
@@ -79,7 +79,7 @@ class Issue(Model):
     comments = IntType()
     created_at = DateTimeType()
     html_url = URLType()
-    labels = ListType(ModelType(Label))
+    labels = SortedListType(ModelType(Label))
     milestone = StringType()
     number = IntType()
     pull_request = ModelType(PullRequest)
