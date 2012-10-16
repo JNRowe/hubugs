@@ -213,7 +213,7 @@ class Repository(Model):
     description = StringType()
     fork = BooleanType()
     forks = IntType()
-    git_url = URLType()
+    git_url = StringType(regex=r'git://github.com/[^/]+/[^/]+.git$')
     has_downloads = BooleanType()
     has_issues = BooleanType()
     has_wiki = BooleanType()
