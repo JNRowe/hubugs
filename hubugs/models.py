@@ -83,7 +83,7 @@ class Issue(Model):
     milestone = StringType()
     number = IntType()
     pull_request = ModelType(PullRequest)
-    state = StringType()
+    state = StringType(choices=['open', 'closed'])
     title = StringType()
     updated_at = DateTimeType()
     url = URLType(required=True)
