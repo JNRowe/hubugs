@@ -33,7 +33,7 @@ class User(Model):
     avatar_url = URLType()
     gravatar_id = StringType()
     login = StringType()
-    url = URLType()
+    url = URLType(required=True)
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.login)
@@ -45,7 +45,7 @@ class Label(Model):
 
     color = StringType()
     name = StringType()
-    url = URLType()
+    url = URLType(required=True)
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.name)
@@ -86,7 +86,7 @@ class Issue(Model):
     state = StringType()
     title = StringType()
     updated_at = DateTimeType()
-    url = URLType()
+    url = URLType(required=True)
     user = ModelType(User)
 
     def __repr__(self):
@@ -153,7 +153,7 @@ class Comment(Model):
     body_html = StringType()
     created_at = DateTimeType()
     updated_at = DateTimeType()
-    url = URLType()
+    url = URLType(required=True)
     user = ModelType(User)
 
     def __repr__(self):
@@ -166,7 +166,7 @@ class Application(Model):
     """GitHub OAuth application model."""
 
     name = StringType()
-    url = URLType()
+    url = URLType(required=True)
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.name)
@@ -184,7 +184,7 @@ class Authorisation(Model):
     scopes = ListType(StringType())
     token = StringType()
     updated_at = DateTimeType()
-    url = URLType()
+    url = URLType(required=True)
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
@@ -200,7 +200,7 @@ class Organization(Model):
     gravatar_id = StringType()
     login = StringType()
     type = StringType()
-    url = URLType()
+    url = URLType(required=True)
 
 
 class Repository(Model):
@@ -228,5 +228,5 @@ class Repository(Model):
     private = BooleanType()
     pushed_at = DateTimeType()
     size = IntType()
-    url = URLType()
+    url = URLType(required=True)
     watchers = IntType()
