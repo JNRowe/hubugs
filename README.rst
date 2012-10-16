@@ -20,7 +20,7 @@ Requirements
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory
 dependencies outside of the standard library are argh_, blessings_, html2text_,
-httplib2_, Jinja_, kitchen_, micromodels_ and Pygments_.
+httplib2_, Jinja_, kitchen_, Pygments_ and schematics_.
 
 Configuration
 -------------
@@ -107,8 +107,8 @@ I can reproduce the problem, or even better a patch!
 .. _kitchen: http://pypi.python.org/pypi/kitchen/
 .. _html2text: http://pypi.python.org/pypi/html2text/
 .. _httplib2: http://pypi.python.org/pypi/httplib2
-.. _micromodels: http://pypi.python.org/pypi/micromodels/
 .. _Pygments: http://pygments.org/
+.. _schematics: http://pypi.python.org/pypi/schematics/
 .. _OAuth: http://oauth.net/
 .. _GitHub settings: https://github.com/settings/applications/
 .. _pull requests: http://github.com/JNRowe/hubugs/issues

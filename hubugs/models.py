@@ -19,53 +19,45 @@
 
 import datetime
 
-import micromodels
+from schematics.models import Model
+from schematics.types import (BooleanType, DateTimeType, IntType, StringType,
+                              URLType)
+from schematics.types.compound import (ListType, ModelType)
 
 
-class ISODateTimeField(micromodels.DateTimeField):
-
-    """ISO-8601 compliant date and time field."""
-
-    def __init__(self, **kwargs):
-        dt_format = '%Y-%m-%dT%H:%M:%SZ'
-        super(ISODateTimeField, self).__init__(format=dt_format,
-                                               serial_format=dt_format,
-                                               **kwargs)
-
-
-class User(micromodels.Model):
+class User(Model):
 
     """GitHub user model."""
 
-    id = micromodels.IntegerField()
-    avatar_url = micromodels.CharField()
-    gravatar_id = micromodels.CharField()
-    login = micromodels.CharField()
-    url = micromodels.CharField()
+    id = IntType()
+    avatar_url = URLType()
+    gravatar_id = StringType()
+    login = StringType()
+    url = URLType()
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.login)
 
 
-class Label(micromodels.Model):
+class Label(Model):
 
     """GitHub issue label model."""
 
-    color = micromodels.CharField()
-    name = micromodels.CharField()
-    url = micromodels.CharField()
+    color = StringType()
+    name = StringType()
+    url = URLType()
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
-class PullRequest(micromodels.Model):
+class PullRequest(Model):
 
     """GitHub issue pull request data model."""
 
-    diff_url = micromodels.CharField()
-    html_url = micromodels.CharField()
-    patch_url = micromodels.CharField()
+    diff_url = URLType()
+    html_url = URLType()
+    patch_url = URLType()
 
     def __nonzero__(self):
         return bool(self.patch_url)
@@ -74,28 +66,28 @@ class PullRequest(micromodels.Model):
         return "<%s %r>" % (self.__class__.__name__, self.patch_url)
 
 
-class Issue(micromodels.Model):
+class Issue(Model):
 
     """GitHub issue model."""
 
-    id = micromodels.IntegerField()
-    assignee = micromodels.ModelField(User)
-    body = micromodels.CharField()
-    body_html = micromodels.CharField()
-    closed_at = ISODateTimeField()
-    closed_by = micromodels.ModelField(User)
-    comments = micromodels.IntegerField()
-    created_at = ISODateTimeField()
-    html_url = micromodels.CharField()
-    labels = micromodels.ModelCollectionField(Label)
-    milestone = micromodels.CharField()
-    number = micromodels.IntegerField()
-    pull_request = micromodels.ModelField(PullRequest)
-    state = micromodels.CharField()
-    title = micromodels.CharField()
-    updated_at = ISODateTimeField()
-    url = micromodels.CharField()
-    user = micromodels.ModelField(User)
+    id = IntType()
+    assignee = ModelType(User)
+    body = StringType()
+    body_html = StringType()
+    closed_at = DateTimeType()
+    closed_by = ModelType(User)
+    comments = IntType()
+    created_at = DateTimeType()
+    html_url = URLType()
+    labels = ListType(ModelType(Label))
+    milestone = StringType()
+    number = IntType()
+    pull_request = ModelType(PullRequest)
+    state = StringType()
+    title = StringType()
+    updated_at = DateTimeType()
+    url = URLType()
+    user = ModelType(User)
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
@@ -143,7 +135,7 @@ class Issue(micromodels.Model):
                     'url': label_url % (owner, project, name)
                 })
             d['labels'] = labels
-        return cls.from_dict(d)
+        return cls(**d)
 
     @staticmethod
     def _v2_conv_timestamp(s):
@@ -152,89 +144,89 @@ class Issue(micromodels.Model):
         return (stamp - zone).isoformat() + 'Z'
 
 
-class Comment(micromodels.Model):
+class Comment(Model):
 
     """GitHub issue comment model."""
 
-    id = micromodels.IntegerField()
-    body = micromodels.CharField()
-    body_html = micromodels.CharField()
-    created_at = ISODateTimeField()
-    updated_at = ISODateTimeField()
-    url = micromodels.CharField()
-    user = micromodels.ModelField(User)
+    id = IntType()
+    body = StringType()
+    body_html = StringType()
+    created_at = DateTimeType()
+    updated_at = DateTimeType()
+    url = URLType()
+    user = ModelType(User)
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
                                self.body[:20])
 
 
-class Application(micromodels.Model):
+class Application(Model):
 
     """GitHub OAuth application model."""
 
-    name = micromodels.CharField()
-    url = micromodels.CharField()
+    name = StringType()
+    url = URLType()
 
     def __repr__(self):
         return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
-class Authorisation(micromodels.Model):
+class Authorisation(Model):
 
     """GitHub OAuth authorisation model."""
 
-    id = micromodels.IntegerField()
-    app = micromodels.ModelField(Application)
-    created_at = ISODateTimeField()
-    note = micromodels.CharField()
-    note_url = micromodels.CharField()
-    scopes = micromodels.FieldCollectionField(micromodels.CharField())
-    token = micromodels.CharField()
-    updated_at = ISODateTimeField()
-    url = micromodels.CharField()
+    id = IntType()
+    app = ModelType(Application)
+    created_at = DateTimeType()
+    note = StringType(default='')
+    note_url = URLType()
+    scopes = ListType(StringType())
+    token = StringType()
+    updated_at = DateTimeType()
+    url = URLType()
 
     def __repr__(self):
         return "<%s %s %r>" % (self.__class__.__name__, self.id,
                                self.note[:20])
 
 
-class Organization(micromodels.Model):
+class Organization(Model):
 
     """GitHub issue organisation model."""
 
-    id = micromodels.IntegerField()
-    avatar_url = micromodels.CharField()
-    gravatar_id = micromodels.CharField()
-    login = micromodels.CharField()
-    type = micromodels.CharField()
-    url = micromodels.CharField()
+    id = IntType()
+    avatar_url = URLType()
+    gravatar_id = StringType()
+    login = StringType()
+    type = StringType()
+    url = URLType()
 
 
-class Repository(micromodels.Model):
+class Repository(Model):
 
     """GitHub repository model."""
 
-    id = micromodels.IntegerField()
-    clone_url = micromodels.CharField()
-    created_at = ISODateTimeField()
-    description = micromodels.CharField()
-    fork = micromodels.BooleanField()
-    forks = micromodels.IntegerField()
-    git_url = micromodels.CharField()
-    has_downloads = micromodels.BooleanField()
-    has_issues = micromodels.BooleanField()
-    has_wiki = micromodels.BooleanField()
-    homepage = micromodels.CharField()
-    html_url = micromodels.CharField()
-    language = micromodels.CharField()
-    master_branch = micromodels.CharField()
-    mirror_url = micromodels.CharField()
-    name = micromodels.CharField()
-    open_issues = micromodels.IntegerField()
-    owner = micromodels.ModelField(User)
-    private = micromodels.BooleanField()
-    pushed_at = ISODateTimeField()
-    size = micromodels.IntegerField()
-    url = micromodels.CharField()
-    watchers = micromodels.IntegerField()
+    id = IntType()
+    clone_url = URLType()
+    created_at = DateTimeType()
+    description = StringType()
+    fork = BooleanType()
+    forks = IntType()
+    git_url = URLType()
+    has_downloads = BooleanType()
+    has_issues = BooleanType()
+    has_wiki = BooleanType()
+    homepage = StringType()
+    html_url = URLType()
+    language = StringType()
+    master_branch = StringType()
+    mirror_url = URLType()
+    name = StringType()
+    open_issues = IntType()
+    owner = ModelType(User)
+    private = BooleanType()
+    pushed_at = DateTimeType()
+    size = IntType()
+    url = URLType()
+    watchers = IntType()

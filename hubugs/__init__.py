@@ -386,10 +386,10 @@ def report_bug(args):
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
-    import blessings, html2text, jinja2, micromodels, pygments  # NOQA
+    import blessings, html2text, jinja2, pygments, schematics # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
                      for m in argh, blessings, html2text, httplib2, jinja2,
-                        micromodels, pygments])
+                        pygments, schematics])
     data = {
         'local': local,
         'sys': sys,
