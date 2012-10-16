@@ -35,5 +35,5 @@ steps::
 * :pypi:`httplib2` for HTTP communications
 * :pypi:`Jinja2` for templating
 * :pypi:`kitchen` for i18n support and text encoding
-* :pypi:`micromodels` is used for representing remote objects
 * :pypi:`Pygments` for syntax highlighting in template output
+* :pypi:`schematics` is used for representing remote objects

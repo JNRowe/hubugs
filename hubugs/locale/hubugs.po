@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.14.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-31 20:25+0100\n"
+"POT-Creation-Date: 2012-10-16 05:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,150 +17,154 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: hubugs/__init__.py:98
+#: hubugs/__init__.py:99
 msgid "bug number(s) to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:100
+#: hubugs/__init__.py:101
 msgid "comment text"
 msgstr ""
 
-#: hubugs/__init__.py:104
+#: hubugs/__init__.py:105
 msgid "sort order for listing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:108
+#: hubugs/__init__.py:109
 msgid "state of bugs to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:111
+#: hubugs/__init__.py:112
 msgid "read message from standard input"
 msgstr ""
 
-#: hubugs/__init__.py:113
+#: hubugs/__init__.py:114
 msgid "title for the new bug"
 msgstr ""
 
-#: hubugs/__init__.py:114
+#: hubugs/__init__.py:115
 msgid "body for the new bug"
 msgstr ""
 
-#: hubugs/__init__.py:117
+#: hubugs/__init__.py:118
 msgid "add label to issue"
 msgstr ""
 
-#: hubugs/__init__.py:119
+#: hubugs/__init__.py:120
 msgid "create new label and add to issue"
 msgstr ""
 
-#: hubugs/__init__.py:122
+#: hubugs/__init__.py:123
 msgid "remove label from issue"
 msgstr ""
 
-#: hubugs/__init__.py:131
+#: hubugs/__init__.py:132
 msgid "Falling back on bundled certificates"
 msgstr ""
 
-#: hubugs/__init__.py:133
+#: hubugs/__init__.py:134
 msgid "Using certs specified in $CURL_CERTS"
 msgstr ""
 
-#: hubugs/__init__.py:159
+#: hubugs/__init__.py:160
 msgid "Configuration complete!"
 msgstr ""
 
-#: hubugs/__init__.py:160
+#: hubugs/__init__.py:161
 msgid "setup GitHub access token"
 msgstr ""
 
-#: hubugs/__init__.py:166
+#: hubugs/__init__.py:167
 msgid "list bugs with specified label"
 msgstr ""
 
-#: hubugs/__init__.py:184
+#: hubugs/__init__.py:185
 msgid "listing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:190
+#: hubugs/__init__.py:191
 msgid "term to search bugs for"
 msgstr ""
 
-#: hubugs/__init__.py:206
+#: hubugs/__init__.py:207
 msgid "searching bugs"
 msgstr ""
 
-#: hubugs/__init__.py:210
+#: hubugs/__init__.py:211
 msgid "show bug including comments"
 msgstr ""
 
-#: hubugs/__init__.py:212
+#: hubugs/__init__.py:213
 msgid "display patches for pull requests"
 msgstr ""
 
-#: hubugs/__init__.py:214
+#: hubugs/__init__.py:215
 msgid "display only the patch content of pull requests"
 msgstr ""
 
-#: hubugs/__init__.py:215
+#: hubugs/__init__.py:216
 msgid "open bug in web browser"
 msgstr ""
 
-#: hubugs/__init__.py:239
+#: hubugs/__init__.py:240
 msgid "displaying bugs"
 msgstr ""
 
-#: hubugs/__init__.py:264
+#: hubugs/__init__.py:265
 #, python-format
 msgid "Bug %d opened"
 msgstr ""
 
-#: hubugs/__init__.py:265
+#: hubugs/__init__.py:266
 msgid "opening new bugs"
 msgstr ""
 
-#: hubugs/__init__.py:282
+#: hubugs/__init__.py:283
 msgid "commenting on bugs"
 msgstr ""
 
-#: hubugs/__init__.py:293
+#: hubugs/__init__.py:294
 msgid "Can not use --stdin or command line title/body with multiple bugs"
 msgstr ""
 
-#: hubugs/__init__.py:311
+#: hubugs/__init__.py:312
 msgid "editing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:333
+#: hubugs/__init__.py:334
 msgid "closing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:355
+#: hubugs/__init__.py:356
 msgid "reopening closed bugs"
 msgstr ""
 
-#: hubugs/__init__.py:380
+#: hubugs/__init__.py:381
 msgid "labelling bugs"
 msgstr ""
 
-#: hubugs/__init__.py:406
+#: hubugs/__init__.py:407
 #, python-format
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:408
+#: hubugs/__init__.py:409
 msgid "report a new bug against hubugs"
 msgstr ""
 
-#: hubugs/__init__.py:419
+#: hubugs/__init__.py:420
 msgid "Please report bugs to the JNRowe/hubugs project"
 msgstr ""
 
-#: hubugs/__init__.py:423
+#: hubugs/__init__.py:424
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:435
+#: hubugs/__init__.py:436
 msgid "Project lookup failed.  Network or GitHub down?"
+msgstr ""
+
+#: hubugs/__init__.py:439
+msgid "API modelling failed.  Please report this!"
 msgstr ""
 
 #: hubugs/template.py:205

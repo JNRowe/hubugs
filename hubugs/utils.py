@@ -295,10 +295,10 @@ def setup_environment(args):
             raise HttpClientError(str(r.status), r, c)
         if model:
             if isinstance(model, list):
-                creator = getattr(models, model[0]).from_dict
-                c = [creator(d) for d in c]
+                creator = getattr(models, model[0])
+                c = [creator(**d) for d in c]
             else:
-                c = getattr(models, model).from_dict(c)
+                c = getattr(models, model)(**c)
         return r, c
 
     args.req_get = http_method
@@ -307,14 +307,14 @@ def setup_environment(args):
     # Make the repository information available, if it will be useful
     # Note: We skip this step for `show -b' for speed, see #20
     if not command == 'setup' \
-        and not (command == 'show' and args.browse == True):
+        and not (command == 'show' and args.browse is True):
         try:
             r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project))
         except HttpClientError as e:
             if e.content['message'] == 'Not Found':
                 raise RepoError(_('Invalid project %r') % args.project)
             raise
-        args.repo_obj = models.Repository.from_dict(c)
+        args.repo_obj = models.Repository(**c)
         if not args.repo_obj.has_issues:
             raise RepoError(("Issues aren't enabled for %r") % args.project)
 
