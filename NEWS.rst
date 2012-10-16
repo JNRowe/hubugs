@@ -3,6 +3,24 @@ User-visible changes
 
 .. contents::
 
+0.15.0 - 2012-10-16
+-------------------
+
+* Search support is back!
+* kitchen_ and schematics_ are now required
+* Initial support for localisation, open a pull request with your translations!
+* pip_ compatible requirements files can now be found in ``extra``
+* nose2_ is now used for running tests
+* expecter_ and nose2-cov_ are required for the test suite
+* micromodels_ is no longer required, see #32
+
+.. _kitchen: http://pypi.python.org/pypi/kitchen/
+.. _schematics: http://pypi.python.org/pypi/schematics/
+.. _pip: http://pypi.python.org/pypi/pip/
+.. _nose2: http://pypi.python.org/pypi/nose2/
+.. _expecter: http://pypi.python.org/pypi/expecter/
+.. _nose2-cov: http://pypi.python.org/pypi/nose2-cov/
+
 0.14.0 - 2012-04-30
 -------------------
 
