@@ -43,7 +43,7 @@ class Label(Model):
 
     """GitHub issue label model."""
 
-    color = StringType()
+    color = StringType(regex='[0-9a-f]{6}')
     name = StringType()
     url = URLType(required=True)
 
