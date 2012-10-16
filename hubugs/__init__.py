@@ -62,6 +62,7 @@ import argh
 import httplib2
 
 from kitchen.text.converters import to_unicode
+from schematics.base import TypeException
 
 
 logging.basicConfig(level=logging.ERROR,
@@ -434,6 +435,8 @@ def main():
     except httplib2.ServerNotFoundError:
         print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
         return errno.ENXIO
+    except TypeException:
+        print utils.fail(_("API modelling failed.  Please report this!"))
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -25,7 +25,13 @@ from schematics.types import (BooleanType, DateTimeType, IntType, StringType,
 from schematics.types.compound import (ListType, ModelType, SortedListType)
 
 
-class User(Model):
+class ValidatingModel(Model):
+    def __init__(self, *args, **kwargs):
+        super(ValidatingModel, self).__init__(*args, **kwargs)
+        self.validate()
+
+
+class User(ValidatingModel):
 
     """GitHub user model."""
 
@@ -39,7 +45,7 @@ class User(Model):
         return "<%s %r>" % (self.__class__.__name__, self.login)
 
 
-class Label(Model):
+class Label(ValidatingModel):
 
     """GitHub issue label model."""
 
@@ -51,7 +57,7 @@ class Label(Model):
         return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
-class PullRequest(Model):
+class PullRequest(ValidatingModel):
 
     """GitHub issue pull request data model."""
 
@@ -66,7 +72,7 @@ class PullRequest(Model):
         return "<%s %r>" % (self.__class__.__name__, self.patch_url)
 
 
-class Issue(Model):
+class Issue(ValidatingModel):
 
     """GitHub issue model."""
 
@@ -144,7 +150,7 @@ class Issue(Model):
         return (stamp - zone).isoformat() + 'Z'
 
 
-class Comment(Model):
+class Comment(ValidatingModel):
 
     """GitHub issue comment model."""
 
@@ -161,7 +167,7 @@ class Comment(Model):
                                self.body[:20])
 
 
-class Application(Model):
+class Application(ValidatingModel):
 
     """GitHub OAuth application model."""
 
@@ -172,7 +178,7 @@ class Application(Model):
         return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
-class Authorisation(Model):
+class Authorisation(ValidatingModel):
 
     """GitHub OAuth authorisation model."""
 
@@ -191,7 +197,7 @@ class Authorisation(Model):
                                self.note[:20])
 
 
-class Organization(Model):
+class Organization(ValidatingModel):
 
     """GitHub issue organisation model."""
 
@@ -203,7 +209,7 @@ class Organization(Model):
     url = URLType(required=True)
 
 
-class Repository(Model):
+class Repository(ValidatingModel):
 
     """GitHub repository model."""
 
