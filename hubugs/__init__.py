@@ -381,7 +381,7 @@ def label(args):
     label_names = utils.sync_labels(args)
 
     if args.list:
-        print ", ".join(sorted(label_names))
+        print(", ".join(sorted(label_names)))
         return
 
     for bug_no in args.bugs:
@@ -433,15 +433,15 @@ def main():
         utils.setup_environment(args)
         args.func(args)
     except template.EmptyMessageError as error:
-        print utils.fail(error.message)
+        print(utils.fail(error.message))
     except (utils.RepoError, EnvironmentError, ValueError) as error:
-        print utils.fail(error.message)
+        print(utils.fail(error.args[0]))
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
+        print(utils.fail(_("Project lookup failed.  Network or GitHub down?")))
         return errno.ENXIO
     except TypeException:
-        print utils.fail(_("API modelling failed.  Please report this!"))
+        print(utils.fail(_("API modelling failed.  Please report this!")))
 
 if __name__ == '__main__':
     sys.exit(main())
