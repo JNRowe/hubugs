@@ -38,6 +38,9 @@ from . import (_version, models)
 
 from .i18n import _
 
+PY3K = sys.version_info[0] == 3
+if PY3K:
+    unicode = str
 
 T = blessings.Terminal()
 
@@ -193,6 +196,8 @@ def get_git_config_val(key, default=None, local_only=False):
     cmd.extend(['--get', key])
     try:
         output = check_output(cmd).strip()
+        if PY3K:
+            output = output.decode()
     except subprocess.CalledProcessError:
         output = default
     return output
@@ -285,7 +290,7 @@ def setup_environment(args):
             headers.update(HEADERS)
         else:
             headers = HEADERS
-        if not isinstance(url, basestring) or not url.startswith('http'):
+        if not isinstance(url, (str, unicode)) or not url.startswith('http'):
             url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
                                               '/' if url else '', url)
         if params:
@@ -294,7 +299,7 @@ def setup_environment(args):
             body = json.dumps(body)
         r, c = http.request(url, method=method, body=body, headers=headers)
         if is_json:
-            c = json.loads(c)
+            c = json.loads(c.decode('utf-8'))
         if str(r.status)[0] == '4':
             raise HttpClientError(str(r.status), r, c)
         if model:
