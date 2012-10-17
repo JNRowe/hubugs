@@ -46,6 +46,7 @@ try:
 except ImportError:
     pass
 
+import argparse
 import atexit
 import errno
 import getpass
@@ -58,12 +59,9 @@ import webbrowser
 
 from base64 import b64encode
 
-import argh
 import httplib2
 
-from kitchen.text.converters import to_unicode
 from schematics.base import TypeException
-
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -75,63 +73,129 @@ from . import (template, utils)
 from .i18n import _
 
 
-COMMANDS = []
+def process_command_line():
+    """Process the command line arguments."""
+    # Convenience parsers for mixing in to command parsers
+    bugs_parser = argparse.ArgumentParser(add_help=False)
+    bugs_parser.add_argument("bugs", nargs="+", type=int,
+                             help=_("bug number(s) to operate on"))
+
+    message_parser = argparse.ArgumentParser(add_help=False)
+    message_parser.add_argument("-m", "--message", help=_("comment text"))
+
+    attrib_parser = argparse.ArgumentParser(add_help=False)
+    attrib_parser.add_argument("-s", "--state", default="open",
+                               choices=["open", "closed", "all"],
+                               help=_("state of bugs to operate on"))
+    attrib_parser.add_argument("-o", "--order", default="number",
+                               choices=["number", "updated"],
+                               help=_("sort order for listing bugs"))
+
+    stdin_parser = argparse.ArgumentParser(add_help=False)
+    stdin_parser.add_argument("--stdin", action='store_true',
+                              help=_("read message from standard input"))
+
+    text_parser = argparse.ArgumentParser(add_help=False)
+    text_parser.add_argument("title", help=_("title for the new bug"),
+                             nargs="?")
+    text_parser.add_argument("body", help=_("body for the new bug"), nargs="?")
+
+    label_parser = argparse.ArgumentParser(add_help=False)
+    label_parser.add_argument("-a", "--add", action="append", default=[],
+                              help=_("add label to issue"), metavar="label")
+    label_parser.add_argument("-c", "--create", action="append", default=[],
+                              help=_("create new label and add to issue"),
+                              metavar="label")
+
+    description = __doc__.splitlines()[0].split("-", 1)[1]
+    epilog = _("Please report bugs to the JNRowe/hubugs project")
+    parser = argparse.ArgumentParser(description=description, epilog=epilog,
+                                     version="%%(prog)s %s" % __version__)
+    parser.add_argument("-p", "--project", action=utils.ProjectAction,
+                        help=_("GitHub project to operate on"),
+                        metavar="project")
+    parser.add_argument("-u", "--host-url", default='https://api.github.com',
+                        help=_("GitHub Enterprise host to connect to"),
+                        metavar="url")
+
+    subs = parser.add_subparsers(title='subcommands')
+
+    setup_p = subs.add_parser('setup', help=_("setup GitHub access token"))
+    setup_p.add_argument('--local', action='store_true',
+                         help=_('set access token for local repository only'))
+    setup_p.set_defaults(func=setup)
+
+    list_p = subs.add_parser('list', help=_('list bugs'),
+                             parents=[attrib_parser, ])
+    list_p.add_argument('-l', '--label',
+                        help=_("list bugs with specified label"),
+                        metavar="label", action="append")
+    list_p.set_defaults(func=list_bugs)
+
+    search_p = subs.add_parser('search', help=_("searching bugs"),
+                               parents=[attrib_parser, ])
+    search_p.add_argument("term", help=_("term to search bugs for"))
+    search_p.set_defaults(func=search)
+
+    show_p = subs.add_parser('show', help=_("displaying bugs"),
+                             parents=[bugs_parser, ])
+    show_p.add_argument("-f", "--full", action='store_true',
+                        help=_("show bug including comments"))
+    show_p.add_argument("-p", "--patch", action='store_true',
+                        help=_("display patches for pull requests"))
+    show_p.add_argument("-o", "--patch-only", action='store_true',
+                        help=_("display only the patch content of pull "
+                               "requests"))
+    show_p.add_argument("-b", "--browse", action='store_true',
+                        help=_("open bug in web browser"))
+    show_p.set_defaults(func=show)
+
+    open_p = subs.add_parser('open', help=_("opening new bugs"),
+                             parents=[label_parser, stdin_parser, text_parser])
+    open_p.set_defaults(func=open_bug)
+
+    comment_p = subs.add_parser('comment', help=_("commenting on bugs"),
+                                parents=[stdin_parser, message_parser,
+                                         bugs_parser])
+    comment_p.set_defaults(func=comment)
+
+    edit_p = subs.add_parser('edit', help=_("editing bugs"),
+                             parents=[stdin_parser, text_parser, bugs_parser])
+    edit_p.set_defaults(func=edit)
+
+    close_p = subs.add_parser('close', help=_("closing bugs"),
+                              parents=[stdin_parser, message_parser,
+                                       bugs_parser])
+    close_p.set_defaults(func=close)
+
+    reopen_p = subs.add_parser('reopen', help=_("reopening closed bugs"),
+                               parents=[stdin_parser, message_parser,
+                                        bugs_parser])
+    reopen_p.set_defaults(func=reopen)
+
+    label_p = subs.add_parser('label', help=_("labelling bugs"),
+                              parents=[label_parser, ])
+    label_p.add_argument("-r", "--remove", action="append", default=[],
+                         help=_("remove label from issue"), metavar="label")
+    label_p.add_argument("-l", "--list", action='store_true',
+                         help=_("list available labels"))
+    label_p.add_argument("bugs", nargs="*", type=int,
+                         help=_("bug number(s) to operate on"))
+    label_p.set_defaults(func=label)
+
+    report_bug_p = subs.add_parser('report-bug',
+                                   help=_("report a new bug against hubugs"))
+    report_bug_p.set_defaults(func=report_bug)
+
+    return parser.parse_args()
 
 
-def command(func):
-    """Simple decorator to add function to ``COMMANDS`` list.
-
-    The purpose of this decorator is to make the definition of commands simpler
-    by reducing duplication, it is purely a convenience.
-
-    :param func func: Function to wrap
-    :rtype: ``func``
-    :returns: Original function
-
-    """
-    COMMANDS.append(func)
-    return func
-
-
-# Convenience wrappers for defining command arguments
-# pylint: disable-msg=C0103
-bugs_arg = argh.arg("bugs", nargs="+", type=int,
-                    help=_("bug number(s) to operate on"))
-
-message_arg = argh.arg("-m", "--message", help=_("comment text"))
-
-order_arg = argh.arg("-o", "--order", default="number",
-                     choices=["number", "updated"],
-                     help=_("sort order for listing bugs"))
-
-states_arg = argh.arg("-s", "--state", default="open",
-                      choices=["open", "closed", "all"],
-                      help=_("state of bugs to operate on"))
-
-stdin_arg = argh.arg("--stdin", default=False,
-                     help=_("read message from standard input"))
-
-title_arg = argh.arg("title", help=_("title for the new bug"), nargs="?")
-body_arg = argh.arg("body", help=_("body for the new bug"), nargs="?")
-
-label_add_arg = argh.arg("-a", "--add", action="append", default=[],
-                         help=_("add label to issue"), metavar="label")
-label_create_arg = argh.arg("-c", "--create", action="append", default=[],
-                            help=_("create new label and add to issue"),
-                            metavar="label")
-label_remove_arg = argh.arg("-r", "--remove", action="append", default=[],
-                            help=_("remove label from issue"), metavar="label")
-# pylint: enable-msg=C0103
-
-
-@command
-@argh.arg('--local', default=False,
-          help='set access token for local repository only')
 def setup(args):
+    """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
-        yield utils.warn(_('Falling back on bundled certificates'))
+        print(utils.warn(_('Falling back on bundled certificates')))
     if utils.CURL_CERTS:
-        yield utils.warn(_('Using certs specified in $CURL_CERTS'))
+        print(utils.warn(_('Using certs specified in $CURL_CERTS')))
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
@@ -142,7 +206,10 @@ def setup(args):
         password = getpass.getpass('GitHub password? ')
     except KeyboardInterrupt:
         return
-    private = argh.confirm('Support private repositories', default=True)
+
+    result = raw_input('Support private repositories? [Y/n] ')
+    private = result.lower() == 'y'
+
     data = {
         'scopes': ['repo' if private else 'public_repo'],
         'note': 'hubugs',
@@ -157,17 +224,11 @@ def setup(args):
     r, auth = args.req_post('https://api.github.com/authorizations', body=data,
                             headers=header, model='Authorisation')
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
-    yield utils.success(_('Configuration complete!'))
-setup.__doc__ = _("setup GitHub access token")
+    print(utils.success(_('Configuration complete!')))
 
 
-@command
-@argh.alias("list")
-@states_arg
-@argh.arg("-l", "--label", help=_("list bugs with specified label"),
-          metavar="label", action="append")
-@order_arg
 def list_bugs(args):
+    """Listing bugs."""
     bugs = []
     params = {}
     if args.label:
@@ -180,16 +241,12 @@ def list_bugs(args):
         r, _bugs = args.req_get('', params=_params, model=['Issue', ])
         bugs.extend(_bugs)
 
-    yield template.display_bugs(bugs, args.order, state=args.state,
-                                project=args.repo_obj)
-list_bugs.__doc__ = _("listing bugs")
+    print(template.display_bugs(bugs, args.order, state=args.state,
+                                project=args.repo_obj))
 
 
-@command
-@states_arg
-@order_arg
-@argh.arg("term", help=_("term to search bugs for"))
 def search(args):
+    """Searching bugs."""
     # This chunk of code is horrific, as is the Issue.from_search() that is
     # required to support it.  However, without search support in API v3 there
     # is realistic way around it.
@@ -204,18 +261,9 @@ def search(args):
     return template.display_bugs(bugs, args.order, term=args.term,
                                  state=args.state, project=args.repo_obj)
 
-search.__doc__ = _("searching bugs")
 
-
-@command
-@argh.arg("-f", "--full", default=False, help=_("show bug including comments"))
-@argh.arg("-p", "--patch", default=False,
-          help=_("display patches for pull requests"))
-@argh.arg("-o", "--patch-only", default=False,
-          help=_("display only the patch content of pull requests"))
-@argh.arg("-b", "--browse", default=False, help=_("open bug in web browser"))
-@bugs_arg
 def show(args):
+    """Displaying bugs."""
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
         if args.browse:
@@ -231,24 +279,16 @@ def show(args):
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
             r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
-            patch = to_unicode(c)
+            patch = c.decode('utf-8')
         else:
             patch = None
-        yield tmpl.render(bug=bug, comments=comments, full=True,
+        print(tmpl.render(bug=bug, comments=comments, full=True,
                           patch=patch, patch_only=args.patch_only,
-                          project=args.repo_obj)
-show.__doc__ = _("displaying bugs")
+                          project=args.repo_obj))
 
 
-@command
-@argh.alias("open")
-@label_add_arg
-@label_create_arg
-@stdin_arg
-@title_arg
-@body_arg
-@argh.wrap_errors(template.EmptyMessageError)
 def open_bug(args):
+    """Opening new bugs."""
     utils.sync_labels(args)
     if args.stdin:
         text = sys.stdin.readlines()
@@ -262,16 +302,11 @@ def open_bug(args):
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    yield utils.success(_("Bug %d opened") % bug.number)
-open_bug.__doc__ = _("opening new bugs")
+    print(utils.success(_("Bug %d opened") % bug.number))
 
 
-@command
-@stdin_arg
-@message_arg
-@bugs_arg
-@argh.wrap_errors(template.EmptyMessageError)
 def comment(args):
+    """Commenting on bugs."""
     if args.stdin:
         message = sys.stdin.read()
     elif args.message:
@@ -280,19 +315,13 @@ def comment(args):
         message = template.edit_text()
     for bug in args.bugs:
         args.req_post('%s/comments' % bug, body={'body': message})
-comment.__doc__ = _("commenting on bugs")
 
 
-@command
-@stdin_arg
-@title_arg
-@body_arg
-@bugs_arg
-@argh.wrap_errors(template.EmptyMessageError)
 def edit(args):
+    """Editing bugs."""
     if (args.title or args.stdin) and len(args.bugs) > 1:
-        raise argh.CommandError(_("Can not use --stdin or command line "
-                                  "title/body with multiple bugs"))
+        raise argparse.ArgumentError(_("Can not use --stdin or command line "
+                                       "title/body with multiple bugs"))
     for bug in args.bugs:
         if args.stdin:
             text = sys.stdin.readlines()
@@ -309,14 +338,10 @@ def edit(args):
 
         data = {'title': title, 'body': body}
         args.req_post(bug, body=data)
-edit.__doc__ = _("editing bugs")
 
 
-@command
-@stdin_arg
-@message_arg
-@bugs_arg
 def close(args):
+    """Closing bugs."""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -331,14 +356,10 @@ def close(args):
         if message:
             args.req_post('%s/comments' % bug, body={'body': message})
         args.req_post(bug, body={'state': 'closed'})
-close.__doc__ = _("closing bugs")
 
 
-@command
-@stdin_arg
-@message_arg
-@bugs_arg
 def reopen(args):
+    """Reopening closed bugs"""
     if args.stdin:
         message = sys.stdin.read()
     elif not args.message:
@@ -353,21 +374,14 @@ def reopen(args):
         if message:
             args.req_post('%s/comments' % bug, body={'body': message})
         args.req_post(bug, body={'state': 'open'})
-reopen.__doc__ = _("reopening closed bugs")
 
 
-@command
-@label_add_arg
-@label_create_arg
-@label_remove_arg
-@argh.arg("-l", "--list", default=False, help="list available labels")
-@argh.arg("bugs", nargs="*", type=int,
-          help="bug number(s) to operate on")
 def label(args):
+    """Labelling bugs"""
     label_names = utils.sync_labels(args)
 
     if args.list:
-        print ", ".join(sorted(label_names))
+        print(", ".join(sorted(label_names)))
         return
 
     for bug_no in args.bugs:
@@ -378,19 +392,17 @@ def label(args):
         for string in args.remove:
             labels.remove(string)
         args.req_post(bug_no, body={'labels': labels})
-label.__doc__ = _("labelling bugs")
 
 
-@command
-@argh.wrap_errors(template.EmptyMessageError)
 def report_bug(args):
+    """Report a new bug against hubugs."""
     local = args.project == 'JNRowe/hubugs'
     args.project = 'JNRowe/hubugs'
 
     import blessings, html2text, jinja2, pygments, schematics # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in argh, blessings, html2text, httplib2, jinja2,
-                        pygments, schematics])
+                     for m in (blessings, html2text, httplib2, jinja2,
+                               pygments, schematics)])
     data = {
         'local': local,
         'sys': sys,
@@ -404,9 +416,8 @@ def report_bug(args):
 
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    yield utils.success(_("Bug %d opened against hubugs, thanks!")
-                        % bug.number)
-report_bug.__doc__ = _("report a new bug against hubugs")
+    print(utils.success(_("Bug %d opened against hubugs, thanks!")
+                        % bug.number))
 
 
 def main():
@@ -416,27 +427,21 @@ def main():
     :return: Exit code
 
     """
-    description = __doc__.splitlines()[0].split("-", 1)[1]
-    epilog = _("Please report bugs to the JNRowe/hubugs project")
-    parser = argh.ArghParser(description=description, epilog=epilog,
-                             version="%%(prog)s %s" % __version__)
-    parser.add_argument("-p", "--project", action=utils.ProjectAction,
-                        help=_("GitHub project to operate on"),
-                        metavar="project")
-    parser.add_argument("-u", "--host-url", default='https://api.github.com',
-                        help="GitHub Enterprise host to connect to",
-                        metavar="url")
-    parser.add_commands(COMMANDS)
+    args = process_command_line()
+
     try:
-        parser.dispatch(pre_call=utils.setup_environment)
+        utils.setup_environment(args)
+        args.func(args)
+    except template.EmptyMessageError as error:
+        print(utils.fail(error.message))
     except (utils.RepoError, EnvironmentError, ValueError) as error:
-        print utils.fail(error.message)
+        print(utils.fail(error.args[0]))
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
+        print(utils.fail(_("Project lookup failed.  Network or GitHub down?")))
         return errno.ENXIO
     except TypeException:
-        print utils.fail(_("API modelling failed.  Please report this!"))
+        print(utils.fail(_("API modelling failed.  Please report this!")))
 
 if __name__ == '__main__':
     sys.exit(main())

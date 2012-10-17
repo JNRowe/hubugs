@@ -17,16 +17,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import argparse
 import json
 import os
 import re
 import subprocess
 import sys
-import urllib
 
 from functools import partial
 
-import argh
+try:  # For Python 3
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode  # NOQA
+
 import blessings
 import httplib2
 
@@ -34,6 +38,9 @@ from . import (_version, models)
 
 from .i18n import _
 
+PY3K = sys.version_info[0] == 3
+if PY3K:
+    unicode = str
 
 T = blessings.Terminal()
 
@@ -122,7 +129,7 @@ class RepoError(ValueError):
     """Error raised for invalid repository values."""
 
 
-class ProjectAction(argh.utils.argparse.Action):
+class ProjectAction(argparse.Action):
 
     """argparse action class for setting project."""
 
@@ -189,6 +196,8 @@ def get_git_config_val(key, default=None, local_only=False):
     cmd.extend(['--get', key])
     try:
         output = check_output(cmd).strip()
+        if PY3K:
+            output = output.decode()
     except subprocess.CalledProcessError:
         output = default
     return output
@@ -209,7 +218,7 @@ def set_git_config_val(key, value, local_only=False):
     try:
         check_output(cmd, stderr=subprocess.STDOUT).strip()
     except subprocess.CalledProcessError as e:
-        raise argh.CommandError(e.output)
+        raise argparse.ArgumentError(e.output)
 
 
 def get_editor():
@@ -257,7 +266,7 @@ def setup_environment(args):
     if not args.project:
         args.project = get_repo()
 
-    command = args.function.__name__
+    command = args.func.__name__
 
     http = get_github_api()
 
@@ -281,16 +290,16 @@ def setup_environment(args):
             headers.update(HEADERS)
         else:
             headers = HEADERS
-        if not isinstance(url, basestring) or not url.startswith('http'):
+        if not isinstance(url, (str, unicode)) or not url.startswith('http'):
             url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
                                               '/' if url else '', url)
         if params:
-            url += '?' + urllib.urlencode(params)
+            url += '?' + urlencode(params)
         if is_json and body:
             body = json.dumps(body)
         r, c = http.request(url, method=method, body=body, headers=headers)
         if is_json:
-            c = json.loads(c)
+            c = json.loads(c.decode('utf-8'))
         if str(r.status)[0] == '4':
             raise HttpClientError(str(r.status), r, c)
         if model:
@@ -336,7 +345,7 @@ def sync_labels(args):
             raise ValueError(_('No such label %r') % label)
     for label in args.create:
         if label in label_names:
-            print warn(_('%r label already exists') % label)
+            print(warn(_('%r label already exists') % label))
         else:
             data = {'name': label, 'color': '000000'}
             args.req_post(labels_url, body=data)
