@@ -23,9 +23,13 @@ import os
 import re
 import subprocess
 import sys
-import urllib
 
 from functools import partial
+
+try:  # For Python 3
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode  # NOQA
 
 import blessings
 import httplib2
@@ -285,7 +289,7 @@ def setup_environment(args):
             url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
                                               '/' if url else '', url)
         if params:
-            url += '?' + urllib.urlencode(params)
+            url += '?' + urlencode(params)
         if is_json and body:
             body = json.dumps(body)
         r, c = http.request(url, method=method, body=body, headers=headers)
