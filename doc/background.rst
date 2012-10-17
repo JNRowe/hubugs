@@ -15,7 +15,7 @@ The requirements
 I live at the command line, data that isn't easily manageable from there may as
 well not exist in my eyes.  Therefore:
 
-    A simple `command line interface`_ is priority one.
+    A simple command line interface is priority one.
 
 It is nice to customise the views of data, and improve the look and feel of a
 view over time.  Therefore:
@@ -29,6 +29,5 @@ Therefore:
 
 .. _GitHub: https://github.com/
 .. _thoroughly documented API: http://developer.github.com/v3/
-.. _command line interface: http://pypi.python.org/pypi/argh/
 .. _templates: http://jinja.pocoo.org/
 .. _cached and compressed: http://code.google.com/p/httplib2/
