@@ -401,8 +401,8 @@ def report_bug(args):
 
     import blessings, html2text, jinja2, pygments, schematics # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in blessings, html2text, httplib2, jinja2, pygments,
-                        schematics])
+                     for m in (blessings, html2text, httplib2, jinja2,
+                               pygments, schematics)])
     data = {
         'local': local,
         'sys': sys,
