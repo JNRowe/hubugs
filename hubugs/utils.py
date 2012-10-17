@@ -336,7 +336,7 @@ def sync_labels(args):
             raise ValueError(_('No such label %r') % label)
     for label in args.create:
         if label in label_names:
-            print warn(_('%r label already exists') % label)
+            print(warn(_('%r label already exists') % label))
         else:
             data = {'name': label, 'color': '000000'}
             args.req_post(labels_url, body=data)
