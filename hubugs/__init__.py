@@ -118,9 +118,9 @@ label_parser.add_argument("-c", "--create", action="append", default=[],
 def setup(args):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
-        print utils.warn(_('Falling back on bundled certificates'))
+        print(utils.warn(_('Falling back on bundled certificates')))
     if utils.CURL_CERTS:
-        print utils.warn(_('Using certs specified in $CURL_CERTS'))
+        print(utils.warn(_('Using certs specified in $CURL_CERTS')))
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
@@ -149,7 +149,7 @@ def setup(args):
     r, auth = args.req_post('https://api.github.com/authorizations', body=data,
                             headers=header, model='Authorisation')
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
-    print utils.success(_('Configuration complete!'))
+    print(utils.success(_('Configuration complete!')))
 
 
 @APP.cmd(name='list', help=_("listing bugs"), parents=[attrib_parser, ])
@@ -169,8 +169,8 @@ def list_bugs(args):
         r, _bugs = args.req_get('', params=_params, model=['Issue', ])
         bugs.extend(_bugs)
 
-    print template.display_bugs(bugs, args.order, state=args.state,
-                                project=args.repo_obj)
+    print(template.display_bugs(bugs, args.order, state=args.state,
+                                project=args.repo_obj))
 
 
 @APP.cmd(help=_("searching bugs"), parents=[attrib_parser, ])
@@ -221,9 +221,9 @@ def show(args):
             patch = c.decode('utf-8')
         else:
             patch = None
-        print tmpl.render(bug=bug, comments=comments, full=True,
+        print(tmpl.render(bug=bug, comments=comments, full=True,
                           patch=patch, patch_only=args.patch_only,
-                          project=args.repo_obj)
+                          project=args.repo_obj))
 
 
 @APP.cmd(name='open', help="opening new bugs",
@@ -243,7 +243,7 @@ def open_bug(args):
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    print utils.success(_("Bug %d opened") % bug.number)
+    print(utils.success(_("Bug %d opened") % bug.number))
 
 
 @APP.cmd(help=_("commenting on bugs"),
@@ -371,8 +371,8 @@ def report_bug(args):
 
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    print utils.success(_("Bug %d opened against hubugs, thanks!")
-                        % bug.number)
+    print(utils.success(_("Bug %d opened against hubugs, thanks!")
+                        % bug.number))
 
 
 def main():
