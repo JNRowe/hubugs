@@ -62,9 +62,7 @@ from base64 import b64encode
 import aaargh
 import httplib2
 
-from kitchen.text.converters import to_unicode
 from schematics.base import TypeException
-
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -220,7 +218,7 @@ def show(args):
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
             r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
-            patch = to_unicode(c)
+            patch = c.decode('utf-8')
         else:
             patch = None
         print tmpl.render(bug=bug, comments=comments, full=True,
@@ -337,7 +335,7 @@ def label(args):
     label_names = utils.sync_labels(args)
 
     if args.list:
-        print ", ".join(sorted(label_names))
+        print(", ".join(sorted(label_names)))
         return
 
     for bug_no in args.bugs:
@@ -358,8 +356,8 @@ def report_bug(args):
 
     import blessings, html2text, jinja2, pygments, schematics # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in aaargh, blessings, html2text, httplib2, jinja2,
-                        pygments, schematics])
+                     for m in (aaargh, blessings, html2text, httplib2, jinja2,
+                        pygments, schematics)])
     data = {
         'local': local,
         'sys': sys,
@@ -397,13 +395,13 @@ def main():
         utils.setup_environment(args)
         args._func(args)
     except (utils.RepoError, EnvironmentError, ValueError) as error:
-        print utils.fail(error.message)
+        print(utils.fail(error.args[0]))
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
+        print(utils.fail(_("Project lookup failed.  Network or GitHub down?")))
         return errno.ENXIO
     except TypeException:
-        print utils.fail(_("API modelling failed.  Please report this!"))
+        print(utils.fail(_("API modelling failed.  Please report this!")))
 
 if __name__ == '__main__':
     sys.exit(main())

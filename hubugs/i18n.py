@@ -17,11 +17,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import gettext
+
 from os import path
-
-from kitchen.i18n import easy_gettext_setup
-
 
 PACKAGE_LOCALE = path.join(path.realpath(path.dirname(__file__)), 'locale')
 
-_, N_ = easy_gettext_setup('hubugs', localedirs=[PACKAGE_LOCALE, ])
+gettext.install('hubugs', PACKAGE_LOCALE)
+
+_, N_ = gettext.gettext, gettext.ngettext
