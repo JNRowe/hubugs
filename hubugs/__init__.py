@@ -429,14 +429,17 @@ def main():
     parser.add_commands(COMMANDS)
     try:
         parser.dispatch(pre_call=utils.setup_environment)
-    except (utils.RepoError, EnvironmentError, ValueError) as error:
-        print utils.fail(error.message)
+    except utils.HttpClientError as error:
+        print utils.fail(error.content['message'])
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
         print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
         return errno.ENXIO
     except TypeException:
         print utils.fail(_("API modelling failed.  Please report this!"))
+    except (utils.RepoError, EnvironmentError, ValueError) as error:
+        print utils.fail(error.content['message'])
+        return errno.EINVAL
 
 if __name__ == '__main__':
     sys.exit(main())
