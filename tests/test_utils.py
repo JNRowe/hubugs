@@ -38,7 +38,7 @@ def test_colouriser(f, result):
 
 class ProjectAction(TestCase):
     def setUp(self):
-        self.parser = utils.argh.ArghParser('test_parser')
+        self.parser = utils.argparse.ArgumentParser('test_parser')
         # Stub out ._print_message() to stop help messages being displayed on
         # stderr during tests.
         self.parser._print_message = Mock(return_value=True)
