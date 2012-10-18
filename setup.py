@@ -1,7 +1,5 @@
 #! /usr/bin/python -tt
 
-import sys
-
 from setuptools import setup
 
 # Hack to import _version file without importing hubugs/__init__.py, its
@@ -9,10 +7,8 @@ from setuptools import setup
 _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
-install_requires = ['argh', 'blessings', 'html2text', 'httplib2>=0.7.4',
-                    'Jinja2>=2', 'kitchen', 'Pygments', 'schematics']
-if sys.version_info[:2] < (2, 7):
-    install_requires.append('argparse')
+install_requires = ['aaargh', 'blessings', 'html2text', 'httplib2>=0.7.4',
+                    'Jinja2>=2', 'Pygments', 'schematics']
 
 
 setup(
