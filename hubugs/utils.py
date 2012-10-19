@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import argparse
 import json
 import os
 import re
@@ -26,7 +27,6 @@ import urllib
 
 from functools import partial
 
-import argh
 import blessings
 import httplib2
 
@@ -122,7 +122,7 @@ class RepoError(ValueError):
     """Error raised for invalid repository values."""
 
 
-class ProjectAction(argh.utils.argparse.Action):
+class ProjectAction(argparse.Action):
 
     """argparse action class for setting project."""
 
@@ -206,10 +206,7 @@ def set_git_config_val(key, value, local_only=False):
     if not local_only:
         cmd.append('--global')
     cmd.extend([key, value])
-    try:
-        check_output(cmd, stderr=subprocess.STDOUT).strip()
-    except subprocess.CalledProcessError as e:
-        raise argh.CommandError(e.output)
+    check_output(cmd, stderr=subprocess.STDOUT).strip()
 
 
 def get_editor():
@@ -257,7 +254,7 @@ def setup_environment(args):
     if not args.project:
         args.project = get_repo()
 
-    command = args.function.__name__
+    command = args._func.__name__
 
     http = get_github_api()
 

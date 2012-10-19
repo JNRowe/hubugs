@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: hubugs 0.14.0\n"
+"Project-Id-Version: hubugs 0.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-16 05:06+0100\n"
+"POT-Creation-Date: 2012-10-18 10:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,153 +17,150 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: hubugs/__init__.py:99
+#: hubugs/__init__.py:80
+msgid "Please report bugs to the JNRowe/hubugs project"
+msgstr ""
+
+#: hubugs/__init__.py:87
 msgid "bug number(s) to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:101
+#: hubugs/__init__.py:90
 msgid "comment text"
 msgstr ""
 
-#: hubugs/__init__.py:105
+#: hubugs/__init__.py:95
 msgid "sort order for listing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:109
+#: hubugs/__init__.py:98
 msgid "state of bugs to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:112
+#: hubugs/__init__.py:102
 msgid "read message from standard input"
 msgstr ""
 
-#: hubugs/__init__.py:114
+#: hubugs/__init__.py:105
 msgid "title for the new bug"
 msgstr ""
 
-#: hubugs/__init__.py:115
+#: hubugs/__init__.py:106
 msgid "body for the new bug"
 msgstr ""
 
-#: hubugs/__init__.py:118
+#: hubugs/__init__.py:110
 msgid "add label to issue"
 msgstr ""
 
-#: hubugs/__init__.py:120
+#: hubugs/__init__.py:112
 msgid "create new label and add to issue"
 msgstr ""
 
-#: hubugs/__init__.py:123
-msgid "remove label from issue"
-msgstr ""
-
-#: hubugs/__init__.py:132
-msgid "Falling back on bundled certificates"
-msgstr ""
-
-#: hubugs/__init__.py:134
-msgid "Using certs specified in $CURL_CERTS"
-msgstr ""
-
-#: hubugs/__init__.py:160
-msgid "Configuration complete!"
-msgstr ""
-
-#: hubugs/__init__.py:161
+#. pylint: enable-msg=C0103
+#: hubugs/__init__.py:117
 msgid "setup GitHub access token"
 msgstr ""
 
-#: hubugs/__init__.py:167
-msgid "list bugs with specified label"
+#: hubugs/__init__.py:123
+msgid "Falling back on bundled certificates"
 msgstr ""
 
-#: hubugs/__init__.py:185
+#: hubugs/__init__.py:125
+msgid "Using certs specified in $CURL_CERTS"
+msgstr ""
+
+#: hubugs/__init__.py:154
+msgid "Configuration complete!"
+msgstr ""
+
+#: hubugs/__init__.py:157
 msgid "listing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:191
-msgid "term to search bugs for"
+#: hubugs/__init__.py:158
+msgid "list bugs with specified label"
 msgstr ""
 
-#: hubugs/__init__.py:207
+#: hubugs/__init__.py:178
 msgid "searching bugs"
 msgstr ""
 
-#: hubugs/__init__.py:211
-msgid "show bug including comments"
+#: hubugs/__init__.py:179
+msgid "term to search bugs for"
 msgstr ""
 
-#: hubugs/__init__.py:213
-msgid "display patches for pull requests"
-msgstr ""
-
-#: hubugs/__init__.py:215
-msgid "display only the patch content of pull requests"
-msgstr ""
-
-#: hubugs/__init__.py:216
-msgid "open bug in web browser"
-msgstr ""
-
-#: hubugs/__init__.py:240
+#: hubugs/__init__.py:197
 msgid "displaying bugs"
 msgstr ""
 
-#: hubugs/__init__.py:265
+#: hubugs/__init__.py:199
+msgid "show bug including comments"
+msgstr ""
+
+#: hubugs/__init__.py:201
+msgid "display patches for pull requests"
+msgstr ""
+
+#: hubugs/__init__.py:203
+msgid "display only the patch content of pull requests"
+msgstr ""
+
+#: hubugs/__init__.py:205
+msgid "open bug in web browser"
+msgstr ""
+
+#: hubugs/__init__.py:248
 #, python-format
 msgid "Bug %d opened"
 msgstr ""
 
-#: hubugs/__init__.py:266
-msgid "opening new bugs"
-msgstr ""
-
-#: hubugs/__init__.py:283
+#: hubugs/__init__.py:251
 msgid "commenting on bugs"
 msgstr ""
 
-#: hubugs/__init__.py:294
-msgid "Can not use --stdin or command line title/body with multiple bugs"
-msgstr ""
-
-#: hubugs/__init__.py:312
+#: hubugs/__init__.py:265
 msgid "editing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:334
+#: hubugs/__init__.py:270
+msgid "Can not use --stdin or command line title/body with multiple bugs"
+msgstr ""
+
+#: hubugs/__init__.py:290
 msgid "closing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:356
+#: hubugs/__init__.py:310
 msgid "reopening closed bugs"
 msgstr ""
 
-#: hubugs/__init__.py:381
+#: hubugs/__init__.py:330
 msgid "labelling bugs"
 msgstr ""
 
-#: hubugs/__init__.py:407
+#: hubugs/__init__.py:332
+msgid "remove label from issue"
+msgstr ""
+
+#: hubugs/__init__.py:353
+msgid "report a new bug against hubugs"
+msgstr ""
+
+#: hubugs/__init__.py:376
 #, python-format
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:409
-msgid "report a new bug against hubugs"
-msgstr ""
-
-#: hubugs/__init__.py:420
-msgid "Please report bugs to the JNRowe/hubugs project"
-msgstr ""
-
-#: hubugs/__init__.py:424
+#: hubugs/__init__.py:388
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:436
+#: hubugs/__init__.py:403
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/__init__.py:439
+#: hubugs/__init__.py:406
 msgid "API modelling failed.  Please report this!"
 msgstr ""
 
@@ -183,30 +180,30 @@ msgstr ""
 msgid "No GitHub user setting!"
 msgstr ""
 
-#: hubugs/utils.py:236
+#: hubugs/utils.py:233
 msgid "No `origin' remote found"
 msgstr ""
 
-#: hubugs/utils.py:248
+#: hubugs/utils.py:245
 msgid "Unknown project, specify with `--project' option"
 msgstr ""
 
-#: hubugs/utils.py:274
+#: hubugs/utils.py:271
 msgid ""
 "No hubugs authorisation token found!  Run 'hubugs setup' to create a token"
 msgstr ""
 
-#: hubugs/utils.py:315
+#: hubugs/utils.py:312
 #, python-format
 msgid "Invalid project %r"
 msgstr ""
 
-#: hubugs/utils.py:336
+#: hubugs/utils.py:333
 #, python-format
 msgid "No such label %r"
 msgstr ""
 
-#: hubugs/utils.py:339
+#: hubugs/utils.py:336
 #, python-format
 msgid "%r label already exists"
 msgstr ""
