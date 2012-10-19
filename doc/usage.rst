@@ -59,6 +59,12 @@ Options
 
    host to connect to, for GitHub Enterprise support
 
+.. note::
+
+   You can define a default for ``-host-url`` by setting ``hubugs.host-url`` in
+   your ``git`` configuration file, both global and project local settings are
+   supported.  See :manpage:`git-config(1)`.
+
 Commands
 --------
 

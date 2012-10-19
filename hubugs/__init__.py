@@ -387,9 +387,10 @@ def main():
     APP.arg("-p", "--project", action=utils.ProjectAction,
             help=_("GitHub project to operate on"),
             metavar="project")
-    APP.arg("-u", "--host-url", default='https://api.github.com',
-            help="GitHub Enterprise host to connect to",
-            metavar="url")
+    APP.arg("-u", "--host-url",
+            default=utils.get_git_config_val('hubugs.host-url',
+                                             'https://api.github.com'),
+            help="GitHub Enterprise host to connect to", metavar="url")
 
     args = APP._parser.parse_args()
 
