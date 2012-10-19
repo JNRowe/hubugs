@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-19 05:20+0100\n"
+"POT-Creation-Date: 2012-10-19 05:35+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -185,15 +185,15 @@ msgstr ""
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:390
+#: hubugs/__init__.py:392
 msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
-#: hubugs/__init__.py:401
+#: hubugs/__init__.py:403
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/__init__.py:404
+#: hubugs/__init__.py:406
 msgid "API modelling failed.  Please report this!"
 msgstr ""
 

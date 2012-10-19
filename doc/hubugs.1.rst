@@ -168,6 +168,9 @@ setting in your git configuration files.  For example::
 You can also set project specific template sets by editing a repository's
 config.  See :manpage:`git-config(1)`.
 
+You can also set a default value for the ``--host-url`` option by defining
+``hubugs.host-url`` in your git configuration files.
+
 BUGS
 ----
 
