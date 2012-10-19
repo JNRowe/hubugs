@@ -112,6 +112,9 @@ class GetRepo(TestCase):
         'http://JNRowe@github.com/JNRowe/misc-overlay',
         'http://github.com/JNRowe/misc-overlay.git',
         'http://github.com/JNRowe/misc-overlay',
+
+        # hg-git
+        'git+ssh://git@github.com:JNRowe/misc-overlay.git',
     )
     @patch('hubugs.utils.get_git_config_val')
     def test_repo_url(self, repo, get_git_config_val):

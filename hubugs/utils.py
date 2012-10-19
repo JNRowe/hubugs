@@ -24,6 +24,11 @@ import re
 import subprocess
 import sys
 
+try:  # For Python 3
+    import configparser
+except ImportError:
+    import ConfigParser as configparser  # NOQA
+
 from functools import partial
 
 try:  # For Python 3
@@ -231,7 +236,7 @@ def get_editor():
 
 
 def get_repo():
-    """Extract GitHub project name from git config.
+    """Extract GitHub project name from git/hg config.
 
     :rtype: ``str``
     :return: GitHub project name, including user
@@ -239,9 +244,25 @@ def get_repo():
     """
     data = get_git_config_val("remote.origin.url", local_only=True)
     if not data:
+        try:
+            root = check_output(['hg', 'root'], stderr=subprocess.PIPE).strip()
+        except (OSError, subprocess.CalledProcessError):
+            # No mercurial install, or not in a mercurial tree
+            pass
+        else:
+            conf = configparser.ConfigParser()
+            conf.read(os.path.join(root, '.hg', 'hgrc'))
+            try:
+                data = conf.get('paths', 'default')
+            except (configparser.NoSectionError, configparser.NoOptionError):
+                pass
+
+    if not data:
         raise RepoError(_("No `origin' remote found"))
+
     match = re.match(r"""
         (?:git(?:@|://)  # SSH or git protocol
+          |git\+ssh://(?:git@)  # hg-git SSH URLs
           |https?://
            (?:.*@)?)  # HTTP URLs support optional auth data
         github.com[:/]  # hostname, : sep for SSH URL
