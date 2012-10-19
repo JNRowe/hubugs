@@ -62,9 +62,7 @@ from base64 import b64encode
 import aaargh
 import httplib2
 
-from kitchen.text.converters import to_unicode
 from schematics.base import TypeException
-
 
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
@@ -120,9 +118,9 @@ label_parser.add_argument("-c", "--create", action="append", default=[],
 def setup(args):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
-        print utils.warn(_('Falling back on bundled certificates'))
+        print(utils.warn(_('Falling back on bundled certificates')))
     if utils.CURL_CERTS:
-        print utils.warn(_('Using certs specified in $CURL_CERTS'))
+        print(utils.warn(_('Using certs specified in $CURL_CERTS')))
     default_user = os.getenv("GITHUB_USER",
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
@@ -151,7 +149,7 @@ def setup(args):
     r, auth = args.req_post('https://api.github.com/authorizations', body=data,
                             headers=header, model='Authorisation')
     utils.set_git_config_val('hubugs.token', auth.token, args.local)
-    print utils.success(_('Configuration complete!'))
+    print(utils.success(_('Configuration complete!')))
 
 
 @APP.cmd(name='list', help=_("listing bugs"), parents=[attrib_parser, ])
@@ -171,8 +169,8 @@ def list_bugs(args):
         r, _bugs = args.req_get('', params=_params, model=['Issue', ])
         bugs.extend(_bugs)
 
-    print template.display_bugs(bugs, args.order, state=args.state,
-                                project=args.repo_obj)
+    print(template.display_bugs(bugs, args.order, state=args.state,
+                                project=args.repo_obj))
 
 
 @APP.cmd(help=_("searching bugs"), parents=[attrib_parser, ])
@@ -220,12 +218,12 @@ def show(args):
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
             r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
-            patch = to_unicode(c)
+            patch = c.decode('utf-8')
         else:
             patch = None
-        print tmpl.render(bug=bug, comments=comments, full=True,
+        print(tmpl.render(bug=bug, comments=comments, full=True,
                           patch=patch, patch_only=args.patch_only,
-                          project=args.repo_obj)
+                          project=args.repo_obj))
 
 
 @APP.cmd(name='open', help=_("opening new bugs"),
@@ -245,7 +243,7 @@ def open_bug(args):
         body = args.body
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    print utils.success(_("Bug %d opened") % bug.number)
+    print(utils.success(_("Bug %d opened") % bug.number))
 
 
 @APP.cmd(help=_("commenting on bugs"),
@@ -339,7 +337,7 @@ def label(args):
     label_names = utils.sync_labels(args)
 
     if args.list:
-        print ", ".join(sorted(label_names))
+        print(", ".join(sorted(label_names)))
         return
 
     for bug_no in args.bugs:
@@ -360,8 +358,8 @@ def report_bug(args):
 
     import blessings, html2text, jinja2, pygments, schematics # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in aaargh, blessings, html2text, httplib2, jinja2,
-                        pygments, schematics])
+                     for m in (aaargh, blessings, html2text, httplib2, jinja2,
+                        pygments, schematics)])
     data = {
         'local': local,
         'sys': sys,
@@ -375,8 +373,8 @@ def report_bug(args):
 
     data = {'title': title, 'body': body, 'labels': args.add + args.create}
     r, bug = args.req_post('', body=data, model='Issue')
-    print utils.success(_("Bug %d opened against hubugs, thanks!")
-                        % bug.number)
+    print(utils.success(_("Bug %d opened against hubugs, thanks!")
+                        % bug.number))
 
 
 def main():
@@ -397,15 +395,16 @@ def main():
         utils.setup_environment(args)
         args._func(args)
     except utils.HttpClientError as error:
-        print utils.fail(error.content['message'])
+        print(utils.fail(error.content['message']))
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        print utils.fail(_("Project lookup failed.  Network or GitHub down?"))
+        print(utils.fail(_("Project lookup failed.  Network or GitHub down?")))
         return errno.ENXIO
     except TypeException:
-        print utils.fail(_("API modelling failed.  Please report this!"))
+        print(utils.fail(_("API modelling failed.  Please report this!")))
+        return errno.EBADMSG
     except (utils.RepoError, EnvironmentError, ValueError) as error:
-        print utils.fail(error.content['message'])
+        print(utils.fail(error.content['message']))
         return errno.EINVAL
 
 if __name__ == '__main__':
