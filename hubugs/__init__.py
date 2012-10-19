@@ -116,7 +116,7 @@ label_parser.add_argument("-c", "--create", action="append", default=[],
 
 @APP.cmd(help=_('setup GitHub access token'))
 @APP.cmd_arg('--local', action='store_true',
-             help='set access token for local repository only')
+             help=_('set access token for local repository only'))
 def setup(args):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
@@ -127,15 +127,15 @@ def setup(args):
                              utils.get_git_config_val("github.user",
                                                       getpass.getuser()))
     try:
-        user = raw_input('GitHub user? [%s] ' % default_user)
+        user = raw_input(_('GitHub user? [%s] ') % default_user)
         if not user:
             user = default_user
-        password = getpass.getpass('GitHub password? ')
+        password = getpass.getpass(_('GitHub password? '))
     except KeyboardInterrupt:
         return
 
-    result = raw_input('Support private repositories? [Y/n] ')
-    private = result.lower() == 'y'
+    result = raw_input(_('Support private repositories? [Y/n] '))
+    private = result.lower() == _('y')
 
     data = {
         'scopes': ['repo' if private else 'public_repo'],
@@ -228,7 +228,7 @@ def show(args):
                           project=args.repo_obj)
 
 
-@APP.cmd(name='open', help="opening new bugs",
+@APP.cmd(name='open', help=_("opening new bugs"),
          parents=[label_parser, stdin_parser, text_parser])
 def open_bug(args):
     """Opening new bugs."""
@@ -330,8 +330,10 @@ def reopen(args):
 @APP.cmd(help=_("labelling bugs"), parents=[label_parser, ])
 @APP.cmd_arg("-r", "--remove", action="append", default=[],
              help=_("remove label from issue"), metavar="label")
-@APP.cmd_arg("-l", "--list", action='store_true', help="list available labels")
-@APP.cmd_arg("bugs", nargs="*", type=int, help="bug number(s) to operate on")
+@APP.cmd_arg("-l", "--list", action='store_true',
+             help=_("list available labels"))
+@APP.cmd_arg("bugs", nargs="*", type=int,
+             help=_("bug number(s) to operate on"))
 def label(args):
     """Labelling bugs."""
     label_names = utils.sync_labels(args)
@@ -385,11 +387,9 @@ def main():
 
     """
     APP.arg("-p", "--project", action=utils.ProjectAction,
-            help=_("GitHub project to operate on"),
-            metavar="project")
+            help=_("GitHub project to operate on"), metavar="project")
     APP.arg("-u", "--host-url", default='https://api.github.com',
-            help="GitHub Enterprise host to connect to",
-            metavar="url")
+            help=_("GitHub Enterprise host to connect to"), metavar="url")
 
     args = APP._parser.parse_args()
 

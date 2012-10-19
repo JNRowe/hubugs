@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.15.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-18 10:47+0100\n"
+"POT-Creation-Date: 2012-10-19 05:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Please report bugs to the JNRowe/hubugs project"
 msgstr ""
 
-#: hubugs/__init__.py:87
+#: hubugs/__init__.py:87 hubugs/__init__.py:336
 msgid "bug number(s) to operate on"
 msgstr ""
 
@@ -62,12 +62,33 @@ msgstr ""
 msgid "setup GitHub access token"
 msgstr ""
 
+#: hubugs/__init__.py:119
+msgid "set access token for local repository only"
+msgstr ""
+
 #: hubugs/__init__.py:123
 msgid "Falling back on bundled certificates"
 msgstr ""
 
 #: hubugs/__init__.py:125
 msgid "Using certs specified in $CURL_CERTS"
+msgstr ""
+
+#: hubugs/__init__.py:130
+#, python-format
+msgid "GitHub user? [%s] "
+msgstr ""
+
+#: hubugs/__init__.py:133
+msgid "GitHub password? "
+msgstr ""
+
+#: hubugs/__init__.py:137
+msgid "Support private repositories? [Y/n] "
+msgstr ""
+
+#: hubugs/__init__.py:138
+msgid "y"
 msgstr ""
 
 #: hubugs/__init__.py:154
@@ -110,6 +131,10 @@ msgstr ""
 msgid "open bug in web browser"
 msgstr ""
 
+#: hubugs/__init__.py:231
+msgid "opening new bugs"
+msgstr ""
+
 #: hubugs/__init__.py:248
 #, python-format
 msgid "Bug %d opened"
@@ -143,17 +168,25 @@ msgstr ""
 msgid "remove label from issue"
 msgstr ""
 
-#: hubugs/__init__.py:353
+#: hubugs/__init__.py:334
+msgid "list available labels"
+msgstr ""
+
+#: hubugs/__init__.py:355
 msgid "report a new bug against hubugs"
 msgstr ""
 
-#: hubugs/__init__.py:376
+#: hubugs/__init__.py:378
 #, python-format
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:388
+#: hubugs/__init__.py:390
 msgid "GitHub project to operate on"
+msgstr ""
+
+#: hubugs/__init__.py:392
+msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
 #: hubugs/__init__.py:403
