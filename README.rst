@@ -71,24 +71,6 @@ Ideas
 If I've forgotten to include your name I wholeheartedly apologise.  Just
 drop me a mail_ and I'll update the list!
 
-Hacking
--------
-
-Patches and `pull requests`_ are most welcome, but I'd appreciate it if you
-could follow the guidelines below to make it easier to integrate your changes.
-These are only guidelines however, and as such can be broken if the need arises
-or you just want to convince me that your style is better.
-
-* `PEP 8`_, the style guide, should be followed where possible.
-* While support for Python versions prior to v2.6 if such a need were to arise,
-  you are encouraged to use v2.6 features now
-* All new classes, methods and functions should be accompanied by new
-  reStructuredText_ formatted descriptions
-* You should add tests for new functionality, and berate me for not writing
-  enough tests at the outset
-* Tests *must not* span network boundaries, use of a common mocking framework is
-  encouraged
-
 Bugs
 ----
 
@@ -110,8 +92,5 @@ I can reproduce the problem, or even better a patch!
 .. _schematics: http://pypi.python.org/pypi/schematics/
 .. _OAuth: http://oauth.net/
 .. _GitHub settings: https://github.com/settings/applications/
-.. _pull requests: http://github.com/JNRowe/hubugs/issues
-.. _PEP 8: http://www.python.org/dev/peps/pep-0008/
-.. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _mail: jnrowe@gmail.com
 .. _issue: http://github.com/JNRowe/hubugs/issues
