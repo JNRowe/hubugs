@@ -47,8 +47,7 @@ If you wish to set the authorisation token from the command line you can use the
 Contributors
 ------------
 
-I'd like to thank the following people who have contributed to
-``hubugs``.
+I'd like to thank the following people who have contributed to ``hubugs``.
 
 Patches
 '''''''
@@ -68,17 +67,17 @@ Ideas
 * James Gray
 * Jules Marleau
 
-If I've forgotten to include your name I wholeheartedly apologise.  Just
-drop me a mail_ and I'll update the list!
+If I've forgotten to include your name I wholeheartedly apologise.  Just drop me
+a mail_ and I'll update the list!
 
 Bugs
 ----
 
-If you find any problems, bugs or just have a question about this package
-either file an issue_ or drop me a mail_.
+If you find any problems, bugs or just have a question about this package either
+file an issue_ or drop me a mail_.
 
-If you've found a problem please attempt to include a minimal testcase so
-I can reproduce the problem, or even better a patch!
+If you've found a problem please attempt to include a minimal testcase so I can
+reproduce the problem, or even better a patch!
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _GitHub API: http://developer.github.com/v3/
