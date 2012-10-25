@@ -350,7 +350,7 @@ def label(args):
         args.req_post(bug_no, body={'labels': labels})
 
 
-@APP.cmd(help=_("report a new bug against hubugs"))
+@APP.cmd(name='report-bug', help=_("report a new bug against hubugs"))
 def report_bug(args):
     """Report a new bug against hubugs."""
     local = args.project == 'JNRowe/hubugs'
