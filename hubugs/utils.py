@@ -275,6 +275,21 @@ def get_repo():
         raise RepoError(_("Unknown project, specify with `--project' option"))
 
 
+def pager(text, pager='less'):
+    """Pass output through pager.
+
+    :param str text: Text to page
+    :param bool pager: Pager to use
+    """
+    if pager:
+        if 'less' in pager and 'LESS' not in os.environ:
+            os.environ['LESS'] = 'FRSX'
+        pager = subprocess.Popen([pager, ], stdin=subprocess.PIPE)
+        pager.communicate(text)
+    else:
+        print text
+
+
 def setup_environment(args):
     """Configure execution environment for commands dispatch.
 

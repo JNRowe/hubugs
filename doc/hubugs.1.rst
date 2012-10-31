@@ -31,6 +31,12 @@ OPTIONS
 -h, --help
     show program's help message and exit
 
+--pager <pager>
+    pass output through a pager
+
+--no-pager
+    do not pass output through pager
+
 -p <project>, --project=<project>
     GitHub project to operate on.  You can supply just ``<project>`` if you wish
     to work on one of your own projects, or ``<user>/<project>`` to operate on
@@ -168,8 +174,9 @@ setting in your git configuration files.  For example::
 You can also set project specific template sets by editing a repository's
 config.  See :manpage:`git-config(1)`.
 
-You can also set a default value for the ``--host-url`` option by defining
-``hubugs.host-url`` in your git configuration files.
+You can set a default value for the ``--pager`` and ``--host-url`` options by
+defining ``hubugs.pager`` or ``hubugs.host-url`` respectively in your ``git``
+configuration files.
 
 BUGS
 ----
