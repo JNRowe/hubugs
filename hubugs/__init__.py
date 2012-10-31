@@ -75,8 +75,7 @@ from .i18n import _
 
 
 APP = aaargh.App(description=__doc__.splitlines()[0].split("-", 1)[1],
-                 epilog=_("Please report bugs to the JNRowe/hubugs project"),
-                 version="%%(prog)s %s" % __version__)
+                 epilog=_("Please report bugs to the JNRowe/hubugs project"))
 
 # Convenience wrappers for defining command arguments
 # pylint: disable-msg=C0103
@@ -384,6 +383,8 @@ def main():
     :return: Exit code
 
     """
+    APP.arg('--version', action='version',
+            version="%%(prog)s %s" % __version__)
     APP.arg("-p", "--project", action=utils.ProjectAction,
             help=_("GitHub project to operate on"), metavar="project")
     APP.arg("-u", "--host-url",
