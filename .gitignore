@@ -1,6 +1,5 @@
 *.egg-info/
 .ropeproject/
-.tox/
 dist/
 doc/.build/
 
