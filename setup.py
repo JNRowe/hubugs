@@ -23,9 +23,7 @@ from setuptools import setup
 _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
-install_requires = ['aaargh', 'blessings', 'html2text', 'httplib2>=0.7.4',
-                    'Jinja2>=2', 'Pygments', 'schematics']
-
+install_requires = map(str.strip, open('extra/requirements.txt').readlines())
 
 setup(
     name='hubugs',
