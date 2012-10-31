@@ -409,6 +409,3 @@ def main():
     except (utils.RepoError, EnvironmentError, ValueError) as error:
         print(utils.fail(error.content['message']))
         return errno.EINVAL
-
-if __name__ == '__main__':
-    sys.exit(main())
