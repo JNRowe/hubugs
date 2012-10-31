@@ -280,6 +280,7 @@ def pager(text, pager='less'):
 
     :param str text: Text to page
     :param bool pager: Pager to use
+
     """
     if pager:
         if 'less' in pager and 'LESS' not in os.environ:

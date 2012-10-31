@@ -26,6 +26,9 @@ from schematics.types.compound import (ListType, ModelType, SortedListType)
 
 
 class ValidatingModel(Model):
+
+    """Forced validation schematics Model."""
+
     def __init__(self, *args, **kwargs):
         super(ValidatingModel, self).__init__(*args, **kwargs)
         self.validate()
@@ -101,10 +104,13 @@ class Issue(ValidatingModel):
 
     @classmethod
     def from_search(cls, d):
-        """Support legacy API search results as API v3 issues(-ish)
+        """Support legacy API search results as API v3 issues(-ish).
 
         This is an awful hack to workaround the lack of search support in API
         v3.  It needs to be removed at the first possible opportunity.
+
+        :rtype: ``Issue``
+        :returns: API v2 issue mangled to look like a API v3 result
 
         """
 

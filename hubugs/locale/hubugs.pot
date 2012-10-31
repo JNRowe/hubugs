@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.15.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-10-31 17:36+0000\n"
+"POT-Creation-Date: 2012-10-31 17:41+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -228,21 +228,21 @@ msgstr ""
 msgid "Unknown project, specify with `--project' option"
 msgstr ""
 
-#: hubugs/utils.py:316
+#: hubugs/utils.py:317
 msgid "No hubugs authorisation token found!  Run 'hubugs setup' to create a token"
 msgstr ""
 
-#: hubugs/utils.py:357
+#: hubugs/utils.py:358
 #, python-format
 msgid "Invalid project %r"
 msgstr ""
 
-#: hubugs/utils.py:378
+#: hubugs/utils.py:379
 #, python-format
 msgid "No such label %r"
 msgstr ""
 
-#: hubugs/utils.py:381
+#: hubugs/utils.py:382
 #, python-format
 msgid "%r label already exists"
 msgstr ""
