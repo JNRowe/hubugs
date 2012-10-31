@@ -55,6 +55,10 @@ Options
 
    pass output through a pager
 
+.. cmdoption:: --no-pager
+
+   do not pass output through pager
+
 .. cmdoption:: -p <project>, --project=<project>
 
    GitHub project to operate on

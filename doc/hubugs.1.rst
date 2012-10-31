@@ -34,6 +34,9 @@ OPTIONS
 --pager <pager>
     pass output through a pager
 
+--no-pager
+    do not pass output through pager
+
 -p <project>, --project=<project>
     GitHub project to operate on.  You can supply just ``<project>`` if you wish
     to work on one of your own projects, or ``<user>/<project>`` to operate on

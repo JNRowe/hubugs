@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.15.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-10-31 16:12+0000\n"
+"POT-Creation-Date: 2012-10-31 16:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -180,23 +180,27 @@ msgstr ""
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:402
+#: hubugs/__init__.py:403
 msgid "pass output through a pager"
 msgstr ""
 
-#: hubugs/__init__.py:406
+#: hubugs/__init__.py:405
+msgid "do not pass output through pager"
+msgstr ""
+
+#: hubugs/__init__.py:407
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:410
+#: hubugs/__init__.py:411
 msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
-#: hubugs/__init__.py:421
+#: hubugs/__init__.py:422
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/__init__.py:424
+#: hubugs/__init__.py:425
 msgid "API modelling failed.  Please report this!"
 msgstr ""
 

@@ -396,6 +396,8 @@ def main():
             default=utils.get_git_config_val('hubugs.pager',
                                              os.getenv('PAGER')),
             help=_("pass output through a pager"))
+    APP.arg("--no-pager", action="store_false", dest="pager",
+            help=_("do not pass output through pager"))
     APP.arg("-p", "--project", action=utils.ProjectAction,
             help=_("GitHub project to operate on"), metavar="project")
     APP.arg("-u", "--host-url",

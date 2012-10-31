@@ -49,6 +49,7 @@ __list_hosts() {
 _arguments '--help[show help message and exit]' \
     "--version[show program's version number and exit]" \
     "--pager=[pass output through a pager]:select pager:_command_names -e" \
+    "--no-pager[do not pass output through pager]" \
     '--project=[GitHub project to operate on]:select project:__list_projects' \
     '--host-url=[GitHub Enterprise host to connect to]:select host:__list_hosts' \
     ':hubugs command:(close comment edit label list open reopen search show)' \
