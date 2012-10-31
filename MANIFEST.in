@@ -8,7 +8,7 @@ include extra/_hubugs
 include extra/requirements*.txt
 
 include hubugs/*.crt
-include hubugs/locale/hubugs.po
+include hubugs/locale/hubugs.pot
 include hubugs/locale/*/LC_MESSAGES/*.mo
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
