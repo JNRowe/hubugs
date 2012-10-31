@@ -35,6 +35,7 @@ Contents
    hubugs manpage <hubugs.1>
    faq
    alternatives
+   release
    appendix
 
 Indices and tables
