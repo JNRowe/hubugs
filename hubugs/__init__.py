@@ -168,8 +168,10 @@ def list_bugs(args):
         r, _bugs = args.req_get('', params=_params, model=['Issue', ])
         bugs.extend(_bugs)
 
-    print(template.display_bugs(bugs, args.order, state=args.state,
-                                project=args.repo_obj))
+    result = template.display_bugs(bugs, args.order, state=args.state,
+                                   project=args.repo_obj)
+    if result:
+        utils.pager(result, pager=args.pager)
 
 
 @APP.cmd(help=_("searching bugs"), parents=[attrib_parser, ])
@@ -187,8 +189,10 @@ def search(args):
         r, c = args.req_get(search_url % (args.project, state, args.term))
         _bugs = [Issue.from_search(d) for d in c['issues']]
         bugs.extend(_bugs)
-    return template.display_bugs(bugs, args.order, term=args.term,
-                                 state=args.state, project=args.repo_obj)
+    result = template.display_bugs(bugs, args.order, term=args.term,
+                                   state=args.state, project=args.repo_obj)
+    if result:
+        utils.pager(result, pager=args.pager)
 
 
 @APP.cmd(help=_("displaying bugs"), parents=[bugs_parser, ])
@@ -202,6 +206,7 @@ def search(args):
              help=_("open bug in web browser"))
 def show(args):
     """Displaying bugs."""
+    results = []
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in args.bugs:
         if args.browse:
@@ -220,9 +225,11 @@ def show(args):
             patch = c.decode('utf-8')
         else:
             patch = None
-        print(tmpl.render(bug=bug, comments=comments, full=True,
-                          patch=patch, patch_only=args.patch_only,
-                          project=args.repo_obj))
+        results.append(tmpl.render(bug=bug, comments=comments, full=True,
+                                   patch=patch, patch_only=args.patch_only,
+                                   project=args.repo_obj))
+    if results:
+        utils.pager("\n".join(results), pager=args.pager)
 
 
 @APP.cmd(name='open', help=_("opening new bugs"),
@@ -385,6 +392,7 @@ def main():
     """
     APP.arg('--version', action='version',
             version="%%(prog)s %s" % __version__)
+    APP.arg("--pager", metavar="pager", help=_("pass output through a pager"))
     APP.arg("-p", "--project", action=utils.ProjectAction,
             help=_("GitHub project to operate on"), metavar="project")
     APP.arg("-u", "--host-url",

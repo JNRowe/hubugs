@@ -51,6 +51,10 @@ Options
 
    show program's help message and exit
 
+.. cmdoption:: --pager <pager>
+
+   pass output through a pager
+
 .. cmdoption:: -p <project>, --project=<project>
 
    GitHub project to operate on
