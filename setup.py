@@ -16,6 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from sys import version_info
+
 from setuptools import setup
 
 # Hack to import _version file without importing hubugs/__init__.py, its
@@ -24,6 +26,10 @@ _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
 install_requires = map(str.strip, open('extra/requirements.txt').readlines())
+if version_info[:2] < (2, 7):
+    extra_req = map(str.strip,
+                    open('extra/requirements-py26.txt').readlines()[1:])
+    install_requires.extend(extra_req)
 
 setup(
     name='hubugs',
