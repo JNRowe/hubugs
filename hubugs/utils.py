@@ -282,6 +282,8 @@ def pager(text, pager='less'):
     :param bool pager: Pager to use
     """
     if pager:
+        if 'less' in pager and 'LESS' not in os.environ:
+            os.environ['LESS'] = 'FRSX'
         pager = subprocess.Popen([pager, ], stdin=subprocess.PIPE)
         pager.communicate(text)
     else:
