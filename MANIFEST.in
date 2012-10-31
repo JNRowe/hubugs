@@ -10,6 +10,7 @@ include extra/requirements*.txt
 include hubugs/*.crt
 include hubugs/locale/hubugs.pot
 include hubugs/locale/*/LC_MESSAGES/*.mo
+include hubugs/locale/*/LC_MESSAGES/*.po
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
 
