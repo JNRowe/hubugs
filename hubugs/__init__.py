@@ -392,7 +392,10 @@ def main():
     """
     APP.arg('--version', action='version',
             version="%%(prog)s %s" % __version__)
-    APP.arg("--pager", metavar="pager", help=_("pass output through a pager"))
+    APP.arg("--pager", metavar="pager",
+            default=utils.get_git_config_val('hubugs.pager',
+                                             os.getenv('PAGER')),
+            help=_("pass output through a pager"))
     APP.arg("-p", "--project", action=utils.ProjectAction,
             help=_("GitHub project to operate on"), metavar="project")
     APP.arg("-u", "--host-url",

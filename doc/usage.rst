@@ -65,9 +65,10 @@ Options
 
 .. note::
 
-   You can define a default for ``-host-url`` by setting ``hubugs.host-url`` in
-   your ``git`` configuration file, both global and project local settings are
-   supported.  See :manpage:`git-config(1)`.
+   You can set a default value for the ``--pager`` and ``--host-url`` options by
+   defining ``hubugs.pager`` or ``hubugs.host-url`` respectively in your ``git``
+   configuration files.  Both global and project local settings are supported,
+   see :manpage:`git-config(1)` for more information.
 
 Commands
 --------
