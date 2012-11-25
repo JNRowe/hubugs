@@ -46,7 +46,7 @@ OPTIONS
 -u <url>, --host-url=<url>
     host to connect to, for GitHub Enterprise support
 
-Commands
+COMMANDS
 --------
 
 ``setup``
