@@ -48,9 +48,7 @@ User-visible changes
 
 .. _GitHub API v3: http://developer.github.com/v3/
 .. _httplib2: http://pypi.python.org/pypi/httplib2
-.. _github2: http://pypi.python.org/pypi/github2/
 .. _micromodels: http://pypi.python.org/pypi/micromodels/
-.. _misaka: http://pypi.python.org/pypi/misaka/
 
 0.13.1 - 2012-02-28
 -------------------
