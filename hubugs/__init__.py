@@ -480,5 +480,5 @@ def main():
         print(utils.fail(error.content['message']))
         return errno.EINVAL
     except (EnvironmentError, ValueError) as error:
-         print(utils.fail(error.message))
-         return errno.EINVAL
+        print(utils.fail(error.message))
+        return errno.EINVAL
