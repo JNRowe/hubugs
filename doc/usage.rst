@@ -254,3 +254,38 @@ Commands
 .. cmdoption:: -r <label>, --remove=<label>
 
    remove label from issue
+
+``milestone`` - Add an issue to a milestone
+'''''''''''''''''''''''''''''''''''''''''''
+
+.. program:: hubugs milestone
+
+::
+
+    hubugs milestone [-h] milestone [bugs [bugs ...]]
+
+``milestones`` - Manage repository milestones
+'''''''''''''''''''''''''''''''''''''''''''''
+
+.. program:: hubugs milestones
+
+::
+
+    hubugs milestones [-h] [-o {due_date,completeness}] [-s {open,closed}]
+        [-c milestone] [-l]
+
+.. cmdoptions:: -o <order>, --order=<order>
+
+   sort order for listing bugs
+
+.. cmdoption:: -s <state>, --state=<state>
+
+   state of bugs to operate on
+
+.. cmdoption:: -c <name>, --create=<name>
+
+   create new milestone
+
+.. cmdoption:: -l, --list
+
+   list available milestones

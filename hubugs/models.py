@@ -60,6 +60,23 @@ class Label(ValidatingModel):
         return "<%s %r>" % (self.__class__.__name__, self.name)
 
 
+class Milestone(ValidatingModel):
+
+    """GitHub issue milestone model."""
+
+    id = IntType()
+    closed_issues = IntType()
+    created_at = DateTimeType()
+    creator = ModelType(User)
+    description = StringType()
+    due_on = DateTimeType()
+    number = IntType()
+    open_issues = IntType()
+    state = StringType(choices=['open', 'closed'])
+    title = StringType()
+    url = URLType(required=True)
+
+
 class PullRequest(ValidatingModel):
 
     """GitHub issue pull request data model."""
@@ -89,7 +106,7 @@ class Issue(ValidatingModel):
     created_at = DateTimeType()
     html_url = URLType()
     labels = SortedListType(ModelType(Label))
-    milestone = StringType()
+    milestone = ModelType(Milestone)
     number = IntType()
     pull_request = ModelType(PullRequest)
     state = StringType(choices=['open', 'closed'])

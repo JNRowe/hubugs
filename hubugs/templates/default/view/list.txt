@@ -10,12 +10,17 @@
 {%- endblock %}
 {%- block body %}
 {%- for bug in bugs %}
+{%- if bug.milestone %}
+{%- set formatted_milestone = " {" + bug.milestone.title | colourise("cyan") + "}" %}
+{% else %}
+{%- set formatted_milestone = "" %}
+{% endif -%}
 {%- if bug.labels %}
 {%- set formatted_labels = " [" + bug.labels | join(", ", "name") | colourise("magenta") + "]" %}
 {% else %}
 {%- set formatted_labels = "" %}
 {% endif -%}
-{{ id_format | format(bug.number) | colourise(highlight_colour) }} {{ bug.title + formatted_labels | truncate(max_title, True) }}
+{{ id_format | format(bug.number) | colourise(highlight_colour) }} {{ bug.title + formatted_milestone + formatted_labels | truncate(max_title, True) }}
 {%- endfor %}
 {% endblock -%}
 

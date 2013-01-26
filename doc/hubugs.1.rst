@@ -162,6 +162,28 @@ Perform labelling actions on an existing bug in a project
 -r <label>, --remove=<label>
    remove label from issue
 
+``milestone``
+'''''''''''''
+
+Add an issue to a milestone
+
+``milestones``
+''''''''''''''
+
+Manage repository milestones
+
+-o <order>, --order=<order>
+   sort order for listing bugs
+
+-s <state>, --state=<state>
+   state of bugs to operate on
+
+-c <name>, --create=<name>
+   create new milestone
+
+-l, --list
+   list available milestones
+
 CONFIGURATION
 -------------
 

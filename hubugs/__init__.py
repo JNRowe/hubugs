@@ -356,6 +356,62 @@ def label(args):
         args.req_post(bug_no, body={'labels': labels})
 
 
+@APP.cmd(help=_("issue milestones"))
+@APP.cmd_arg("milestone", help=_("milestone to assign to"))
+@APP.cmd_arg("bugs", nargs="*", type=int,
+             help=_("bug number(s) to operate on"))
+def milestone(args):
+    """Issue milestones."""
+    milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
+    r, milestones = args.req_get(milestones_url, model=['Milestone'])
+
+    milestone_mapping = dict((m.title, m.number) for m in milestones)
+
+    try:
+        milestone = milestone_mapping[args.milestone]
+    except KeyError:
+        raise ValueError(_('No such milestone %r') % args.milestone)
+
+    for bug_no in args.bugs:
+        args.req_post(bug_no, body={'milestone': milestone})
+
+
+@APP.cmd(help=_("repository milestones"))
+@APP.cmd_arg("-o", "--order", default="number",
+             choices=["due_date", "completeness"],
+             help=_("sort order for listing bugs"))
+@APP.cmd_arg("-s", "--state", default="open",
+             choices=["open", "closed"],
+             help=_("state of milestones to operate on"))
+@APP.cmd_arg("-c", "--create", help=_("create new milestone"),
+             metavar="milestone")
+@APP.cmd_arg("-l", "--list", action='store_true',
+             help=_("list available milestones"))
+def milestones(args):
+    """Repository milestones."""
+    if not args.list and not args.create:
+        print(utils.fail("No action specified!"))
+        return 1
+    milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
+    r, milestones = args.req_get(milestones_url, model=['Milestone'])
+
+    if args.list:
+        tmpl = template.get_template('view', '/list_milestones.txt')
+        columns = utils.T.width if utils.T.width else 80
+        max_id = max(i.number for i in milestones)
+        id_len = len(str(max_id))
+
+        result = tmpl.render(milestones=milestones, order=args.order,
+                             state=args.state, project=args.repo_obj,
+                             id_len=id_len, max_title=columns - id_len - 2)
+        if result:
+            utils.pager(result, pager=args.pager)
+    elif args.create:
+        data = {'title': args.create}
+        r, milestone = args.req_post('', body=data, model='Milestone')
+        print(utils.success(_("Milestone %d created" % milestone.number)))
+
+
 @APP.cmd(name='report-bug', help=_("report a new bug against hubugs"))
 def report_bug(args):
     """Report a new bug against hubugs."""
