@@ -3,6 +3,19 @@ User-visible changes
 
 .. contents::
 
+0.16.0 - 2013-01-26
+-------------------
+
+* Support for output paging has been added
+* Support for reading GitHub settings from Mercurial_ repositories
+* Initial milestone support has been added, but *may* change in future releases
+* ``hubugs`` requires *exactly* schematics_ v0.5
+* aaargh_ is now required, and argh_ dependency has been dropped
+* kitchen_ is no longer required
+
+.. _Mercurial: http://mercurial.selenic.com/
+.. _aaargh: http://pypi.python.org/pypi/aaargh/
+
 0.15.0 - 2012-10-16
 -------------------
 
