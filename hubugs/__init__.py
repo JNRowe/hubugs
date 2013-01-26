@@ -475,6 +475,9 @@ def main():
     except TypeException:
         print(utils.fail(_("API modelling failed.  Please report this!")))
         return errno.EBADMSG
-    except (utils.RepoError, EnvironmentError, ValueError) as error:
+    except (utils.RepoError) as error:
         print(utils.fail(error.content['message']))
         return errno.EINVAL
+    except (EnvironmentError, ValueError) as error:
+         print(utils.fail(error.message))
+         return errno.EINVAL
