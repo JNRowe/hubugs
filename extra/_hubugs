@@ -73,8 +73,8 @@ case "$words[1]" in
     ;;
 (label)
     _arguments '--help[show help message and exit]' \
-        '--add[add label to issue]:select label: ' \
-        '--remove[remove label from issue]:select label: '
+        '--add=[add label to issue]:select label: ' \
+        '--remove=[remove label from issue]:select label: '
     ;;
 (list)
     _arguments '--help[show help message and exit]' \
