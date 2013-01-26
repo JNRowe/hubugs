@@ -1,14 +1,14 @@
 # Translations template for hubugs.
-# Copyright (C) 2012 ORGANIZATION
+# Copyright (C) 2013 ORGANIZATION
 # This file is distributed under the same license as the hubugs project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.15.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-10-31 17:41+0000\n"
+"POT-Creation-Date: 2013-01-26 17:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,7 +29,7 @@ msgstr ""
 msgid "comment text"
 msgstr ""
 
-#: hubugs/__init__.py:92
+#: hubugs/__init__.py:92 hubugs/__init__.py:362
 msgid "sort order for listing bugs"
 msgstr ""
 
@@ -172,35 +172,56 @@ msgid "list available labels"
 msgstr ""
 
 #: hubugs/__init__.py:359
+msgid "repository milestones"
+msgstr ""
+
+#: hubugs/__init__.py:365
+msgid "state of milestones to operate on"
+msgstr ""
+
+#: hubugs/__init__.py:366
+msgid "create new milestone"
+msgstr ""
+
+#: hubugs/__init__.py:369
+msgid "list available milestones"
+msgstr ""
+
+#: hubugs/__init__.py:392
+#, python-format
+msgid "Milestone %d created"
+msgstr ""
+
+#: hubugs/__init__.py:395
 msgid "report a new bug against hubugs"
 msgstr ""
 
-#: hubugs/__init__.py:382
+#: hubugs/__init__.py:418
 #, python-format
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:398
+#: hubugs/__init__.py:434
 msgid "pass output through a pager"
 msgstr ""
 
-#: hubugs/__init__.py:400
+#: hubugs/__init__.py:436
 msgid "do not pass output through pager"
 msgstr ""
 
-#: hubugs/__init__.py:402
+#: hubugs/__init__.py:438
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:406
+#: hubugs/__init__.py:442
 msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
-#: hubugs/__init__.py:417
+#: hubugs/__init__.py:453
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/__init__.py:420
+#: hubugs/__init__.py:456
 msgid "API modelling failed.  Please report this!"
 msgstr ""
 
