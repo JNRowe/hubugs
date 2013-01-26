@@ -151,7 +151,6 @@ Reopen a previously closed bug in a project
 -m <text>, --message=<text>
    comment text
 
-
 ``label``
 '''''''''
 
