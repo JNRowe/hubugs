@@ -52,7 +52,7 @@ _arguments '--help[show help message and exit]' \
     "--no-pager[do not pass output through pager]" \
     '--project=[GitHub project to operate on]:select project:__list_projects' \
     '--host-url=[GitHub Enterprise host to connect to]:select host:__list_hosts' \
-    ':hubugs command:(close comment edit label list open reopen search show)' \
+    ':hubugs command:(close comment edit label list milestone milestones open reopen search show)' \
     '*::subcmd:->subcmd' && return 0
 
 ### DGEN_TAG: Generated from hubugs/__init__.py {{{
@@ -81,6 +81,16 @@ case "$words[1]" in
         '--state=[state of bugs to operate on]:select state:(open closed all)' \
         '--label=[list bugs with specified label]:select label: ' \
         '--order=[sort order for listing bugs]:select order:(number updated)'
+    ;;
+(milestone)
+    _arguments '--help[show help message and exit]'
+    ;;
+(milestones)
+    _arguments '--help[show help message and exit]' \
+        '--order=[sort order for listing milestones]:select order:(due_date completeness)'
+        '--state=[state of milestones to operate on]:select state:(open closed)' \
+        '--create=[create new milestone]:select milestone: ' \
+        '--list[list available milestones]:select milestone: '
     ;;
 (open)
     _arguments '--help[show help message and exit]' \
