@@ -274,7 +274,7 @@ Commands
     hubugs milestones [-h] [-o {due_date,completeness}] [-s {open,closed}]
         [-c milestone] [-l]
 
-.. cmdoptions:: -o <order>, --order=<order>
+.. cmdoption:: -o <order>, --order=<order>
 
    sort order for listing bugs
 
