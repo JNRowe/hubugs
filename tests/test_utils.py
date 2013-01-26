@@ -107,15 +107,12 @@ class GetGitConfigVal(TestCase):
 
 class GetEditor(TestCase):
     def test_git_editor_envvar(self):
-        with patch.dict('os.environ', {'EDITOR': 'custom git editor'}):
+        with patch.dict('os.environ', {'EDITOR': 'custom git editor'},
+                        clear=True):
             expect(utils.get_editor()) == ['custom', 'git', 'editor']
 
-    def test_editor_environment_visual(self):
-        with patch.dict('os.environ', {'VISUAL': 'visual'}):
-            expect(utils.get_editor()) == ['visual', ]
-
     def test_editor_environment_editor(self):
-        with patch.dict('os.environ', {'EDITOR': 'editor'}):
+        with patch.dict('os.environ', {'EDITOR': 'editor'}, clear=True):
             expect(utils.get_editor()) == ['editor', ]
 
 
