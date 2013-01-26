@@ -255,6 +255,15 @@ Commands
 
    remove label from issue
 
+``milestone`` - Add an issue to a milestone
+'''''''''''''''''''''''''''''''''''''''''''
+
+.. program:: hubugs milestone
+
+::
+
+    hubugs milestone [-h] milestone [bugs [bugs ...]]
+
 ``milestones`` - Manage repository milestones
 '''''''''''''''''''''''''''''''''''''''''''''
 

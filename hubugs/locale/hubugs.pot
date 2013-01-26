@@ -21,7 +21,7 @@ msgstr ""
 msgid "Please report bugs to the JNRowe/hubugs project"
 msgstr ""
 
-#: hubugs/__init__.py:84 hubugs/__init__.py:340
+#: hubugs/__init__.py:84 hubugs/__init__.py:340 hubugs/__init__.py:362
 msgid "bug number(s) to operate on"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 msgid "comment text"
 msgstr ""
 
-#: hubugs/__init__.py:92 hubugs/__init__.py:362
+#: hubugs/__init__.py:92 hubugs/__init__.py:382
 msgid "sort order for listing bugs"
 msgstr ""
 
@@ -172,56 +172,69 @@ msgid "list available labels"
 msgstr ""
 
 #: hubugs/__init__.py:359
+msgid "issue milestones"
+msgstr ""
+
+#: hubugs/__init__.py:360
+msgid "milestone to assign to"
+msgstr ""
+
+#: hubugs/__init__.py:373
+#, python-format
+msgid "No such milestone %r"
+msgstr ""
+
+#: hubugs/__init__.py:379
 msgid "repository milestones"
 msgstr ""
 
-#: hubugs/__init__.py:365
+#: hubugs/__init__.py:385
 msgid "state of milestones to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:366
+#: hubugs/__init__.py:386
 msgid "create new milestone"
 msgstr ""
 
-#: hubugs/__init__.py:369
+#: hubugs/__init__.py:389
 msgid "list available milestones"
 msgstr ""
 
-#: hubugs/__init__.py:392
+#: hubugs/__init__.py:412
 #, python-format
 msgid "Milestone %d created"
 msgstr ""
 
-#: hubugs/__init__.py:395
+#: hubugs/__init__.py:415
 msgid "report a new bug against hubugs"
 msgstr ""
 
-#: hubugs/__init__.py:418
+#: hubugs/__init__.py:438
 #, python-format
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:434
+#: hubugs/__init__.py:454
 msgid "pass output through a pager"
 msgstr ""
 
-#: hubugs/__init__.py:436
+#: hubugs/__init__.py:456
 msgid "do not pass output through pager"
 msgstr ""
 
-#: hubugs/__init__.py:438
+#: hubugs/__init__.py:458
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:442
+#: hubugs/__init__.py:462
 msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
-#: hubugs/__init__.py:453
+#: hubugs/__init__.py:473
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/__init__.py:456
+#: hubugs/__init__.py:476
 msgid "API modelling failed.  Please report this!"
 msgstr ""
 

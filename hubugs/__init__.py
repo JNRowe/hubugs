@@ -356,6 +356,26 @@ def label(args):
         args.req_post(bug_no, body={'labels': labels})
 
 
+@APP.cmd(help=_("issue milestones"))
+@APP.cmd_arg("milestone", help=_("milestone to assign to"))
+@APP.cmd_arg("bugs", nargs="*", type=int,
+             help=_("bug number(s) to operate on"))
+def milestone(args):
+    """Issue milestones."""
+    milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
+    r, milestones = args.req_get(milestones_url, model=['Milestone'])
+
+    milestone_mapping = dict((m.title, m.number) for m in milestones)
+
+    try:
+        milestone = milestone_mapping[args.milestone]
+    except KeyError:
+        raise ValueError(_('No such milestone %r') % args.milestone)
+
+    for bug_no in args.bugs:
+        args.req_post(bug_no, body={'milestone': milestone})
+
+
 @APP.cmd(help=_("repository milestones"))
 @APP.cmd_arg("-o", "--order", default="number",
              choices=["due_date", "completeness"],

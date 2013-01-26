@@ -163,6 +163,11 @@ Perform labelling actions on an existing bug in a project
 -r <label>, --remove=<label>
    remove label from issue
 
+``milestone``
+'''''''''''''
+
+Add an issue to a milestone
+
 ``milestones``
 ''''''''''''''
 
