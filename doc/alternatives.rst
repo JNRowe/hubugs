@@ -20,14 +20,10 @@ slightly different output.
 :mod:`hubugs` provides the following advantages:
 
 * Easily customisable output
-* HTTP compression support
 * On-disk cache support
-* Pull request integration
 
 and has the following disadvantages:
 
-* No built-in pager support, but that is only a less_ pipe or shell function
-  away
 * :mod:`hubugs` requires a significant number of external packages, which may
   be a problem for some users
 
@@ -49,8 +45,6 @@ patches, but just didn't find it comfortable to use in the long run [#]_.
 
 and has the following disadvantages:
 
-* No built-in pager support, but that is only a less_ pipe or shell function
-  away
 * :mod:`hubugs` requires a significant number of external packages, which may
   be a problem for some users
 
