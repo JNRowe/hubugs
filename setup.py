@@ -26,11 +26,9 @@ from setuptools import setup
 _version = {}
 execfile('hubugs/_version.py', {}, _version)
 
-install_requires = map(str.strip, open('extra/requirements.txt').readlines())
-if version_info[:2] < (2, 7):
-    extra_req = map(str.strip,
-                    open('extra/requirements-py26.txt').readlines()[1:])
-    install_requires.extend(extra_req)
+
+req_file = open('extra/requirements-py%s%s.txt' % version_info[:2])
+install_requires = map(str.strip, req_file.readlines())
 
 setup(
     name='hubugs',
