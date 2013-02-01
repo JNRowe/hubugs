@@ -287,9 +287,12 @@ def pager(text, pager='less'):
         if 'less' in pager and 'LESS' not in os.environ:
             os.environ['LESS'] = 'FRSX'
         pager = subprocess.Popen([pager, ], stdin=subprocess.PIPE)
-        pager.communicate(text)
+        if PY3K:
+            pager.communicate(text.encode())
+        else:
+            pager.communicate(text)
     else:
-        print text
+        print(text)
 
 
 def setup_environment(args):
