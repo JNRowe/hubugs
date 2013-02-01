@@ -17,6 +17,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from sys import version_info
+
+if version_info[0] == 3:
+    unicode = str
+else:
+    unicode = unicode
+
+
 def no_travis(f):
     f.no_travis = 1
     return f

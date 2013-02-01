@@ -28,7 +28,7 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
-from utils import no_travis
+from tests.utils import (no_travis, unicode)
 
 
 # We only test forced styling output of blessings, as blessings handles the
@@ -38,9 +38,9 @@ template.utils.T = template.utils.blessings.Terminal(force_styling=True)
 
 class Colourise(TestCase):
     @params(
-        ('red', u'\x1b[38;5;1ms\x1b[m\x1b(B'),
-        ('on blue', u'\x1b[48;5;4ms\x1b[m\x1b(B'),
-        ('bold', u'\x1b[1ms\x1b[m\x1b(B'),
+        ('red', unicode('\x1b[38;5;1ms\x1b[m\x1b(B')),
+        ('on blue', unicode('\x1b[48;5;4ms\x1b[m\x1b(B')),
+        ('bold', unicode('\x1b[1ms\x1b[m\x1b(B')),
     )
     @no_travis
     def test_color(self, attribute, result):
