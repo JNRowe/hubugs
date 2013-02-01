@@ -320,10 +320,9 @@ def setup_environment(args):
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
                     model=None, is_json=True):
+        lheaders = HEADERS.copy()
         if headers:
-            headers.update(HEADERS)
-        else:
-            headers = HEADERS
+            lheaders.update(headers)
         if not isinstance(url, (str, unicode)) or not url.startswith('http'):
             url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
                                               '/' if url else '', url)
@@ -331,7 +330,7 @@ def setup_environment(args):
             url += '?' + urlencode(params)
         if is_json and body:
             body = json.dumps(body)
-        r, c = http.request(url, method=method, body=body, headers=headers)
+        r, c = http.request(url, method=method, body=body, headers=lheaders)
         if is_json:
             c = json.loads(c.decode('utf-8'))
         if str(r.status)[0] == '4':
