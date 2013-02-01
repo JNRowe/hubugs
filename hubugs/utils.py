@@ -159,14 +159,16 @@ def check_output(args, **kwargs):
 
     """
     try:
-        return subprocess.check_output(args, **kwargs)
+        output = subprocess.check_output(args, **kwargs)
     except AttributeError:
         process = subprocess.Popen(args, stdout=subprocess.PIPE, **kwargs)
         output, unused_err = process.communicate()
         retcode = process.poll()
         if retcode:
             raise subprocess.CalledProcessError(retcode, args[0])
-        return output
+    if PY3K:
+        output = output.decode()
+    return output
 
 
 def get_github_api():
@@ -202,8 +204,6 @@ def get_git_config_val(key, default=None, local_only=False):
     cmd.extend(['--get', key])
     try:
         output = check_output(cmd).strip()
-        if PY3K:
-            output = output.decode()
     except subprocess.CalledProcessError:
         output = default
     return output
