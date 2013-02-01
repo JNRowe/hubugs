@@ -24,7 +24,8 @@ from setuptools import setup
 # Hack to import _version file without importing hubugs/__init__.py, its
 # purpose is to allow import without requiring dependencies at this point.
 _version = {}
-execfile('hubugs/_version.py', {}, _version)
+exec(compile(open('hubugs/_version.py').read(), 'hubugs/_version.py', 'exec'),
+     {}, _version)
 
 
 def parse_requires(file):
