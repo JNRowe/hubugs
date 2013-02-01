@@ -20,6 +20,13 @@
 import collections
 import datetime
 
+# We used to use tight, explicit bindings for API objects but the desire to
+# support Python 3 and the lack of a usable binding library has made it
+# necessary to use the loose dynamic binding implemented below.
+#
+# I fully expect to return to strict binding in the future, once either a tool
+# becomes available or I free up a little more itch-scratching time
+
 
 def object_hook(d, name='unknown'):
     """JSON object hook to create dot-accessible objects.
