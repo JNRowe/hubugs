@@ -3,6 +3,12 @@ User-visible changes
 
 .. contents::
 
+0.17.0 - 2013-02-01
+-------------------
+
+* Python 3 support!
+* schematics_ is no longer required
+
 0.16.0 - 2013-01-26
 -------------------
 
