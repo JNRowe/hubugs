@@ -81,7 +81,7 @@ class Highlight(TestCase):
 
 class EditText(TestCase):
     @staticmethod
-    def getmtime_side_effect(file, response=range(100)):
+    def getmtime_side_effect(file, response=list(range(100))):
         return response.pop()
 
     @staticmethod
