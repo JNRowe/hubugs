@@ -311,12 +311,11 @@ def setup_environment(args):
     }
 
     # We use manual auth when calling setup
-    use_auth = not command == 'setup'
-    if use_auth:
+    if command == 'setup':
         token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
         if not token:
             raise EnvironmentError(_("No hubugs authorisation token found!  "
-                                   "Run 'hubugs setup' to create a token"))
+                                     "Run 'hubugs setup' to create a token"))
         HEADERS["Authorization"] = "token %s" % token
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
@@ -350,8 +349,8 @@ def setup_environment(args):
 
     # Make the repository information available, if it will be useful
     # Note: We skip this step for `show -b' for speed, see #20
-    if not command == 'setup' \
-        and not (command == 'show' and args.browse is True):
+    if not command == 'setup' and not (command == 'show'
+                                       and args.browse is True):
         try:
             r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project))
         except HttpClientError as e:
