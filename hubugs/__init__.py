@@ -63,8 +63,6 @@ from base64 import b64encode
 import aaargh
 import httplib2
 
-from schematics.base import TypeException
-
 logging.basicConfig(level=logging.ERROR,
                     format="%(asctime)s - %(message)s",
                     datefmt="%Y-%m-%dT%H:%M:%S")
@@ -166,7 +164,7 @@ def list_bugs(args):
     for state in states:
         _params = params.copy()
         _params['state'] = state
-        r, _bugs = args.req_get('', params=_params, model=['Issue', ])
+        r, _bugs = args.req_get('', params=_params, model='Issue')
         bugs.extend(_bugs)
 
     result = template.display_bugs(bugs, args.order, state=args.state,
@@ -179,16 +177,17 @@ def list_bugs(args):
 @APP.cmd_arg("term", help=_("term to search bugs for"))
 def search(args):
     """Searching bugs."""
-    # This chunk of code is horrific, as is the Issue.from_search() that is
+    # This chunk of code is horrific, as is the models.from_search() that is
     # required to support it.  However, without search support in API v3 there
-    # is realistic way around it.
-    from .models import Issue
-    search_url = 'https://api.github.com/legacy/issues/search/%s/%s/%s'
+    # is no realistic way around it.
+    from .models import from_search
+    search_url = '%s/legacy/issues/search/%%s/%%s/%%s' % args.host_url
     states = ["open", "closed"] if args.state == "all" else [args.state, ]
     bugs = []
     for state in states:
-        r, c = args.req_get(search_url % (args.project, state, args.term))
-        _bugs = [Issue.from_search(d) for d in c['issues']]
+        r, c = args.req_get(search_url % (args.project, state, args.term),
+                            model='issue')
+        _bugs = [from_search(d) for d in c.issues]
         bugs.extend(_bugs)
     result = template.display_bugs(bugs, args.order, term=args.term,
                                    state=args.state, project=args.repo_obj)
@@ -217,8 +216,7 @@ def show(args):
         r, bug = args.req_get(bug_no, model='Issue')
 
         if args.full and bug.comments:
-            r, comments = args.req_get('%s/comments' % bug_no,
-                                       model=['Comment', ])
+            r, comments = args.req_get('%s/comments' % bug_no, model='Comment')
         else:
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
@@ -364,7 +362,7 @@ def label(args):
 def milestone(args):
     """Issue milestones."""
     milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
-    r, milestones = args.req_get(milestones_url, model=['Milestone'])
+    r, milestones = args.req_get(milestones_url, model='Milestone')
 
     milestone_mapping = dict((m.title, m.number) for m in milestones)
 
@@ -394,7 +392,7 @@ def milestones(args):
         print(utils.fail("No action specified!"))
         return 1
     milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
-    r, milestones = args.req_get(milestones_url, model=['Milestone'])
+    r, milestones = args.req_get(milestones_url, model='Milestone')
 
     if args.list:
         tmpl = template.get_template('view', '/list_milestones.txt')
@@ -473,9 +471,6 @@ def main():
     except httplib2.ServerNotFoundError:
         print(utils.fail(_("Project lookup failed.  Network or GitHub down?")))
         return errno.ENXIO
-    except TypeException:
-        print(utils.fail(_("API modelling failed.  Please report this!")))
-        return errno.EBADMSG
     except (utils.RepoError) as error:
         print(utils.fail(error.content['message']))
         return errno.EINVAL

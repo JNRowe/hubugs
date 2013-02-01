@@ -20,7 +20,7 @@ Requirements
 
 ``hubugs`` requires Python_ v2.6 or above.  ``hubugs``'s mandatory dependencies
 outside of the standard library are aaargh_, blessings_, html2text_, httplib2_,
-Jinja_, Pygments_ and schematics_.
+Jinja_ and Pygments_.
 
 Configuration
 -------------
@@ -88,7 +88,6 @@ reproduce the problem, or even better a patch!
 .. _html2text: http://pypi.python.org/pypi/html2text/
 .. _httplib2: http://pypi.python.org/pypi/httplib2
 .. _Pygments: http://pygments.org/
-.. _schematics: http://pypi.python.org/pypi/schematics/
 .. _OAuth: http://oauth.net/
 .. _GitHub settings: https://github.com/settings/applications/
 .. _mail: jnrowe@gmail.com
