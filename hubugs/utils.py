@@ -287,9 +287,12 @@ def pager(text, pager='less'):
         if 'less' in pager and 'LESS' not in os.environ:
             os.environ['LESS'] = 'FRSX'
         pager = subprocess.Popen([pager, ], stdin=subprocess.PIPE)
-        pager.communicate(text)
+        if PY3K:
+            pager.communicate(text.encode())
+        else:
+            pager.communicate(text)
     else:
-        print text
+        print(text)
 
 
 def setup_environment(args):
@@ -332,15 +335,11 @@ def setup_environment(args):
             body = json.dumps(body)
         r, c = http.request(url, method=method, body=body, headers=lheaders)
         if is_json:
-            c = json.loads(c.decode('utf-8'))
+            c = json.loads(c.decode('utf-8'),
+                           object_hook=partial(models.object_hook,
+                                               name=model))
         if str(r.status)[0] == '4':
             raise HttpClientError(str(r.status), r, c)
-        if model:
-            if isinstance(model, list):
-                creator = getattr(models, model[0])
-                c = [creator(**d) for d in c]
-            else:
-                c = getattr(models, model)(**c)
         return r, c
 
     args.req_get = http_method
@@ -351,12 +350,13 @@ def setup_environment(args):
     if not command == 'setup' and not (command == 'show'
                                        and args.browse is True):
         try:
-            r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project))
+            r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project),
+                                model='Repo')
         except HttpClientError as e:
             if e.content['message'] == 'Not Found':
                 raise RepoError(_('Invalid project %r') % args.project)
             raise
-        args.repo_obj = models.Repository(**c)
+        args.repo_obj = c
         if not args.repo_obj.has_issues:
             raise RepoError(("Issues aren't enabled for %r") % args.project)
 

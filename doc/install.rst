@@ -35,4 +35,3 @@ steps::
 * :pypi:`httplib2` for HTTP communications
 * :pypi:`Jinja2` for templating
 * :pypi:`Pygments` for syntax highlighting in template output
-* :pypi:`schematics` is used for representing remote objects
