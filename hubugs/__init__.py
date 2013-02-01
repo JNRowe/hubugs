@@ -24,7 +24,7 @@ from . import _version
 __version__ = _version.dotted
 __date__ = _version.date
 __author__ = "James Rowe <jnrowe@gmail.com>"
-__copyright__ = u"2010, 2011, 2012, 2013  James Rowe"
+__copyright__ = "2010, 2011, 2012, 2013  James Rowe"
 __license__ = "GNU General Public License Version 3"
 __credits__ = "Ben Griffiths, Matt Leighton"
 __history__ = "See git repository"
