@@ -222,7 +222,10 @@ def show(args):
         else:
             comments = []
         if (args.patch or args.patch_only) and bug.pull_request:
-            r, c = args.req_get(bug.pull_request.patch_url, is_json=False)
+            url = "%s/repos/%s/pulls/%s" % (args.host_url, args.project,
+                                            bug_no)
+            headers = {'Accept': 'application/vnd.github.patch'}
+            r, c = args.req_get(url, headers=headers, is_json=False)
             patch = c.decode('utf-8')
         else:
             patch = None
