@@ -3,7 +3,7 @@
 .. module:: hubugs
 
 :mod:`hubugs`
-==============
+=============
 
 :mod:`hubugs` is a very simple client for working with `GitHub's issue
 tracker`_ from the command line.
