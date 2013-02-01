@@ -5,6 +5,6 @@ python:
   - pypy
 install:
   - pip install --use-mirrors .
-  - pip install --use-mirrors -r requirements-test.txt
+  - pip install --use-mirrors -r extra/requirements-test.txt
 script:
   - nose2 -A '!no_travis' tests
