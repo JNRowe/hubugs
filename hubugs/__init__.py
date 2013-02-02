@@ -265,7 +265,8 @@ def comment(args):
     else:
         message = template.edit_text()
     for bug in args.bugs:
-        args.req_post('%s/comments' % bug, body={'body': message})
+        args.req_post('%s/comments' % bug, body={'body': message},
+                      model='Comment')
 
 
 @APP.cmd(help=_("editing bugs"),
@@ -290,7 +291,7 @@ def edit(args):
             body = args.body
 
         data = {'title': title, 'body': body}
-        args.req_post(bug, body=data)
+        args.req_post(bug, body=data, model='Issue')
 
 
 @APP.cmd(help=_("closing bugs"),
@@ -309,8 +310,9 @@ def close(args):
         message = args.message
     for bug in args.bugs:
         if message:
-            args.req_post('%s/comments' % bug, body={'body': message})
-        args.req_post(bug, body={'state': 'closed'})
+            args.req_post('%s/comments' % bug, body={'body': message},
+                          model='Comment')
+        args.req_post(bug, body={'state': 'closed'}, model='Issue')
 
 
 @APP.cmd(help=_("reopening closed bugs"),
@@ -329,8 +331,9 @@ def reopen(args):
         message = args.message
     for bug in args.bugs:
         if message:
-            args.req_post('%s/comments' % bug, body={'body': message})
-        args.req_post(bug, body={'state': 'open'})
+            args.req_post('%s/comments' % bug, body={'body': message},
+                          model='Comment')
+        args.req_post(bug, body={'state': 'open'}, model='Issue')
 
 
 @APP.cmd(help=_("labelling bugs"), parents=[label_parser, ])
@@ -355,7 +358,7 @@ def label(args):
 
         for string in args.remove:
             labels.remove(string)
-        args.req_post(bug_no, body={'labels': labels})
+        args.req_post(bug_no, body={'labels': labels}, model='Label')
 
 
 @APP.cmd(help=_("issue milestones"))
@@ -375,7 +378,7 @@ def milestone(args):
         raise ValueError(_('No such milestone %r') % args.milestone)
 
     for bug_no in args.bugs:
-        args.req_post(bug_no, body={'milestone': milestone})
+        args.req_post(bug_no, body={'milestone': milestone}, model='Milestone')
 
 
 @APP.cmd(help=_("repository milestones"))

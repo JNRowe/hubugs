@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.17.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-01 08:20+0000\n"
+"POT-Creation-Date: 2013-02-02 05:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Please report bugs to the JNRowe/hubugs project"
 msgstr ""
 
-#: hubugs/__init__.py:83 hubugs/__init__.py:342 hubugs/__init__.py:364
+#: hubugs/__init__.py:83 hubugs/__init__.py:345 hubugs/__init__.py:367
 msgid "bug number(s) to operate on"
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 msgid "comment text"
 msgstr ""
 
-#: hubugs/__init__.py:91 hubugs/__init__.py:384
+#: hubugs/__init__.py:91 hubugs/__init__.py:387
 msgid "sort order for listing bugs"
 msgstr ""
 
@@ -143,94 +143,94 @@ msgstr ""
 msgid "commenting on bugs"
 msgstr ""
 
-#: hubugs/__init__.py:271
+#: hubugs/__init__.py:272
 msgid "editing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:276
+#: hubugs/__init__.py:277
 msgid "Can not use --stdin or command line title/body with multiple bugs"
 msgstr ""
 
-#: hubugs/__init__.py:296
+#: hubugs/__init__.py:297
 msgid "closing bugs"
 msgstr ""
 
-#: hubugs/__init__.py:316
+#: hubugs/__init__.py:318
 msgid "reopening closed bugs"
 msgstr ""
 
-#: hubugs/__init__.py:336
+#: hubugs/__init__.py:339
 msgid "labelling bugs"
 msgstr ""
 
-#: hubugs/__init__.py:338
+#: hubugs/__init__.py:341
 msgid "remove label from issue"
 msgstr ""
 
-#: hubugs/__init__.py:340
+#: hubugs/__init__.py:343
 msgid "list available labels"
 msgstr ""
 
-#: hubugs/__init__.py:361
+#: hubugs/__init__.py:364
 msgid "issue milestones"
 msgstr ""
 
-#: hubugs/__init__.py:362
+#: hubugs/__init__.py:365
 msgid "milestone to assign to"
 msgstr ""
 
-#: hubugs/__init__.py:375
+#: hubugs/__init__.py:378
 #, python-format
 msgid "No such milestone %r"
 msgstr ""
 
-#: hubugs/__init__.py:381
+#: hubugs/__init__.py:384
 msgid "repository milestones"
 msgstr ""
 
-#: hubugs/__init__.py:387
+#: hubugs/__init__.py:390
 msgid "state of milestones to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:388
+#: hubugs/__init__.py:391
 msgid "create new milestone"
 msgstr ""
 
-#: hubugs/__init__.py:391
+#: hubugs/__init__.py:394
 msgid "list available milestones"
 msgstr ""
 
-#: hubugs/__init__.py:414
+#: hubugs/__init__.py:417
 #, python-format
 msgid "Milestone %d created"
 msgstr ""
 
-#: hubugs/__init__.py:417
+#: hubugs/__init__.py:420
 msgid "report a new bug against hubugs"
 msgstr ""
 
-#: hubugs/__init__.py:440
+#: hubugs/__init__.py:443
 #, python-format
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:456
+#: hubugs/__init__.py:459
 msgid "pass output through a pager"
 msgstr ""
 
-#: hubugs/__init__.py:458
+#: hubugs/__init__.py:461
 msgid "do not pass output through pager"
 msgstr ""
 
-#: hubugs/__init__.py:460
+#: hubugs/__init__.py:463
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:464
+#: hubugs/__init__.py:467
 msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
-#: hubugs/__init__.py:475
+#: hubugs/__init__.py:478
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 

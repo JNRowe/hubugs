@@ -370,8 +370,8 @@ def sync_labels(args):
 
     """
     labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
-    r, c = args.req_get(labels_url)
-    label_names = [label['name'] for label in c]
+    r, c = args.req_get(labels_url, model='Label')
+    label_names = [label.name for label in c]
 
     for label in args.add:
         if label not in label_names:
@@ -381,5 +381,5 @@ def sync_labels(args):
             print(warn(_('%r label already exists') % label))
         else:
             data = {'name': label, 'color': '000000'}
-            args.req_post(labels_url, body=data)
+            args.req_post(labels_url, body=data, model="Label")
     return label_names + args.add + args.create
