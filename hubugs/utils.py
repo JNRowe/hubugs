@@ -314,7 +314,7 @@ def setup_environment(args):
     }
 
     # We use manual auth when calling setup
-    if command == 'setup':
+    if not command == 'setup':
         token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
         if not token:
             raise EnvironmentError(_("No hubugs authorisation token found!  "
