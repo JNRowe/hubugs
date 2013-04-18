@@ -478,7 +478,7 @@ def main():
         print(utils.fail(_("Project lookup failed.  Network or GitHub down?")))
         return errno.ENXIO
     except (utils.RepoError) as error:
-        print(utils.fail(error.content['message']))
+        print(utils.fail(error.message))
         return errno.EINVAL
     except (EnvironmentError, ValueError) as error:
         print(utils.fail(error.message))
