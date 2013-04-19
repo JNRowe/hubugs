@@ -1,19 +1,18 @@
-{%- set heading_colour = "green" -%}
-{%- set highlight_colour = "yellow" -%}
+{%- import "default/view/theme.txt" as theme -%}
 {%- if id_len == 1 -%}
 {% set id_format = "%2d" %}
 {%- else -%}
 {% set id_format = "%%%dd" | format(id_len) %}
 {%- endif -%}
 {%- block header -%}
-{{ "Id" | colourise(heading_colour) }} {{ spacer }}{{ "Title" | colourise(heading_colour) }}
+{{ "Id" | colourise(theme.heading_colour) }} {{ spacer }}{{ "Title" | colourise(theme.heading_colour) }}
 {%- endblock %}
 {%- block body %}
 {%- for milestone in milestones %}
-{{ id_format | format(milestone.number) | colourise(highlight_colour) }} {{ milestone.title | truncate(max_title, True) }}
+{{ id_format | format(milestone.number) | colourise(theme.highlight_colour) }} {{ milestone.title | truncate(max_title, True) }}
 {%- endfor %}
 {% endblock -%}
 
 {%- block footer %}
-{{ milestones | length | string | colourise(heading_colour) }} {{ state }} milestone{% if milestones | length != 1 %}s{% endif %} found
+{{ milestones | length | string | colourise(theme.heading_colour) }} {{ state }} milestone{% if milestones | length != 1 %}s{% endif %} found
 {%- endblock %}

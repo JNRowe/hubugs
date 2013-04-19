@@ -1,29 +1,28 @@
-{%- set heading_colour = "green" -%}
-{%- set highlight_colour = "yellow" -%}
+{%- import "default/view/theme.txt" as theme -%}
 {%- if id_len == 1 -%}
 {% set id_format = "%2d" %}
 {%- else -%}
 {% set id_format = "%%%dd" | format(id_len) %}
 {%- endif -%}
 {%- block header -%}
-{{ "Id" | colourise(heading_colour) }} {{ spacer }}{{ "Title" | colourise(heading_colour) }}
+{{ "Id" | colourise(theme.heading_colour) }} {{ spacer }}{{ "Title" | colourise(theme.heading_colour) }}
 {%- endblock %}
 {%- block body %}
 {%- for bug in bugs %}
 {%- if bug.milestone -%}
-{%- set formatted_milestone = " {" + bug.milestone.title | colourise("cyan") + "}" -%}
+{%- set formatted_milestone = " {" + bug.milestone.title | colourise(theme.milestone_colour) + "}" -%}
 {%- else -%}
 {%- set formatted_milestone = "" -%}
 {%- endif -%}
 {%- if bug.labels -%}
-{%- set formatted_labels = " [" + bug.labels | join(", ", "name") | colourise("magenta") + "]" -%}
+{%- set formatted_labels = " [" + bug.labels | join(", ", "name") | colourise(theme.label_colour) + "]" -%}
 {%- else -%}
 {%- set formatted_labels = "" -%}
 {%- endif %}
-{{ id_format | format(bug.number) | colourise(highlight_colour) }} {{ bug.title + formatted_milestone + formatted_labels | truncate(max_title, True) }}
+{{ id_format | format(bug.number) | colourise(theme.highlight_colour) }} {{ bug.title + formatted_milestone + formatted_labels | truncate(max_title, True) }}
 {%- endfor %}
 {% endblock -%}
 
 {%- block footer %}
-{{ bugs | length | string | colourise(heading_colour) }} {{ state }} bug{% if bugs | length != 1 %}s{% endif %} found{% if term %} matching {{ term | colourise(heading_colour) }}{% endif %}
+{{ bugs | length | string | colourise(theme.heading_colour) }} {{ state }} bug{% if bugs | length != 1 %}s{% endif %} found{% if term %} matching {{ term | colourise(theme.heading_colour) }}{% endif %}
 {%- endblock %}

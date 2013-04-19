@@ -1,0 +1,5 @@
+{%- set error_colour = "red" -%}
+{%- set heading_colour = "green" -%}
+{%- set highlight_colour = "yellow" -%}
+{%- set label_colour = "magenta" -%}
+{%- set milestone_colour = "cyan" -%}
