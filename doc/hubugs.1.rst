@@ -40,8 +40,8 @@ OPTIONS
 -p <project>, --project=<project>
     GitHub project to operate on.  You can supply just ``<project>`` if you wish
     to work on one of your own projects, or ``<user>/<project>`` to operate on
-    another user's repository.  Default is derived from the current repository,
-    if possible.
+    another user's repository.  Default is derived from the ``hubugs.project``
+    setting in the git config or the current repository, if possible.
 
 -u <url>, --host-url=<url>
     host to connect to, for GitHub Enterprise support

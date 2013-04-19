@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.17.2\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-19 01:23+0100\n"
+"POT-Creation-Date: 2013-04-19 01:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -250,29 +250,29 @@ msgstr ""
 msgid "No GitHub user setting!"
 msgstr ""
 
-#: hubugs/utils.py:262
-msgid "No `origin' remote found"
+#: hubugs/utils.py:269
+msgid "Unable to guess project from repository"
 msgstr ""
 
-#: hubugs/utils.py:276
-msgid "Unknown project, specify with `--project' option"
+#: hubugs/utils.py:283
+msgid "Invalid project configuration, specify with `--project' option"
 msgstr ""
 
-#: hubugs/utils.py:320
+#: hubugs/utils.py:328
 msgid "No hubugs authorisation token found!  Run 'hubugs setup' to create a token"
 msgstr ""
 
-#: hubugs/utils.py:357
+#: hubugs/utils.py:365
 #, python-format
 msgid "Invalid project %r"
 msgstr ""
 
-#: hubugs/utils.py:378
+#: hubugs/utils.py:386
 #, python-format
 msgid "No such label %r"
 msgstr ""
 
-#: hubugs/utils.py:381
+#: hubugs/utils.py:389
 #, python-format
 msgid "%r label already exists"
 msgstr ""

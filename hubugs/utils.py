@@ -239,11 +239,18 @@ def get_editor():
 def get_repo():
     """Extract GitHub project name from git/hg config.
 
+    We check the git config for ``hubugs.project``, and then fall back to
+    ``remote.origin.url``.  If both of these fail we check a mercurial root, to
+    satisfy the ``hg-git`` users.
+
     :rtype: ``str``
     :return: GitHub project name, including user
 
     """
-    data = get_git_config_val("remote.origin.url", local_only=True)
+    data = get_git_config_val('hubugs.project', local_only=True)
+    if data:
+        return data
+    data = get_git_config_val('remote.origin.url', local_only=True)
     if not data:
         try:
             root = check_output(['hg', 'root'], stderr=subprocess.PIPE).strip()
@@ -259,7 +266,7 @@ def get_repo():
                 pass
 
     if not data:
-        raise RepoError(_("No `origin' remote found"))
+        raise RepoError(_("Unable to guess project from repository"))
 
     match = re.match(r"""
         (?:git(?:@|://)  # SSH or git protocol
@@ -273,7 +280,8 @@ def get_repo():
     if match:
         return match.groups()[0]
     else:
-        raise RepoError(_("Unknown project, specify with `--project' option"))
+        raise RepoError(_("Invalid project configuration, specify with "
+                          "`--project' option"))
 
 
 def pager(text, pager='less'):

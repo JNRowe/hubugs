@@ -134,7 +134,8 @@ class GetRepo(TestCase):
     )
     @patch('hubugs.utils.get_git_config_val')
     def test_repo_url(self, repo, get_git_config_val):
-        get_git_config_val.return_value = repo
+        # side_effect to skip hubugs.project call
+        get_git_config_val.side_effect = [None, repo]
         expect(utils.get_repo()) == 'JNRowe/misc-overlay'
 
     @params(
@@ -144,6 +145,13 @@ class GetRepo(TestCase):
     )
     @patch('hubugs.utils.get_git_config_val')
     def test_broken_url(self, repo, get_git_config_val):
-        get_git_config_val.return_value = repo
+        # side_effect to skip hubugs.project call
+        get_git_config_val.side_effect = [None, repo]
         with expect.raises(ValueError):
             utils.get_repo()
+
+    @patch('hubugs.utils.get_git_config_val')
+    def test_config_project(self, get_git_config_val):
+        # side_effect to skip hubugs.project call
+        get_git_config_val.return_value = 'JNRowe/misc-overlay'
+        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
