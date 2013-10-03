@@ -38,18 +38,18 @@ from .i18n import _
 if sys.platform == 'darwin':
     _USER_DATA_DIR = os.path.expanduser('~/Library/Application Support')
 else:
-    _USER_DATA_DIR = os.path.join(os.environ.get("HOME", "/"), ".local")
+    _USER_DATA_DIR = os.path.join(os.environ.get('HOME', '/'), '.local')
 
-USER_DATA_DIR = os.environ.get("XDG_DATA_HOME", _USER_DATA_DIR)
-SYSTEM_DATA_DIR = os.environ.get("XDG_DATA_DIRS",
-                                 "/usr/local/share/:/usr/share/").split(":")
-PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, "hubugs", "templates"), ]
+USER_DATA_DIR = os.environ.get('XDG_DATA_HOME', _USER_DATA_DIR)
+SYSTEM_DATA_DIR = os.environ.get('XDG_DATA_DIRS',
+                                 '/usr/local/share/:/usr/share/').split(':')
+PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, 'hubugs', 'templates'), ]
 for directory in SYSTEM_DATA_DIR:
-    PKG_DATA_DIRS.append(os.path.join(directory, "hubugs", "templates"))
+    PKG_DATA_DIRS.append(os.path.join(directory, 'hubugs', 'templates'))
 
 ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
     [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
-ENV.loader.loaders.append(jinja2.PackageLoader("hubugs", "templates"))
+ENV.loader.loaders.append(jinja2.PackageLoader('hubugs', 'templates'))
 
 
 class EmptyMessageError(ValueError):
@@ -69,7 +69,7 @@ def get_template(group, name):
 
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
-    return ENV.get_template("%s/%s/%s" % (template_set, group, name))
+    return ENV.get_template('%s/%s/%s' % (template_set, group, name))
 
 
 def jinja_filter(func):
@@ -101,11 +101,11 @@ def colourise(text, formatting):
     """
     return getattr(utils.T, formatting.replace(' ', '_'))(text)
 # American spelling, just for Brandon Cady ;)
-ENV.filters["colorize"] = ENV.filters["colourise"]
+ENV.filters['colorize'] = ENV.filters['colourise']
 
 
 @jinja_filter
-def highlight(text, lexer="diff", formatter="terminal"):
+def highlight(text, lexer='diff', formatter='terminal'):
     """Highlight text with pygments.
 
     Returns text untouched if colour output is not enabled
@@ -156,7 +156,7 @@ def relative_time(timestamp):
 
     """
 
-    numstr = ". a two three four five six seven eight nine ten".split()
+    numstr = '. a two three four five six seven eight nine ten'.split()
 
     matches = [
         60 * 60 * 24 * 365,
@@ -167,7 +167,7 @@ def relative_time(timestamp):
         60,
         1,
     ]
-    match_names = ["year", "month", "week", "day", "hour", "minute", "second"]
+    match_names = ['year', 'month', 'week', 'day', 'hour', 'minute', 'second']
 
     delta = datetime.datetime.utcnow() - timestamp
     # Switch to delta.total_seconds, if 2.6 support is dropped
@@ -178,15 +178,15 @@ def relative_time(timestamp):
             name = match_names[matches.index(scale)]
             break
 
-    if i == 1 and name in ("year", "month", "week"):
-        result = "last %s" % name
-    elif i == 1 and name == "day":
-        result = "yesterday"
-    elif i == 1 and name == "hour":
-        result = "about an hour ago"
+    if i == 1 and name in ('year', 'month', 'week'):
+        result = 'last %s' % name
+    elif i == 1 and name == 'day':
+        result = 'yesterday'
+    elif i == 1 and name == 'hour':
+        result = 'about an hour ago'
     else:
-        result = "about %s %s%s ago" % (i if i > 10 else numstr[i], name,
-                                        "s" if i > 1 else "")
+        result = 'about %s %s%s ago' % (i if i > 10 else numstr[i], name,
+                                        's' if i > 1 else '')
     return result
 
 
@@ -202,11 +202,11 @@ def display_bugs(bugs, order, **extras):
 
     """
     if not bugs:
-        return utils.success(_("No bugs found!"))
+        return utils.success(_('No bugs found!'))
 
     # Match ordering method to bug attribute
-    if order == "updated":
-        attr = "updated_at"
+    if order == 'updated':
+        attr = 'updated_at'
     else:
         attr = order
 
@@ -219,13 +219,13 @@ def display_bugs(bugs, order, **extras):
 
     max_id = max(i.number for i in bugs)
     id_len = len(str(max_id))
-    spacer = " " * (id_len - 2)
+    spacer = ' ' * (id_len - 2)
 
     return template.render(bugs=bugs, spacer=spacer, id_len=id_len,
                            max_title=columns - id_len - 2, **extras)
 
 
-def edit_text(edit_type="default", data=None):
+def edit_text(edit_type='default', data=None):
     """Edit data with external editor.
 
     :param str edit_type: Template to use in editor
@@ -238,23 +238,23 @@ def edit_text(edit_type="default", data=None):
     """
     template = get_template('edit', '%s.mkd' % edit_type)
 
-    fd, name = tempfile.mkstemp(prefix="hubugs-", suffix=".mkd")
+    fd, name = tempfile.mkstemp(prefix='hubugs-', suffix='.mkd')
     try:
-        with os.fdopen(fd, "w") as f:
+        with os.fdopen(fd, 'w') as f:
             f.write(template.render(data if data else {}))
 
         orig_mtime = os.path.getmtime(name)
         subprocess.check_call(utils.get_editor() + [name, ])
         new_mtime = os.path.getmtime(name)
 
-        text = "".join(filter(lambda s: not s.startswith("#"),
+        text = ''.join(filter(lambda s: not s.startswith('#'),
                               open(name).readlines())).strip()
     finally:
         os.unlink(name)
 
     if not text:
-        raise EmptyMessageError(_("No message given"))
+        raise EmptyMessageError(_('No message given'))
     elif orig_mtime == new_mtime:
-        raise EmptyMessageError(_("Message not edited"))
+        raise EmptyMessageError(_('Message not edited'))
 
     return text.strip()

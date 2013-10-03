@@ -65,9 +65,9 @@ def from_search(obj):
 
     """
 
-    avatar_url = ("https://secure.gravatar.com/avatar/%s?d="
-                  "https://a248.e.akamai.net/assets.github.com%%2F"
-                  "images%%2Fgravatars%%2Fgravatar-140.png")
+    avatar_url = ('https://secure.gravatar.com/avatar/%s?d='
+                  'https://a248.e.akamai.net/assets.github.com%%2F'
+                  'images%%2Fgravatars%%2Fgravatar-140.png')
     label_url = 'https://api.github.com/repos/%s/%s/labels/%s'
 
     owner, project = obj.html_url.split('/')[3:5]

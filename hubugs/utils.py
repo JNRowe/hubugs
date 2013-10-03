@@ -71,7 +71,7 @@ elif os.path.exists(os.getenv('CURL_CA_BUNDLE', '')):
     CURL_CERTS = True
 if not SYSTEM_CERTS and not CURL_CERTS:
     CA_CERTS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            "GitHub_certs.crt")
+                            'GitHub_certs.crt')
 
 
 # Set up informational message functions
@@ -141,11 +141,11 @@ class ProjectAction(argparse.Action):
 
     def __call__(self, parser, namespace, project, option_string=None):
         """Set fully qualified GitHub project name."""
-        if not "/" in project:
-            user = os.getenv("GITHUB_USER", get_git_config_val("github.user"))
+        if not '/' in project:
+            user = os.getenv('GITHUB_USER', get_git_config_val('github.user'))
             if not user:
-                raise parser.error(_("No GitHub user setting!"))
-            project = "%s/%s" % (user, project)
+                raise parser.error(_('No GitHub user setting!'))
+            project = '%s/%s' % (user, project)
         namespace.project = project
 
 
@@ -179,11 +179,11 @@ def get_github_api():
 
     """
     if sys.platform == 'darwin':
-        user_cache_dir = os.path.expanduser("~/Library/Caches")
+        user_cache_dir = os.path.expanduser('~/Library/Caches')
     else:
-        user_cache_dir = os.path.join(os.getenv("HOME", "/"), ".cache")
-    xdg_cache_dir = os.getenv("XDG_CACHE_HOME")
-    cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, "hubugs")
+        user_cache_dir = os.path.join(os.getenv('HOME', '/'), '.cache')
+    xdg_cache_dir = os.getenv('XDG_CACHE_HOME')
+    cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, 'hubugs')
 
     return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
 
@@ -266,7 +266,7 @@ def get_repo():
                 pass
 
     if not data:
-        raise RepoError(_("Unable to guess project from repository"))
+        raise RepoError(_('Unable to guess project from repository'))
 
     match = re.match(r"""
         (?:git(?:@|://)  # SSH or git protocol
@@ -280,7 +280,7 @@ def get_repo():
     if match:
         return match.groups()[0]
     else:
-        raise RepoError(_("Invalid project configuration, specify with "
+        raise RepoError(_('Invalid project configuration, specify with '
                           "`--project' option"))
 
 
@@ -323,11 +323,11 @@ def setup_environment(args):
 
     # We use manual auth when calling setup
     if not command == 'setup':
-        token = os.getenv("HUBUGS_TOKEN", get_git_config_val("hubugs.token"))
+        token = os.getenv('HUBUGS_TOKEN', get_git_config_val('hubugs.token'))
         if not token:
-            raise EnvironmentError(_("No hubugs authorisation token found!  "
+            raise EnvironmentError(_('No hubugs authorisation token found!  '
                                      "Run 'hubugs setup' to create a token"))
-        HEADERS["Authorization"] = "token %s" % token
+        HEADERS['Authorization'] = 'token %s' % token
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
                     model=None, is_json=True):
@@ -389,5 +389,5 @@ def sync_labels(args):
             print(warn(_('%r label already exists') % label))
         else:
             data = {'name': label, 'color': '000000'}
-            args.req_post(labels_url, body=data, model="Label")
+            args.req_post(labels_url, body=data, model='Label')
     return label_names + args.add + args.create

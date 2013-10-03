@@ -28,8 +28,8 @@ sys.path.insert(0, root_dir)
 import hubugs
 
 extensions = \
-    ["sphinx.ext.%s" % ext for ext in ['autodoc', 'intersphinx', ]] \
-    + ["sphinxcontrib.%s" % ext for ext in ['cheeseshop']]
+    ['sphinx.ext.%s' % ext for ext in ['autodoc', 'intersphinx', ]] \
+    + ['sphinxcontrib.%s' % ext for ext in ['cheeseshop']]
 
 master_doc = 'index'
 source_suffix = '.rst'
@@ -37,12 +37,12 @@ source_suffix = '.rst'
 project = u'hubugs'
 copyright = hubugs.__copyright__
 
-version = ".".join(map(str, hubugs._version.tuple[:2]))
+version = '.'.join(map(str, hubugs._version.tuple[:2]))
 release = hubugs._version.dotted
 
 pygments_style = 'sphinx'
 html_theme_options = {
-    "externalrefs": True,
+    'externalrefs': True,
 }
 try:
     html_last_updated_fmt = check_output(['git', 'log',
