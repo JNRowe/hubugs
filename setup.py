@@ -1,4 +1,4 @@
-#! /usr/bin/python -tt
+#! /usr/bin/env python
 # coding=utf-8
 """setup.py - Setuptools tasks and config for hubugs"""
 # Copyright © 2010, 2011, 2012, 2013  James Rowe <jnrowe@gmail.com>
