@@ -26,9 +26,9 @@ import subprocess
 import sys
 
 try:  # For Python 3
-    import configparser
+    from configparser import ConfigParser
 except ImportError:
-    import ConfigParser as configparser  # NOQA
+    from ConfigParser import SafeConfigParser as ConfigParser  # NOQA
 
 from functools import partial
 
