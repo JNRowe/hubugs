@@ -38,6 +38,7 @@ except ImportError:
     from urllib import urlencode  # NOQA
 
 import blessings
+import pathlib
 import httplib2
 
 from . import (_version, models)
@@ -50,9 +51,10 @@ if PY3K:
 
 T = blessings.Terminal()
 
-_HTTPLIB2_BUNDLE = os.path.realpath(os.path.dirname(httplib2.CA_CERTS))
+_HTTPLIB2_BUNDLE = pathlib.Path(httplib2.CA_CERTS).parent
+_MODULE_PATH = pathlib.Path(httplib2.__file__).parent
 SYSTEM_CERTS = \
-    not _HTTPLIB2_BUNDLE.startswith(os.path.dirname(httplib2.__file__))
+    not _HTTPLIB2_BUNDLE == _MODULE_PATH
 CA_CERTS = None
 CURL_CERTS = False
 if not SYSTEM_CERTS and sys.platform.startswith('linux'):
@@ -67,11 +69,10 @@ elif not SYSTEM_CERTS and sys.platform.startswith('freebsd'):
         CA_CERTS = '/usr/local/share/certs/ca-root-nss.crt'
         SYSTEM_CERTS = True
 elif os.path.exists(os.getenv('CURL_CA_BUNDLE', '')):
-    CA_CERTS = os.getenv('CURL_CA_BUNDLE')
+    CA_CERTS = os.path.expanduser(os.getenv('CURL_CA_BUNDLE'))
     CURL_CERTS = True
 if not SYSTEM_CERTS and not CURL_CERTS:
-    CA_CERTS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'GitHub_certs.crt')
+    CA_CERTS = _MODULE_PATH.joinpath('GitHub_certs.crt').as_posix()
 
 
 # Set up informational message functions
