@@ -28,7 +28,8 @@ import sys
 try:  # For Python 3
     import configparser
 except ImportError:
-    import ConfigParser as configparser  # NOQA
+    import ConfigParser as configparser
+    configparser.ConfigParser = configparser.SafeConfigParser  # NOQA
 
 from functools import partial
 
