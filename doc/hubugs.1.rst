@@ -74,6 +74,9 @@ List bugs for a project
 -p <number>, --page <number>
    page number
 
+-r, --pull-requests
+   list only pull requests
+
 ``search``
 ''''''''''
 

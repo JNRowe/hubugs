@@ -155,10 +155,17 @@ def setup(args):
              metavar='label', action='append')
 @APP.cmd_arg('-p', '--page', help=_('page number'), type=int, default=1,
              metavar='number')
+@APP.cmd_arg('-r', '--pull-requests', action='store_true',
+             help=_('list only pull requests'))
 def list_bugs(args):
     """Listing bugs."""
     bugs = []
     params = {}
+    if args.pull_requests:
+        # FIXME: Dirty solution to supporting PRs only, needs rethink
+        url = '%s/repos/%s/pulls' % (args.host_url, args.project)
+    else:
+        url = ''
     if args.page != 1:
         params['page'] = args.page
     if args.label:
@@ -168,7 +175,7 @@ def list_bugs(args):
     for state in states:
         _params = params.copy()
         _params['state'] = state
-        r, _bugs = args.req_get('', params=_params, model='Issue')
+        r, _bugs = args.req_get(url, params=_params, model='Issue')
         bugs.extend(_bugs)
 
     result = template.display_bugs(bugs, args.order, state=args.state,

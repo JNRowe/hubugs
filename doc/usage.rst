@@ -117,6 +117,10 @@ Commands
 
    page number
 
+.. cmdoption:: -r, --pull-requests
+
+   list only pull requests
+
 ``search`` - Search bugs reports in a project
 '''''''''''''''''''''''''''''''''''''''''''''
 

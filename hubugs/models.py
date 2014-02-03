@@ -35,6 +35,9 @@ def object_hook(d, name='unknown'):
     :param str name: Fallback name, if dict has no ``type`` key
 
     """
+    # FIXME: Dump _links attributes for the time being
+    if '_links' in d:
+        d.pop('_links')
     for k, v in d.items():
         try:
             d[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%SZ')
