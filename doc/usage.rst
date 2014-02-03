@@ -113,6 +113,10 @@ Commands
 
    sort order for listing bugs
 
+.. cmdoption:: -p <number>, --page <number>
+
+   page number
+
 ``search`` - Search bugs reports in a project
 '''''''''''''''''''''''''''''''''''''''''''''
 

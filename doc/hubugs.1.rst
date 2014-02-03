@@ -71,6 +71,9 @@ List bugs for a project
 -o <order>, --order=<order>
    sort order for listing bugs
 
+-p <number>, --page <number>
+   page number
+
 ``search``
 ''''''''''
 

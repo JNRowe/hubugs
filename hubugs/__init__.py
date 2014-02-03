@@ -153,10 +153,14 @@ def setup(args):
 @APP.cmd(name='list', help=_('listing bugs'), parents=[attrib_parser, ])
 @APP.cmd_arg('-l', '--label', help=_('list bugs with specified label'),
              metavar='label', action='append')
+@APP.cmd_arg('-p', '--page', help=_('page number'), type=int, default=1,
+             metavar='number')
 def list_bugs(args):
     """Listing bugs."""
     bugs = []
     params = {}
+    if args.page != 1:
+        params['page'] = args.page
     if args.label:
         params['labels'] = ','.join(args.label)
 
