@@ -269,15 +269,17 @@ def get_repo():
     if not data:
         raise RepoError(_('Unable to guess project from repository'))
 
-    match = re.match(r"""
+    match = re.match(
+        r"""
         (?:git(?:@|://)  # SSH or git protocol
           |git\+ssh://(?:git@)  # hg-git SSH URLs
           |https?://
            (?:.*@)?)  # HTTP URLs support optional auth data
         github.com[:/]  # hostname, : sep for SSH URL
         ([^/]+/.*?)  # project
-        (?:.git)?$  # .git suffix is optional in all clone URLs""",
-                     data, re.VERBOSE)
+        (?:.git)?$  # .git suffix is optional in all clone URLs
+        """,
+        data, re.VERBOSE)
     if match:
         return match.groups()[0]
     else:
