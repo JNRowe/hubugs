@@ -1,12 +1,15 @@
 include COPYING
 include *.rst
 
+include .coveragerc
+
 include doc/*.rst
 include doc/conf.py
 
 include extra/_hubugs
 include extra/requirements*.txt
 
+include hubugs.py
 include hubugs/*.crt
 include hubugs/locale/hubugs.pot
 include hubugs/locale/*/LC_MESSAGES/*.mo
