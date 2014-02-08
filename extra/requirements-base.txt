@@ -1,4 +1,3 @@
-aaargh
 blessings
 html2text
 httplib2>=0.7.4

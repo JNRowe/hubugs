@@ -1,2 +1,3 @@
 -r requirements.txt
+aaargh==0.4
 argparse
