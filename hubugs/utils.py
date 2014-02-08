@@ -51,28 +51,37 @@ if PY3K:
 
 T = blessings.Terminal()
 
-_HTTPLIB2_BUNDLE = os.path.realpath(os.path.dirname(httplib2.CA_CERTS))
-SYSTEM_CERTS = \
-    not _HTTPLIB2_BUNDLE.startswith(os.path.dirname(httplib2.__file__))
-CA_CERTS = None
-CURL_CERTS = False
-if not SYSTEM_CERTS and sys.platform.startswith('linux'):
-    for cert_file in ['/etc/ssl/certs/ca-certificates.crt',
-                      '/etc/pki/tls/certs/ca-bundle.crt']:
-        if os.path.exists(cert_file):
-            CA_CERTS = cert_file
+try:
+    # httplib2 0.8 and above support setting certs via ca_certs_locater module,
+    # making this dirty mess even dirtier
+    assert map(int, httplib2.__version__.split('.')) >= [0, 8]
+    import ca_certs_locater
+except (AssertionError, ImportError):
+    _HTTPLIB2_BUNDLE = os.path.realpath(os.path.dirname(httplib2.CA_CERTS))
+    SYSTEM_CERTS = \
+        not _HTTPLIB2_BUNDLE.startswith(os.path.dirname(httplib2.__file__))
+    CA_CERTS = None
+    CURL_CERTS = False
+    if not SYSTEM_CERTS and sys.platform.startswith('linux'):
+        for cert_file in ['/etc/ssl/certs/ca-certificates.crt',
+                          '/etc/pki/tls/certs/ca-bundle.crt']:
+            if os.path.exists(cert_file):
+                CA_CERTS = cert_file
+                SYSTEM_CERTS = True
+                break
+    elif not SYSTEM_CERTS and sys.platform.startswith('freebsd'):
+        if os.path.exists('/usr/local/share/certs/ca-root-nss.crt'):
+            CA_CERTS = '/usr/local/share/certs/ca-root-nss.crt'
             SYSTEM_CERTS = True
-            break
-elif not SYSTEM_CERTS and sys.platform.startswith('freebsd'):
-    if os.path.exists('/usr/local/share/certs/ca-root-nss.crt'):
-        CA_CERTS = '/usr/local/share/certs/ca-root-nss.crt'
-        SYSTEM_CERTS = True
-elif os.path.exists(os.getenv('CURL_CA_BUNDLE', '')):
-    CA_CERTS = os.getenv('CURL_CA_BUNDLE')
-    CURL_CERTS = True
-if not SYSTEM_CERTS and not CURL_CERTS:
-    CA_CERTS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            'GitHub_certs.crt')
+    elif os.path.exists(os.getenv('CURL_CA_BUNDLE', '')):
+        CA_CERTS = os.getenv('CURL_CA_BUNDLE')
+        CURL_CERTS = True
+    if not SYSTEM_CERTS and not CURL_CERTS:
+        CA_CERTS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'GitHub_certs.crt')
+else:
+    CA_CERTS = ca_certs_locater.get()
+    CURL_CERTS = False
 
 
 # Set up informational message functions
