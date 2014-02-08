@@ -247,7 +247,8 @@ def edit_text(edit_type='default', data=None):
         subprocess.check_call(utils.get_editor() + [name, ])
         new_mtime = os.path.getmtime(name)
 
-        text = ''.join(filter(lambda s: not s.startswith('#'),
+        comment_char = utils.get_git_config_val('core.commentchar', '#')
+        text = ''.join(filter(lambda s: not s.startswith(comment_char),
                               open(name).readlines())).strip()
     finally:
         os.unlink(name)

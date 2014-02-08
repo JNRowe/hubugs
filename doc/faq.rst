@@ -38,6 +38,12 @@ is simple:
     Sub-heading
     -----------
 
+The other possibility, although not recommended, is to set a custom value for
+`core.commentchar` in your ``git`` configuration settings.  program:`hubugs`
+will honour the set value, and strip any lines that begin with that character.
+You should note however that this is a recent addition to git, and other tools
+may not work correctly with it set to a non-default value.
+
 .. _setext: http://docutils.sourceforge.net/mirror/setext.html
 
 I don't like your choice of template language
