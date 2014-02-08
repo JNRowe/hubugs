@@ -43,27 +43,27 @@ Options
 
 .. program:: hubugs
 
-.. cmdoption:: --version
+.. option:: --version
 
    show program's version number and exit
 
-.. cmdoption:: -h, --help
+.. option:: -h, --help
 
    show program's help message and exit
 
-.. cmdoption:: --pager <pager>
+.. option:: --pager <pager>
 
    pass output through a pager
 
-.. cmdoption:: --no-pager
+.. option:: --no-pager
 
    do not pass output through pager
 
-.. cmdoption:: -p <project>, --project=<project>
+.. option:: -p <project>, --project=<project>
 
    GitHub project to operate on
 
-.. cmdoption:: -u <url>, --host-url=<url>
+.. option:: -u <url>, --host-url=<url>
 
    host to connect to, for GitHub Enterprise support
 
@@ -86,7 +86,7 @@ Commands
 
     hubugs.py setup [-h] [--local]
 
-.. cmdoption:: --local
+.. option:: --local
 
    set access token for local repository only
 
@@ -101,23 +101,23 @@ Commands
     hubugs list [-h] [-s {open,closed,all}] [-l label]
         [-o {number,updated}]
 
-.. cmdoption:: -s <state>, --state=<state>
+.. option:: -s <state>, --state=<state>
 
    state of bugs to operate on
 
-.. cmdoption:: -l <label>, --label=<label>
+.. option:: -l <label>, --label=<label>
 
    list bugs with specified label
 
-.. cmdoption:: -o <order>, --order=<order>
+.. option:: -o <order>, --order=<order>
 
    sort order for listing bugs
 
-.. cmdoption:: -p <number>, --page <number>
+.. option:: -p <number>, --page <number>
 
    page number
 
-.. cmdoption:: -r, --pull-requests
+.. option:: -r, --pull-requests
 
    list only pull requests
 
@@ -132,11 +132,11 @@ Commands
         [-o {number,updated}]
         term
 
-.. cmdoption:: -s <state>, --state=<state>
+.. option:: -s <state>, --state=<state>
 
    state of bugs to operate on
 
-.. cmdoption:: -o <order>, --order=<order>
+.. option:: -o <order>, --order=<order>
 
    sort order for listing bugs
 
@@ -149,19 +149,19 @@ Commands
 
     hubugs show [-h] [-f] [-p] bugs [bugs ...]
 
-.. cmdoption:: -f, --full
+.. option:: -f, --full
 
    show bug including comments
 
-.. cmdoption:: -p, --patch
+.. option:: -p, --patch
 
    display patches for pull requests
 
-.. cmdoption:: -o, --patch-only
+.. option:: -o, --patch-only
 
    display only the patch content of pull requests
 
-.. cmdoption:: -b, --browse
+.. option:: -b, --browse
 
    open bug in web browser
 
@@ -174,11 +174,11 @@ Commands
 
     hubugs open [-h] [-a label] [--stdin] [title] [body]
 
-.. cmdoption:: -a label, --add label
+.. option:: -a label, --add label
 
    add label to issue
 
-.. cmdoption:: --stdin
+.. option:: --stdin
 
    read message from standard input
 
@@ -191,11 +191,11 @@ Commands
 
     hubugs comment [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
 
-.. cmdoption:: --stdin
+.. option:: --stdin
 
    read message from standard input
 
-.. cmdoption:: -m <text>, --message=<text>
+.. option:: -m <text>, --message=<text>
 
    comment text
 
@@ -208,7 +208,7 @@ Commands
 
     hubugs edit [-h] [--stdin] [title] [body] bugs [bugs ...]
 
-.. cmdoption:: --stdin
+.. option:: --stdin
 
    read message from standard input
 
@@ -221,11 +221,11 @@ Commands
 
     hubugs close [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
 
-.. cmdoption:: --stdin
+.. option:: --stdin
 
    read message from standard input
 
-.. cmdoption:: -m <text>, --message=<text>
+.. option:: -m <text>, --message=<text>
 
    comment text
 
@@ -238,11 +238,11 @@ Commands
 
     reopen [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
 
-.. cmdoption:: --stdin
+.. option:: --stdin
 
    read message from standard input
 
-.. cmdoption:: -m <text>, --message=<text>
+.. option:: -m <text>, --message=<text>
 
    comment text
 
@@ -255,11 +255,11 @@ Commands
 
     hubugs label [-h] [-a label] [-r label] bugs [bugs ...]
 
-.. cmdoption:: -a <label>, --add=<label>
+.. option:: -a <label>, --add=<label>
 
    add label to issue
 
-.. cmdoption:: -r <label>, --remove=<label>
+.. option:: -r <label>, --remove=<label>
 
    remove label from issue
 
@@ -282,18 +282,18 @@ Commands
     hubugs milestones [-h] [-o {due_date,completeness}] [-s {open,closed}]
         [-c milestone] [-l]
 
-.. cmdoption:: -o <order>, --order=<order>
+.. option:: -o <order>, --order=<order>
 
    sort order for listing bugs
 
-.. cmdoption:: -s <state>, --state=<state>
+.. option:: -s <state>, --state=<state>
 
    state of bugs to operate on
 
-.. cmdoption:: -c <name>, --create=<name>
+.. option:: -c <name>, --create=<name>
 
    create new milestone
 
-.. cmdoption:: -l, --list
+.. option:: -l, --list
 
    list available milestones
