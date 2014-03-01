@@ -237,17 +237,20 @@ def edit_text(edit_type='default', data=None):
 
     """
     template = get_template('edit', '%s.mkd' % edit_type)
+    comment_char = utils.get_git_config_val('core.commentchar', '#')
+    if not data:
+        data = {}
+    data['comment_char'] = comment_char
 
     fd, name = tempfile.mkstemp(prefix='hubugs-', suffix='.mkd')
     try:
         with os.fdopen(fd, 'w') as f:
-            f.write(template.render(data if data else {}))
+            f.write(template.render(data))
 
         orig_mtime = os.path.getmtime(name)
         subprocess.check_call(utils.get_editor() + [name, ])
         new_mtime = os.path.getmtime(name)
 
-        comment_char = utils.get_git_config_val('core.commentchar', '#')
         text = ''.join(filter(lambda s: not s.startswith(comment_char),
                               open(name).readlines())).strip()
     finally:

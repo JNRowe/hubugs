@@ -146,6 +146,11 @@ Edit group
    The current bug body in ``edit`` subcommand sessions, if any.  See
    :attr:`Bug.body`
 
+.. data:: comment_char(str)
+
+   The character to use for comments in templates, defaults to '#'. See
+   ``core.commentchar`` in :manpage:`git-config(1)`
+
 All groups
 ''''''''''
 

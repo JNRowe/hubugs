@@ -1,8 +1,8 @@
 {%- extends "default/edit/open.mkd" -%}
 {%- block header -%}
   {%- if not local -%}
-# NOTE: This command is for reporting bugs against hubugs, if that is not your
-# intention close this file without saving to cancel!
+{{ comment_char }} NOTE: This command is for reporting bugs against hubugs, if that is not your
+{{ comment_char }} intention close this file without saving to cancel!
   {%- endif -%}
 {%- endblock -%}
 

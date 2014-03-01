@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.17.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-02-03 15:34+0000\n"
+"POT-Creation-Date: 2014-03-01 19:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -246,11 +246,11 @@ msgstr ""
 msgid "No bugs found!"
 msgstr ""
 
-#: hubugs/template.py:256
+#: hubugs/template.py:260
 msgid "No message given"
 msgstr ""
 
-#: hubugs/template.py:258
+#: hubugs/template.py:262
 msgid "Message not edited"
 msgstr ""
 

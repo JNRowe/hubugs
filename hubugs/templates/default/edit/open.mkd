@@ -3,6 +3,6 @@
 
 {{ body }}
 {%- block inset -%}{%- endblock -%}
-# Please enter the content for your new bug, the first line will be used for
-# the title.  Lines beginning with '#' will be ignored
+{{ comment_char }} Please enter the content for your new bug, the first line will be used for
+{{ comment_char }} the title.  Lines beginning with '{{ comment_char }}' will be ignored
 {%- block footer -%}{%- endblock -%}
