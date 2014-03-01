@@ -18,10 +18,10 @@
 #
 
 from collections import namedtuple
+from datetime import (datetime, timedelta)
 from os import getenv
 from unittest import TestCase
 
-from datetime import (datetime, timedelta)
 from expecter import expect
 from mock import patch
 from nose2.tools import params
