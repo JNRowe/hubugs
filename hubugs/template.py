@@ -38,7 +38,7 @@ from .i18n import _
 if sys.platform == 'darwin':
     _USER_DATA_DIR = os.path.expanduser('~/Library/Application Support')
 else:
-    _USER_DATA_DIR = os.path.join(os.environ.get('HOME', '/'), '.local')
+    _USER_DATA_DIR = os.path.join(os.environ.get('HOME', '/'), '.local/share')
 
 USER_DATA_DIR = os.environ.get('XDG_DATA_HOME', _USER_DATA_DIR)
 SYSTEM_DATA_DIR = os.environ.get('XDG_DATA_DIRS',
