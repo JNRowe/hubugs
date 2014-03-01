@@ -18,6 +18,7 @@
 #
 
 from collections import namedtuple
+from os import getenv
 from unittest import TestCase
 
 from datetime import (datetime, timedelta)
@@ -28,7 +29,7 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
-from tests.utils import (no_travis, unicode)
+from tests.utils import (TerminalTypeError, unicode)
 
 
 # We only test forced styling output of blessings, as blessings handles the
@@ -38,15 +39,18 @@ template.utils.T = template.utils.blessings.Terminal(force_styling=True)
 
 class Colourise(TestCase):
     @params(
-        ('red', unicode('\x1b[38;5;1ms\x1b[m\x1b(B')),
-        ('on blue', unicode('\x1b[48;5;4ms\x1b[m\x1b(B')),
-        ('bold', unicode('\x1b[1ms\x1b[m\x1b(B')),
+        ('red', unicode('\x1b[31'), unicode('\x1b[38;5;1m')),
+        ('on blue', unicode('\x1b[44m'), unicode('\x1b[48;5;4m')),
+        ('bold', unicode('\x1b[1m'), unicode('\x1b[1m')),
     )
-    @no_travis
-    def test_color(self, attribute, result):
-        expect(template.colourise('s', attribute)) == result
+    def test_color(self, attribute, linux_result, rxvt_result):
+        if getenv('TERM') == 'linux':
+            expect(template.colourise('s', attribute)).contains(linux_result)
+        elif getenv('TERM').startswith('rxvt'):
+            expect(template.colourise('s', attribute)).contains(rxvt_result)
+        else:
+            raise TerminalTypeError(getenv('TERM'))
 
-    @no_travis
     def test_invalid_colour(self):
         with expect.raises(TypeError):
             template.colourise('s', 'mauve with a hint of green')

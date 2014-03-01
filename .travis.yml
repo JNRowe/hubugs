@@ -17,4 +17,4 @@ install:
     fi
   - pip install .
 script:
-  - nose2 -A '!no_travis' tests
+  - nose2 tests

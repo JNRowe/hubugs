@@ -19,6 +19,7 @@
 
 import argparse
 
+from os import getenv
 from subprocess import CalledProcessError
 from unittest import TestCase
 
@@ -28,7 +29,8 @@ from nose2.tools import params
 
 from hubugs import utils
 
-from tests.utils import (no_travis, unicode)
+from tests.utils import (TerminalTypeError, unicode)
+
 
 # We only test forced styling output of blessings, as blessings handles the
 # sys.stdout.isatty() flipping
@@ -46,13 +48,17 @@ def fake_env(key, default=None):
 
 
 @params(
-    (utils.success, unicode('\x1b[38;5;10mtest\x1b[m\x1b(B')),
-    (utils.fail, unicode('\x1b[38;5;9mtest\x1b[m\x1b(B')),
-    (utils.warn, unicode('\x1b[38;5;11mtest\x1b[m\x1b(B')),
+    (utils.success, unicode('\x1b[310m'), unicode('\x1b[38;5;10m')),
+    (utils.fail, unicode('\x1b[39m'), unicode('\x1b[38;5;9m')),
+    (utils.warn, unicode('\x1b[311m'), unicode('\x1b[38;5;11m')),
 )
-@no_travis
-def test_colouriser(f, result):
-    expect(f('test')) == result
+def test_colouriser(f, linux_result, rxvt_result):
+    if getenv('TERM') == 'linux':
+        expect(f('test')).contains(linux_result)
+    elif getenv('TERM').startswith('rxvt'):
+        expect(f('test')).contains(rxvt_result)
+    else:
+        raise TerminalTypeError(getenv('TERM'))
 
 
 class ProjectAction(TestCase):

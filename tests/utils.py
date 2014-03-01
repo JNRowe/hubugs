@@ -25,6 +25,8 @@ else:
     unicode = unicode
 
 
-def no_travis(f):
-    f.no_travis = 1
-    return f
+class TerminalTypeError(EnvironmentError):
+
+    """Unsupported terminal type for tests"""
+
+    pass
