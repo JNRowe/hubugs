@@ -25,12 +25,6 @@ import re
 import subprocess
 import sys
 
-try:  # For Python 3
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
-    configparser.ConfigParser = configparser.SafeConfigParser  # NOQA
-
 from functools import partial
 
 try:  # For Python 3
@@ -39,6 +33,7 @@ except ImportError:
     from urllib import urlencode  # NOQA
 
 import blessings
+import configobj
 import httplib2
 
 from . import (_version, models)
@@ -268,11 +263,10 @@ def get_repo():
             # No mercurial install, or not in a mercurial tree
             pass
         else:
-            conf = configparser.ConfigParser()
-            conf.read(os.path.join(root, '.hg', 'hgrc'))
+            conf = configobj.ConfigObj(os.path.join(root, '.hg', 'hgrc'))
             try:
-                data = conf.get('paths', 'default')
-            except (configparser.NoSectionError, configparser.NoOptionError):
+                data = conf['paths']['default']
+            except KeyError:
                 pass
 
     if not data:
