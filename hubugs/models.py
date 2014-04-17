@@ -33,7 +33,6 @@ def object_hook(d, name='unknown'):
 
     :param dict d: Dictionary to operate on
     :param str name: Fallback name, if dict has no ``type`` key
-
     """
     # FIXME: Dump _links attributes for the time being
     if '_links' in d:
@@ -50,7 +49,6 @@ def _v2_conv_timestamp(s):
     """Parse API v2 style timestamps.
 
     :param str s: Timestamp to parse
-
     """
     zone = datetime.timedelta(hours=int(s[-5:-3]))
     stamp = datetime.datetime.strptime(s[:-6], '%Y-%m-%dT%H:%M:%S')
@@ -65,7 +63,6 @@ def from_search(obj):
 
     :rtype: ``Issue``
     :returns: API v2 issue mangled to look like a API v3 result
-
     """
 
     avatar_url = ('https://secure.gravatar.com/avatar/%s?d='

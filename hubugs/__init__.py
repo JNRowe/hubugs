@@ -460,7 +460,6 @@ def main():
 
     :rtype: ``int``
     :return: Exit code
-
     """
     APP.arg('--version', action='version',
             version='%%(prog)s %s' % __version__)

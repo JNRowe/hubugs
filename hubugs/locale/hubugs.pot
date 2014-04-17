@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hubugs 0.17.5\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-04-17 14:46+0100\n"
+"POT-Creation-Date: 2014-04-17 14:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -222,65 +222,65 @@ msgstr ""
 msgid "Bug %d opened against hubugs, thanks!"
 msgstr ""
 
-#: hubugs/__init__.py:470
+#: hubugs/__init__.py:469
 msgid "pass output through a pager"
 msgstr ""
 
-#: hubugs/__init__.py:472
+#: hubugs/__init__.py:471
 msgid "do not pass output through pager"
 msgstr ""
 
-#: hubugs/__init__.py:474
+#: hubugs/__init__.py:473
 msgid "GitHub project to operate on"
 msgstr ""
 
-#: hubugs/__init__.py:478
+#: hubugs/__init__.py:477
 msgid "GitHub Enterprise host to connect to"
 msgstr ""
 
-#: hubugs/__init__.py:489
+#: hubugs/__init__.py:488
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/template.py:205
+#: hubugs/template.py:198
 msgid "No bugs found!"
 msgstr ""
 
-#: hubugs/template.py:260
+#: hubugs/template.py:252
 msgid "No message given"
 msgstr ""
 
-#: hubugs/template.py:262
+#: hubugs/template.py:254
 msgid "Message not edited"
 msgstr ""
 
-#: hubugs/utils.py:152
+#: hubugs/utils.py:148
 msgid "No GitHub user setting!"
 msgstr ""
 
-#: hubugs/utils.py:273
+#: hubugs/utils.py:263
 msgid "Unable to guess project from repository"
 msgstr ""
 
-#: hubugs/utils.py:289
+#: hubugs/utils.py:279
 msgid "Invalid project configuration, specify with `--project' option"
 msgstr ""
 
-#: hubugs/utils.py:334
+#: hubugs/utils.py:322
 msgid "No hubugs authorisation token found!  Run 'hubugs setup' to create a token"
 msgstr ""
 
-#: hubugs/utils.py:371
+#: hubugs/utils.py:359
 #, python-format
 msgid "Invalid project %r"
 msgstr ""
 
-#: hubugs/utils.py:392
+#: hubugs/utils.py:379
 #, python-format
 msgid "No such label %r"
 msgstr ""
 
-#: hubugs/utils.py:395
+#: hubugs/utils.py:382
 #, python-format
 msgid "%r label already exists"
 msgstr ""

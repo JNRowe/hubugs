@@ -87,7 +87,6 @@ def _colourise(text, colour):
     :param str colour: Colour to display text in
     :rtype: ``str``
     :return: Colourised text, if possible
-
     """
     return getattr(T, colour.replace(' ', '_'))(text)
 
@@ -98,7 +97,6 @@ def success(text):
     :param str text:  Text to format
     :rtype: ``str`
     :return: Bright green text, if possible
-
     """
     return _colourise(text, 'bright green')
 
@@ -109,7 +107,6 @@ def fail(text):
     :param str text:  Text to format
     :rtype: ``str`
     :return: Bright red text, if possible
-
     """
     return _colourise(text, 'bright red')
 
@@ -120,7 +117,6 @@ def warn(text):
     :param str text:  Text to format
     :rtype: ``str`
     :return: Bright yellow text, if possible
-
     """
     return _colourise(text, 'bright yellow')
 
@@ -161,7 +157,6 @@ def check_output(args, **kwargs):
     :rtype: ``str``
     :return: Command output
     :raise subprocess.CalledProcessError: If command execution fails
-
     """
     try:
         output = subprocess.check_output(args, **kwargs)
@@ -181,7 +176,6 @@ def get_github_api():
 
     :rtype: ``httplib2.Http``
     :return: GitHub HTTP session
-
     """
     if sys.platform == 'darwin':
         user_cache_dir = os.path.expanduser('~/Library/Caches')
@@ -201,7 +195,6 @@ def get_git_config_val(key, default=None, local_only=False):
     :param bool local_only: Fetch configuration values from repo config only
     :rtype: ``str``
     :return: Git config value, if set
-
     """
     cmd = ['git', 'config', ]
     if local_only:
@@ -220,7 +213,6 @@ def set_git_config_val(key, value, local_only=False):
     :param str key: Configuration value to fetch
     :param str value: Value to set
     :param bool local_only: Set configuration values from repo config only
-
     """
     cmd = ['git', 'config', ]
     if not local_only:
@@ -236,7 +228,6 @@ def get_editor():
 
     :rtype: ``list`` of ``str``
     :return: Users chosen editor, or ``vi`` if not set
-
     """
     return check_output(['git', 'var', 'GIT_EDITOR']).strip().split()
 
@@ -250,7 +241,6 @@ def get_repo():
 
     :rtype: ``str``
     :return: GitHub project name, including user
-
     """
     data = get_git_config_val('hubugs.project', local_only=True)
     if data:
@@ -295,7 +285,6 @@ def pager(text, pager='less'):
 
     :param str text: Text to page
     :param bool pager: Pager to use
-
     """
     if pager:
         if 'less' in pager and 'LESS' not in os.environ:
@@ -313,7 +302,6 @@ def setup_environment(args):
     """Configure execution environment for commands dispatch.
 
     :param argparse.Namespace args: argparse namespace to operate on
-
     """
     if not args.project:
         args.project = get_repo()
@@ -381,7 +369,6 @@ def sync_labels(args):
     :param argparse.Namespace args: argparse namespace to operate on
     :rtype: ``list``
     :return: List of project's label names
-
     """
     labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
     r, c = args.req_get(labels_url, model='Label')

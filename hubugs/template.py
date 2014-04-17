@@ -66,7 +66,6 @@ def get_template(group, name):
     :param str name: Template name
     :rtype: ``jinja2.environment.Template``
     :return: Jinja template instance
-
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
     return ENV.get_template('%s/%s/%s' % (template_set, group, name))
@@ -78,7 +77,6 @@ def jinja_filter(func):
     :param func func: Function to add to Jinja environment
     :rtype: ``func``
     :returns: Unmodified function
-
     """
     ENV.filters[func.__name__] = func
 
@@ -97,7 +95,6 @@ def colourise(text, formatting):
     :param str formatting: Formatting to apply to text
     :rtype: ``str``
     :return: Colourised text, when possible
-
     """
     return getattr(utils.T, formatting.replace(' ', '_'))(text)
 # American spelling, just for Brandon Cady ;)
@@ -115,7 +112,6 @@ def highlight(text, lexer='diff', formatter='terminal'):
     :param str formatter: Jinja formatter to use
     :rtype: ``str``
     :return: Syntax highlighted output, when possible
-
     """
     if utils.T.is_a_tty:
         lexer = get_lexer_by_name(lexer)
@@ -134,7 +130,6 @@ def html2text(html, width=80, ascii_replacements=False):
     :param bool ascii_replacements: Use psuedo-ascii replacements for Unicode
     :rtype: ``str``
     :return: Rendered text
-
     """
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
@@ -153,7 +148,6 @@ def relative_time(timestamp):
     :return: Human readable date and time offset
 
     .. _bleeter: http://jnrowe.github.com/bleeter/
-
     """
 
     numstr = '. a two three four five six seven eight nine ten'.split()
@@ -199,7 +193,6 @@ def display_bugs(bugs, order, **extras):
     :param dict extras: Additional values to pass to templates
     :rtype: ``str``
     :return: Rendered template output
-
     """
     if not bugs:
         return utils.success(_('No bugs found!'))
@@ -234,7 +227,6 @@ def edit_text(edit_type='default', data=None):
     :return: User supplied text
     :raise EmptyMessageError: No message given
     :raise EmptyMessageError: Message not edited
-
     """
     template = get_template('edit', '%s.mkd' % edit_type)
     comment_char = utils.get_git_config_val('core.commentchar', '#')
