@@ -235,4 +235,4 @@ which could produce output such as::
 .. _GitHub: https://github.com/JNRowe/hubugs/
 .. _built-in filters: http://jinja.pocoo.org/docs/templates/#list-of-builtin-filters
 .. _Pygments: http://pygments.org/
-.. _html2text: http://pypi.python.org/pypi/html2text/
+.. _html2text: https://crate.io/packages/html2text/
