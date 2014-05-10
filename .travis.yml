@@ -4,6 +4,7 @@ python:
   - 2.7
   - 3.2
   - 3.3
+  - 3.4
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == '3.2' ]]; then
       pip install -r extra/requirements-py32.txt;
