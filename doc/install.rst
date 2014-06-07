@@ -29,8 +29,8 @@ steps::
 :mod:`hubugs` depends on following packages, all of which are available from
 :abbr:`PyPI (Python Package Index)`:
 
-* :pypi:`aaargh` an excellent package for building command line tools in Python
 * :pypi:`blessings` for terminal formatting including colourisation
+* :pypi:`click` an excellent package for building command line tools in Python
 * :pypi:`configparser` for configuration file handling
 * :pypi:`html2text` is used formatting HTML for the terminal
 * :pypi:`httplib2` for HTTP communications
