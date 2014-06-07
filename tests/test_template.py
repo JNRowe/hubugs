@@ -79,7 +79,7 @@ class EditText(TestCase):
         return response.pop()
 
     @staticmethod
-    def check_call_side_effect(args):
+    def popen_side_effect(args, **kwargs):
         open(args[1], 'a').write('Some message')
 
     @patch('subprocess.check_call')
@@ -88,19 +88,19 @@ class EditText(TestCase):
         with expect.raises(template.EmptyMessageError):
             template.edit_text()
 
-    @patch('subprocess.check_call')
+    @patch('subprocess.Popen')
     @patch('os.path.getmtime')
-    def test_message(self, getmtime, check_call):
+    def test_message(self, getmtime, Popen):
         getmtime.side_effect = self.getmtime_side_effect
-        check_call.side_effect = self.check_call_side_effect
+        Popen.side_effect = self.popen_side_effect
 
         expect(template.edit_text()) == 'Some message'
 
-    @patch('subprocess.check_call')
+    @patch('subprocess.Popen')
     @patch('os.path.getmtime')
-    def test_message_comments(self, getmtime, check_call):
+    def test_message_comments(self, getmtime, Popen):
         getmtime.side_effect = self.getmtime_side_effect
-        check_call.side_effect = self.check_call_side_effect
+        Popen.side_effect = self.popen_side_effect
 
         expect(template.edit_text()) == 'Some message'
 

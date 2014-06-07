@@ -21,8 +21,6 @@ import datetime
 import operator
 import os
 import sys
-import subprocess
-import tempfile
 
 import click
 import html2text as html2
@@ -248,23 +246,13 @@ def edit_text(edit_type='default', data=None):
         data = {}
     data['comment_char'] = comment_char
 
-    fd, name = tempfile.mkstemp(prefix='hubugs-', suffix='.mkd')
-    try:
-        with os.fdopen(fd, 'w') as f:
-            f.write(template.render(data))
-
-        orig_mtime = os.path.getmtime(name)
-        subprocess.check_call(utils.get_editor() + [name, ])
-        new_mtime = os.path.getmtime(name)
-
+    text = click.edit(template.render(data), require_save=True,
+                      extension='.mkd')
+    if text:
         text = ''.join(filter(lambda s: not s.startswith(comment_char),
-                              open(name).readlines())).strip()
-    finally:
-        os.unlink(name)
+                              text.splitlines())).strip()
 
     if not text:
         raise EmptyMessageError(_('No message given'))
-    elif orig_mtime == new_mtime:
-        raise EmptyMessageError(_('Message not edited'))
 
     return text.strip()
