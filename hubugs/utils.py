@@ -310,23 +310,16 @@ def get_repo():
                           "`--project' option"))
 
 
-def pager(text, pager='less'):
+def pager(text, pager=False):
     """Pass output through pager.
 
     :param str text: Text to page
     :param bool pager: Pager to use
     """
     if pager:
-        pager_cmd = get_git_config_val('hubugs.pager', os.getenv('PAGER'))
-        if 'less' in pager_cmd and 'LESS' not in os.environ:
-            os.environ['LESS'] = 'FRSX'
-        pager = subprocess.Popen([pager_cmd, ], stdin=subprocess.PIPE)
-        if PY3K:
-            pager.communicate(text.encode())
-        else:
-            pager.communicate(text)
+        click.echo_via_pager(text)
     else:
-        print(text)
+        click.echo(text)
 
 
 def setup_environment(project, host_url):
