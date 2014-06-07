@@ -305,7 +305,7 @@ def open_bug(globs, add, create, stdin, title, body):
     """Opening new bugs."""
     utils.sync_labels(globs, add, create)
     if stdin:
-        text = sys.stdin.readlines()
+        text = click.get_text_stream('stdin').readlines()
     elif not title:
         text = template.edit_text('open').splitlines()
     if stdin or not title:
@@ -327,7 +327,7 @@ def open_bug(globs, add, create, stdin, title, body):
 def comment(globs, message, stdin, bugs):
     """Commenting on bugs."""
     if stdin:
-        message = sys.stdin.read()
+        message = click.get_text_stream().read()
     elif message:
         message = message
     else:
@@ -349,7 +349,7 @@ def edit(globs, stdin, title, body, bugs):
                            'with multiple bugs'))
     for bug in bugs:
         if stdin:
-            text = sys.stdin.readlines()
+            text = click.get_text_stream().readlines()
         elif not title:
             r, current = globs.req_get(bug, model='Issue')
             current_data = {'title': current.title, 'body': current.body}
@@ -373,7 +373,7 @@ def edit(globs, stdin, title, body, bugs):
 def close(globs, stdin, message, bugs):
     """Closing bugs."""
     if stdin:
-        message = sys.stdin.read()
+        message = click.get_text_stream().read()
     elif not message:
         try:
             message = template.edit_text()
@@ -397,7 +397,7 @@ def close(globs, stdin, message, bugs):
 def reopen(globs, stdin, message, bugs):
     """Reopening closed bugs."""
     if stdin:
-        message = sys.stdin.read()
+        message = click.get_text_stream().read()
     elif not message:
         try:
             message = template.edit_text()
