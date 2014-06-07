@@ -164,9 +164,9 @@ def label_parser(f):
 def setup(globs, local):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
-        click.echo(utils.warn(_('Falling back on bundled certificates')))
+        utils.warn(_('Falling back on bundled certificates'))
     if utils.CURL_CERTS:
-        click.echo(utils.warn(_('Using certs specified in $CURL_CERTS')))
+        utils.warn(_('Using certs specified in $CURL_CERTS'))
     default_user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user',
                                                       getpass.getuser()))
@@ -193,7 +193,7 @@ def setup(globs, local):
                                 body=data, headers=header,
                                 model='Authorisation', token=False)
     utils.set_git_config_val('hubugs.token', auth.token, local)
-    print(utils.success(_('Configuration complete!')))
+    utils.success(_('Configuration complete!'))
 
 
 @cli.command(name='list', help=_('Listing bugs.'))
@@ -317,7 +317,7 @@ def open_bug(globs, add, create, stdin, title, body):
         body = body
     data = {'title': title, 'body': body, 'labels': add + create}
     r, bug = globs['req_post']('', body=data, model='Issue')
-    print(utils.success(_('Bug %d opened') % bug.number))
+    utils.success(_('Bug %d opened') % bug.number)
 
 
 @cli.command(help=_('Commenting on bugs.'))
@@ -472,7 +472,7 @@ def milestone(globs, milestone, bugs):
 def milestones(globs, order, state, create, list):
     """Repository milestones."""
     if not list and not create:
-        print(utils.fail('No action specified!'))
+        utils.fail('No action specified!')
         return 1
     milestones_url = '%s/repos/%s/milestones' % (globs['host_url'],
                                                  globs['project'])
@@ -492,7 +492,7 @@ def milestones(globs, order, state, create, list):
     elif create:
         data = {'title': create}
         r, milestone = globs['req_post']('', body=data, model='Milestone')
-        print(utils.success(_('Milestone %d created' % milestone.number)))
+        utils.success(_('Milestone %d created' % milestone.number))
 
 
 @cli.command(help=_('Report a new bug against hubugs.'))
@@ -502,10 +502,9 @@ def report_bug(globs):
     local = globs['project'] == 'JNRowe/hubugs'
     globs['project'] = 'JNRowe/hubugs'
 
-    import blessings, html2text, jinja2, pygments  # NOQA
+    import html2text, jinja2, pygments  # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in (blessings, click, html2text, httplib2, jinja2,
-                               pygments)])
+                     for m in (click, html2text, httplib2, jinja2, pygments)])
     data = {
         'local': local,
         'sys': sys,
@@ -519,8 +518,7 @@ def report_bug(globs):
 
     data = {'title': title, 'body': body}
     r, bug = globs['req_post']('', body=data, model='Issue')
-    print(utils.success(_('Bug %d opened against hubugs, thanks!')
-                        % bug.number))
+    utils.success(_('Bug %d opened against hubugs, thanks!') % bug.number)
 
 
 def main():
@@ -532,15 +530,14 @@ def main():
     try:
         cli()
     except utils.HttpClientError as error:
-        click.echo(utils.fail(error.content[0]))
+        utils.fail(error.content[0])
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        click.echo(utils.fail(_('Project lookup failed.  Network or GitHub '
-                                'down?')))
+        utils.fail(_('Project lookup failed.  Network or GitHub down?'))
         return errno.ENXIO
     except (utils.RepoError) as error:
-        click.echo(utils.fail(error.message))
+        utils.fail(error.message)
         return errno.EINVAL
     except (EnvironmentError, ValueError) as error:
-        click.echo(utils.fail(error.message))
+        utils.fail(error.message)
         return errno.EINVAL

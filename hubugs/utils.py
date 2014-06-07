@@ -31,7 +31,7 @@ try:  # For Python 3
 except ImportError:
     from urllib import urlencode  # NOQA
 
-import blessings
+import click
 import configobj
 import httplib2
 
@@ -42,8 +42,6 @@ from .i18n import _
 PY3K = sys.version_info[0] == 3
 if PY3K:
     unicode = str
-
-T = blessings.Terminal()
 
 try:
     # httplib2 0.8 and above support setting certs via ca_certs_locater module,
@@ -87,7 +85,7 @@ def _colourise(text, colour):
     :rtype: ``str``
     :return: Colourised text, if possible
     """
-    return getattr(T, colour.replace(' ', '_'))(text)
+    return click.termui.secho(text, fg=colour, bold=True)
 
 
 def success(text):
@@ -97,7 +95,7 @@ def success(text):
     :rtype: ``str``
     :return: Bright green text, if possible
     """
-    return _colourise(text, 'bright green')
+    return _colourise(text, 'green')
 
 
 def fail(text):
@@ -107,7 +105,7 @@ def fail(text):
     :rtype: ``str``
     :return: Bright red text, if possible
     """
-    return _colourise(text, 'bright red')
+    return _colourise(text, 'red')
 
 
 def warn(text):
@@ -117,7 +115,7 @@ def warn(text):
     :rtype: ``str``
     :return: Bright yellow text, if possible
     """
-    return _colourise(text, 'bright yellow')
+    return _colourise(text, 'yellow')
 
 
 class HttpClientError(ValueError):
@@ -353,7 +351,7 @@ def sync_labels(globs, add, create):
             raise ValueError(_('No such label %r') % label)
     for label in create:
         if label in label_names:
-            print(warn(_('%r label already exists') % label))
+            warn(_('%r label already exists') % label)
         else:
             data = {'name': label, 'color': '000000'}
             globs['req_post'](labels_url, body=data, model='Label')

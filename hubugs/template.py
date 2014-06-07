@@ -24,6 +24,7 @@ import sys
 import subprocess
 import tempfile
 
+import click
 import html2text as html2
 import jinja2
 import misaka
@@ -85,19 +86,19 @@ def jinja_filter(func):
 
 
 @jinja_filter
-def colourise(text, formatting):
-    """Colourise text using blessings.
+def colourise(text, fg=None, bg=None, **kwargs):
+    """Colourise text.
 
     Returns text untouched if colour output is not enabled
 
-    :see: ``blessings``
-
     :param str text: Text to colourise
-    :param str formatting: Formatting to apply to text
+    :param str fg: Foreground colour
+    :param str bg: Background colour
+    :param dict kwargs: Formatting to apply to text
     :rtype: ``str``
     :return: Colourised text, when possible
     """
-    return getattr(utils.T, formatting.replace(' ', '_'))(text)
+    return click.style(text, fg, bg, **kwargs)
 # American spelling, just for Brandon Cady ;)
 ENV.filters['colorize'] = ENV.filters['colourise']
 
@@ -114,7 +115,7 @@ def highlight(text, lexer='diff', formatter='terminal'):
     :rtype: ``str``
     :return: Syntax highlighted output, when possible
     """
-    if utils.T.is_a_tty:
+    if sys.stdout.isatty():
         lexer = get_lexer_by_name(lexer)
         formatter = get_formatter_by_name(formatter)
         return pyg_highlight(text, lexer, formatter)
@@ -219,7 +220,7 @@ def display_bugs(bugs, order, **extras):
     bugs = sorted(bugs, key=operator.attrgetter(attr))
 
     # Default to 80 columns, when stdout is not a tty
-    columns = utils.T.width if utils.T.width else 80
+    columns = click.get_terminal_size()[0]
 
     template = get_template('view', 'list.txt')
 
