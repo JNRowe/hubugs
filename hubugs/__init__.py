@@ -55,7 +55,6 @@ import os
 # Used by raw_input, when imported
 import readline  # NOQA
 import sys
-import webbrowser
 
 from base64 import b64encode
 
@@ -272,8 +271,8 @@ def show(globs, full, patch, patch_only, browse, bugs):
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in bugs:
         if browse:
-            webbrowser.open_new_tab('https://github.com/%s/issues/%d'
-                                    % (globs.project, bug_no))
+            click.launch('https://github.com/%s/issues/%d'
+                         % (globs.project, bug_no))
             continue
         r, bug = globs.req_get(bug_no, model='Issue')
 
