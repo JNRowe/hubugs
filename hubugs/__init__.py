@@ -423,7 +423,7 @@ def label(globs, add, create, remove, list, bugs):
     label_names = utils.sync_labels(globs, add, create)
 
     if list:
-        print(', '.join(sorted(label_names)))
+        click.echo(', '.join(sorted(label_names)))
         return
 
     for bug_no in bugs:
