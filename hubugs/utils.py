@@ -118,6 +118,53 @@ def warn(text):
     return _colourise(text, 'yellow')
 
 
+class AttrDict(dict):
+
+    """Dictionary with attribute access.
+
+    .. seealso:: :obj:`dict`
+    """
+
+    def __contains__(self, key):
+        """Check for item membership
+
+        :param object key: Key to test for
+        :rtype: :obj:`bool`
+        """
+        return hasattr(self, key) or super(AttrDict, self).__contains__(key)
+
+    def __getattr__(self, key):
+        """Support item access via dot notation
+
+        :param object key: Key to fetch
+        """
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(key)
+
+    def __setattr__(self, key, value):
+        """Support item assignment via dot notation
+
+        :param object key: Key to set value for
+        :param object value: Value to set key to
+        """
+        try:
+            self[key] = value
+        except:
+            raise AttributeError(key)
+
+    def __delattr__(self, key):
+        """Support item deletion via dot notation
+
+        :param object key: Key to delete
+        """
+        try:
+            del self[key]
+        except KeyError:
+            raise AttributeError(key)
+
+
 class HttpClientError(ValueError):
 
     """Error raised for client error status codes."""
@@ -284,7 +331,7 @@ def pager(text, pager='less'):
 
 def setup_environment(project, host_url):
     """Configure execution environment for commands dispatch."""
-    env = {}
+    env = AttrDict()
 
     if not project:
         project = get_repo()
@@ -342,8 +389,8 @@ def sync_labels(globs, add, create):
     :rtype: ``list``
     :return: List of project's label names
     """
-    labels_url = '%s/repos/%s/labels' % (globs['host_url'], globs['project'])
-    r, c = globs['req_get'](labels_url, model='Label')
+    labels_url = '%s/repos/%s/labels' % (globs.host_url, globs.project)
+    r, c = globs.req_get(labels_url, model='Label')
     label_names = [label.name for label in c]
 
     for label in add:
@@ -354,5 +401,5 @@ def sync_labels(globs, add, create):
             warn(_('%r label already exists') % label)
         else:
             data = {'name': label, 'color': '000000'}
-            globs['req_post'](labels_url, body=data, model='Label')
+            globs.req_post(labels_url, body=data, model='Label')
     return label_names + add + create

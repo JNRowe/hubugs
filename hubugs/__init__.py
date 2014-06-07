@@ -189,9 +189,9 @@ def setup(globs, local):
     header = {
         'Authorization': 'Basic ' + b64encode(':'.join([user, password]))
     }
-    r, auth = globs['req_post']('https://api.github.com/authorizations',
-                                body=data, headers=header,
-                                model='Authorisation', token=False)
+    r, auth = globs.req_post('https://api.github.com/authorizations',
+                             body=data, headers=header, model='Authorisation',
+                             token=False)
     utils.set_git_config_val('hubugs.token', auth.token, local)
     utils.success(_('Configuration complete!'))
 
@@ -211,7 +211,7 @@ def list_bugs(globs, label, page, pull_requests, order, state):
     params = {}
     if pull_requests:
         # FIXME: Dirty solution to supporting PRs only, needs rethink
-        url = '%s/repos/%s/pulls' % (globs['host_url'], globs['project'])
+        url = '%s/repos/%s/pulls' % (globs.host_url, globs.project)
     else:
         url = ''
     if page != 1:
@@ -223,13 +223,13 @@ def list_bugs(globs, label, page, pull_requests, order, state):
     for state in states:
         _params = params.copy()
         _params['state'] = state
-        r, _bugs = globs['req_get'](url, params=_params, model='Issue')
+        r, _bugs = globs.req_get(url, params=_params, model='Issue')
         bugs.extend(_bugs)
 
     result = template.display_bugs(bugs, order, state=state,
-                                   project=globs['repo_obj']())
+                                   project=globs.repo_obj())
     if result:
-        utils.pager(result, pager=globs['pager'])
+        utils.pager(result, pager=globs.pager)
 
 
 @cli.command(help=_('Searching bugs.'))
@@ -242,18 +242,18 @@ def search(globs, order, state, term):
     # required to support it.  However, without search support in API v3 there
     # is no realistic way around it.
     from .models import from_search
-    search_url = '%s/legacy/issues/search/%%s/%%s/%%s' % globs['host_url']
+    search_url = '%s/legacy/issues/search/%%s/%%s/%%s' % globs.host_url
     states = ['open', 'closed'] if state == 'all' else [state, ]
     bugs = []
     for state in states:
-        r, c = globs['req_get'](search_url % (globs['project'], state, term),
-                                model='issue')
+        r, c = globs.req_get(search_url % (globs.project, state, term),
+                             model='issue')
         _bugs = [from_search(d) for d in c.issues]
         bugs.extend(_bugs)
     result = template.display_bugs(bugs, order, term=term, state=state,
-                                   project=globs['repo_obj']())
+                                   project=globs.repo_obj())
     if result:
-        utils.pager(result, pager=globs['pager'])
+        utils.pager(result, pager=globs.pager)
 
 
 @cli.command(help=_('Displaying bugs.'))
@@ -273,28 +273,28 @@ def show(globs, full, patch, patch_only, browse, bugs):
     for bug_no in bugs:
         if browse:
             webbrowser.open_new_tab('https://github.com/%s/issues/%d'
-                                    % (globs['project'], bug_no))
+                                    % (globs.project, bug_no))
             continue
-        r, bug = globs['req_get'](bug_no, model='Issue')
+        r, bug = globs.req_get(bug_no, model='Issue')
 
         if full and bug.comments:
-            r, comments = globs['req_get']('%s/comments' % bug_no,
-                                           model='Comment')
+            r, comments = globs.req_get('%s/comments' % bug_no,
+                                        model='Comment')
         else:
             comments = []
         if (patch or patch_only) and bug.pull_request:
-            url = '%s/repos/%s/pulls/%s' % (globs['host_url'],
-                                            globs['project'], bug_no)
+            url = '%s/repos/%s/pulls/%s' % (globs.host_url, globs.project,
+                                            bug_no)
             headers = {'Accept': 'application/vnd.github.patch'}
-            r, c = globs['req_get'](url, headers=headers, is_json=False)
+            r, c = globs.req_get(url, headers=headers, is_json=False)
             patch = c.decode('utf-8')
         else:
             patch = None
         results.append(tmpl.render(bug=bug, comments=comments, full=True,
                                    patch=patch, patch_only=patch_only,
-                                   project=globs['repo_obj']()))
+                                   project=globs.repo_obj()))
     if results:
-        utils.pager('\n'.join(results), pager=globs['pager'])
+        utils.pager('\n'.join(results), pager=globs.pager)
 
 
 @cli.command(name='open', help=_('Opening new bugs.'))
@@ -316,7 +316,7 @@ def open_bug(globs, add, create, stdin, title, body):
         title = title
         body = body
     data = {'title': title, 'body': body, 'labels': add + create}
-    r, bug = globs['req_post']('', body=data, model='Issue')
+    r, bug = globs.req_post('', body=data, model='Issue')
     utils.success(_('Bug %d opened') % bug.number)
 
 
@@ -334,8 +334,8 @@ def comment(globs, message, stdin, bugs):
     else:
         message = template.edit_text()
     for bug in bugs:
-        globs['req_post']('%s/comments' % bug, body={'body': message},
-                          model='Comment')
+        globs.req_post('%s/comments' % bug, body={'body': message},
+                       model='Comment')
 
 
 @cli.command(help=_('Editing bugs.'))
@@ -352,7 +352,7 @@ def edit(globs, stdin, title, body, bugs):
         if stdin:
             text = sys.stdin.readlines()
         elif not title:
-            r, current = globs['req_get'](bug, model='Issue')
+            r, current = globs.req_get(bug, model='Issue')
             current_data = {'title': current.title, 'body': current.body}
             text = template.edit_text('open', current_data).splitlines()
         if stdin or not title:
@@ -363,7 +363,7 @@ def edit(globs, stdin, title, body, bugs):
             body = body
 
         data = {'title': title, 'body': body}
-        globs['req_post'](bug, body=data, model='Issue')
+        globs.req_post(bug, body=data, model='Issue')
 
 
 @cli.command(help=_('Closing bugs.'))
@@ -385,9 +385,9 @@ def close(globs, stdin, message, bugs):
         message = message
     for bug in bugs:
         if message:
-            globs['req_post']('%s/comments' % bug, body={'body': message},
-                              model='Comment')
-        globs['req_post'](bug, body={'state': 'closed'}, model='Issue')
+            globs.req_post('%s/comments' % bug, body={'body': message},
+                           model='Comment')
+        globs.req_post(bug, body={'state': 'closed'}, model='Issue')
 
 
 @cli.command(help=_('Reopening closed bugs.'))
@@ -407,9 +407,9 @@ def reopen(globs, stdin, message, bugs):
             message = None
     for bug in bugs:
         if message:
-            globs['req_post']('%s/comments' % bug, body={'body': message},
-                              model='Comment')
-        globs['req_post'](bug, body={'state': 'open'}, model='Issue')
+            globs.req_post('%s/comments' % bug, body={'body': message},
+                           model='Comment')
+        globs.req_post(bug, body={'state': 'open'}, model='Issue')
 
 
 @cli.command(help=_('Labelling bugs.'))
@@ -427,13 +427,13 @@ def label(globs, add, create, remove, list, bugs):
         return
 
     for bug_no in bugs:
-        r, bug = globs['req_get'](bug_no, model='Issue')
+        r, bug = globs.req_get(bug_no, model='Issue')
         labels = [label.name for label in bug.labels]
         labels.extend(add + create)
 
         for string in remove:
             labels.remove(string)
-        globs['req_post'](bug_no, body={'labels': labels}, model='Label')
+        globs.req_post(bug_no, body={'labels': labels}, model='Label')
 
 
 @cli.command(help=_('Issue milestones.'))
@@ -442,9 +442,8 @@ def label(globs, add, create, remove, list, bugs):
 @click.pass_obj
 def milestone(globs, milestone, bugs):
     """Issue milestones."""
-    milestones_url = '%s/repos/%s/milestones' % (globs['host_url'],
-                                                 globs['project'])
-    r, milestones = globs['req_get'](milestones_url, model='Milestone')
+    milestones_url = '%s/repos/%s/milestones' % (globs.host_url, globs.project)
+    r, milestones = globs.req_get(milestones_url, model='Milestone')
 
     milestone_mapping = dict((m.title, m.number) for m in milestones)
 
@@ -454,8 +453,8 @@ def milestone(globs, milestone, bugs):
         raise ValueError(_('No such milestone %r') % milestone)
 
     for bug_no in bugs:
-        globs['req_post'](bug_no, body={'milestone': milestone},
-                          model='Milestone')
+        globs.req_post(bug_no, body={'milestone': milestone},
+                       model='Milestone')
 
 
 @cli.command(help=_('Repository milestones.'))
@@ -474,9 +473,8 @@ def milestones(globs, order, state, create, list):
     if not list and not create:
         utils.fail('No action specified!')
         return 1
-    milestones_url = '%s/repos/%s/milestones' % (globs['host_url'],
-                                                 globs['project'])
-    r, milestones = globs['req_get'](milestones_url, model='Milestone')
+    milestones_url = '%s/repos/%s/milestones' % (globs.host_url, globs.project)
+    r, milestones = globs.req_get(milestones_url, model='Milestone')
 
     if list:
         tmpl = template.get_template('view', '/list_milestones.txt')
@@ -485,13 +483,13 @@ def milestones(globs, order, state, create, list):
         id_len = len(str(max_id))
 
         result = tmpl.render(milestones=milestones, order=order, state=state,
-                             project=globs['repo_obj'](),
+                             project=globs.repo_obj(),
                              id_len=id_len, max_title=columns - id_len - 2)
         if result:
-            utils.pager(result, pager=globs['pager'])
+            utils.pager(result, pager=globs.pager)
     elif create:
         data = {'title': create}
-        r, milestone = globs['req_post']('', body=data, model='Milestone')
+        r, milestone = globs.req_post('', body=data, model='Milestone')
         utils.success(_('Milestone %d created' % milestone.number))
 
 
@@ -499,8 +497,8 @@ def milestones(globs, order, state, create, list):
 @click.pass_obj
 def report_bug(globs):
     """Report a new bug against hubugs."""
-    local = globs['project'] == 'JNRowe/hubugs'
-    globs['project'] = 'JNRowe/hubugs'
+    local = globs.project == 'JNRowe/hubugs'
+    globs.project = 'JNRowe/hubugs'
 
     import html2text, jinja2, pygments  # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
@@ -517,7 +515,7 @@ def report_bug(globs):
     body = '\n'.join(text[1:])
 
     data = {'title': title, 'body': body}
-    r, bug = globs['req_post']('', body=data, model='Issue')
+    r, bug = globs.req_post('', body=data, model='Issue')
     utils.success(_('Bug %d opened against hubugs, thanks!') % bug.number)
 
 
