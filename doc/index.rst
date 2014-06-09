@@ -36,6 +36,7 @@ Contents
    faq
    alternatives
    release
+   api/index
    appendix
 
 Indices and tables
