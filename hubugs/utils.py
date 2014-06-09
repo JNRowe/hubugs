@@ -95,7 +95,7 @@ def success(text):
     """Output a success message.
 
     :param str text:  Text to format
-    :rtype: ``str`
+    :rtype: ``str``
     :return: Bright green text, if possible
     """
     return _colourise(text, 'bright green')
@@ -105,7 +105,7 @@ def fail(text):
     """Output a failure message.
 
     :param str text:  Text to format
-    :rtype: ``str`
+    :rtype: ``str``
     :return: Bright red text, if possible
     """
     return _colourise(text, 'bright red')
@@ -115,7 +115,7 @@ def warn(text):
     """Output a warning message.
 
     :param str text:  Text to format
-    :rtype: ``str`
+    :rtype: ``str``
     :return: Bright yellow text, if possible
     """
     return _colourise(text, 'bright yellow')
