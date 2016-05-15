@@ -14,8 +14,8 @@
 {% endblock -%}
 {%- block body %}
 {%- if not patch_only -%}
-{%- if bug.body_html %}
-{{ bug.body_html | html2text }}
+{%- if bug.body %}
+{{ bug.body | markdown | html2text }}
 {%- endif -%}
 {%- endif -%}
 {% endblock %}
@@ -35,7 +35,7 @@
 {{ " Created" | colourise(theme.heading_colour) }}: {{ comment.created_at | relative_time }} by {{ comment.user.login | colourise(theme.highlight_colour) }}
 {{ " Updated" | colourise(theme.heading_colour) }}: {{ comment.updated_at | relative_time }}
 
-{{ comment.body_html | html2text }}
+{{ comment.body | markdown | html2text }}
 {%- endfor %}
 {%- endif -%}
 {%- endif -%}
