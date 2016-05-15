@@ -311,7 +311,7 @@ def setup_environment(args):
     http = get_github_api()
 
     HEADERS = {
-        'Accept': 'application/vnd.github.beta.full+json',
+        'Accept': 'application/vnd.github.v3+json',
         'User-Agent': _version.web,
     }
 
