@@ -20,7 +20,7 @@ User-visible changes
 * kitchen_ is no longer required
 
 .. _Mercurial: http://mercurial.selenic.com/
-.. _aaargh: https://crate.io/packages/aaargh/
+.. _aaargh: https://pypi.python.org/pypi/aaargh/
 
 0.15.0 - 2012-10-16
 -------------------
@@ -33,12 +33,12 @@ User-visible changes
 * expecter_ and nose2-cov_ are required for the test suite
 * micromodels_ is no longer required, see #32
 
-.. _kitchen: https://crate.io/packages/kitchen/
-.. _schematics: https://crate.io/packages/schematics/
-.. _pip: https://crate.io/packages/pip/
-.. _nose2: https://crate.io/packages/nose2/
-.. _expecter: https://crate.io/packages/expecter/
-.. _nose2-cov: https://crate.io/packages/nose2-cov/
+.. _kitchen: https://pypi.python.org/pypi/kitchen/
+.. _schematics: https://pypi.python.org/pypi/schematics/
+.. _pip: https://pypi.python.org/pypi/pip/
+.. _nose2: https://pypi.python.org/pypi/nose2/
+.. _expecter: https://pypi.python.org/pypi/expecter/
+.. _nose2-cov: https://pypi.python.org/pypi/nose2-cov/
 
 0.14.0 - 2012-04-30
 -------------------
@@ -53,8 +53,8 @@ User-visible changes
 * github2_ and misaka_ are no longer required
 
 .. _GitHub API v3: http://developer.github.com/v3/
-.. _httplib2: https://crate.io/packages/httplib2
-.. _micromodels: https://crate.io/packages/micromodels/
+.. _httplib2: https://pypi.python.org/pypi/httplib2
+.. _micromodels: https://pypi.python.org/pypi/micromodels/
 
 0.13.1 - 2012-02-28
 -------------------
@@ -74,8 +74,8 @@ User-visible changes
   Markdown`_
 * blessings_ is now required for terminal formatting
 
-.. _misaka: https://crate.io/packages/misaka/
-.. _blessings: https://crate.io/packages/blessings/
+.. _misaka: https://pypi.python.org/pypi/misaka/
+.. _blessings: https://pypi.python.org/pypi/blessings/
 .. _GitHub flavoured Markdown: http://github.github.com/github-flavored-markdown/
 
 0.12.0 - 2012-01-16
@@ -87,7 +87,7 @@ User-visible changes
   ``html2text`` filter
 
 .. _markdown2: http://github.com/trentm/python-markdown2
-.. _html2text: https://crate.io/packages/html2text
+.. _html2text: https://pypi.python.org/pypi/html2text
 
 0.11.0 - 2011-09-06
 -------------------
@@ -109,8 +109,8 @@ User-visible changes
 * Testsuite that can be run via nose_ or tox_
 * github2 v0.5.0, or later, is now required
 
-.. _nose: https://crate.io/packages/nose
-.. _tox: https://crate.io/packages/tox/
+.. _nose: https://pypi.python.org/pypi/nose
+.. _tox: https://pypi.python.org/pypi/tox/
 
 0.8.0 - 2011-05-30
 ------------------
@@ -124,7 +124,7 @@ User-visible changes
 * Works with unpatched github2_ package now!
 * No longer supports priorities, GitHub have dropped support for this feature
 
-.. _github2: https://crate.io/packages/github2/
+.. _github2: https://pypi.python.org/pypi/github2/
 
 0.6.0 - 2011-04-09
 ------------------
@@ -145,7 +145,7 @@ User-visible changes
 * Labels are now included in list output
 * argh_ is now required
 
-.. _argh: https://crate.io/packages/argh/
+.. _argh: https://pypi.python.org/pypi/argh/
 
 0.4.0 - 2011-02-26
 ------------------
@@ -165,7 +165,7 @@ User-visible changes
 * Addition of a distutils_ ``setup.py``
 
 .. _Jinja: http://jinja.pocoo.org/
-.. _termcolor: https://crate.io/packages/termcolor/
+.. _termcolor: https://pypi.python.org/pypi/termcolor/
 .. _distutils: http://docs.python.org/install/index.html
 
 0.2.0 - 2011-02-25

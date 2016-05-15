@@ -83,13 +83,13 @@ reproduce the problem, or even better a patch!
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _GitHub API: http://developer.github.com/v3/
 .. _Python: http://www.python.org/
-.. _aaargh: https://crate.io/packages/aaargh/
-.. _blessings: https://crate.io/packages/blessings/
-.. _configobj: https://crate.io/packages/configobj/
+.. _aaargh: https://pypi.python.org/pypi/aaargh/
+.. _blessings: https://pypi.python.org/pypi/blessings/
+.. _configobj: https://pypi.python.org/pypi/configobj/
 .. _Jinja: http://jinja.pocoo.org/
-.. _html2text: https://crate.io/packages/html2text/
-.. _httplib2: https://crate.io/packages/httplib2
-.. _misaka: https://crate.io/packages/misaka/
+.. _html2text: https://pypi.python.org/pypi/html2text/
+.. _httplib2: https://pypi.python.org/pypi/httplib2
+.. _misaka: https://pypi.python.org/pypi/misaka/
 .. _Pygments: http://pygments.org/
 .. _OAuth: http://oauth.net/
 .. _GitHub settings: https://github.com/settings/applications/
