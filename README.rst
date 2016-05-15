@@ -4,16 +4,16 @@ hubugs - Simple client for GitHub issues
 .. image:: https://secure.travis-ci.org/JNRowe/hubugs.png?branch=master
    :target: http://travis-ci.org/JNRowe/hubugs
 
+.. warning::
+
+   I don't really use GitHub anymore, so this package is somewhat orphaned.  It
+   should still work *and* I will fix bugs when they're pointed out, but
+   ``hubugs`` is frankly quite a low priority for me.
+
 Introduction
 ------------
 
 ``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
-
-.. important::
-
-   This package is in a *rapid* state of flux right now, as support for version
-   3 of the `GitHub API`_ is added.  Be aware there may be some significant
-   changes to the user interface coming soon!
 
 Requirements
 ------------
@@ -81,7 +81,6 @@ If you've found a problem please attempt to include a minimal testcase so I can
 reproduce the problem, or even better a patch!
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
-.. _GitHub API: http://developer.github.com/v3/
 .. _Python: http://www.python.org/
 .. _aaargh: https://pypi.python.org/pypi/aaargh/
 .. _blessings: https://pypi.python.org/pypi/blessings/
