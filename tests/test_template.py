@@ -121,6 +121,11 @@ class EditText(TestCase):
             template.edit_text('open', data={'title': 'Some message'})
 
 
+class Markdown(TestCase):
+    def test_basic(self):
+        assert_equals(template.markdown('### hello'), '<h3>hello</h3>\n')
+
+
 class Html2Text(TestCase):
     def test_basic(self):
         expect(template.html2text('<h3>hello</h3>')) == '### hello'

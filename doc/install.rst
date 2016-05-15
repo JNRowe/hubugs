@@ -35,4 +35,5 @@ steps::
 * :pypi:`html2text` is used formatting HTML for the terminal
 * :pypi:`httplib2` for HTTP communications
 * :pypi:`Jinja2` for templating
+* :pypi:`misaka` is used for converting issue text to HTML
 * :pypi:`Pygments` for syntax highlighting in template output

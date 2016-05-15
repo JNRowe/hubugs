@@ -20,7 +20,7 @@ Requirements
 
 ``hubugs`` requires Python_ v2.6 or newer, including Python 3.  ``hubugs``'s
 mandatory dependencies outside of the standard library are aaargh_, blessings_,
-configobj_, html2text_, httplib2_, Jinja_ and Pygments_.
+configobj_, html2text_, httplib2_, Jinja_, misaka_ and Pygments_.
 
 Configuration
 -------------
@@ -89,6 +89,7 @@ reproduce the problem, or even better a patch!
 .. _Jinja: http://jinja.pocoo.org/
 .. _html2text: https://crate.io/packages/html2text/
 .. _httplib2: https://crate.io/packages/httplib2
+.. _misaka: https://crate.io/packages/misaka/
 .. _Pygments: http://pygments.org/
 .. _OAuth: http://oauth.net/
 .. _GitHub settings: https://github.com/settings/applications/
