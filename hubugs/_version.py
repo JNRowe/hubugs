@@ -1,10 +1,10 @@
-# This is hubugs version 0.17.5 (2014-02-03)
-# pylint: disable=C0103, C0111, C0121, W0622
+# This is hubugs version 0.18.0 (2016-05-16)
+# pylint: skip-file
 
-dotted = '0.17.5'
-libtool = '17:25'
-hex = 0x001105
-date = '2014-02-03'
-tuple = (0, 17, 5)
-dict = {'major': 0, 'micro': 5, 'minor': 17}
-web = 'hubugs/0.17.5'
+dotted = '0.18.0'
+libtool = '18:20'
+hex = 0x001200
+date = '2016-05-16'
+tuple = (0, 18, 0)
+dict = {'major': 0, 'minor': 18, 'micro': 0}
+web = 'hubugs/0.18.0'

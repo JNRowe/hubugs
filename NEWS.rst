@@ -3,6 +3,16 @@ User-visible changes
 
 .. contents::
 
+0.18.0 - 2016-05-16
+-------------------
+
+* Support for httplib2_ v0.8's ``ca_certs_locater``
+* Support for git's ``core.commentchar`` in templates
+* Requires configobj_
+* misaka_ is required [again], as GitHub no longer provide pre-formatted HTML
+
+.. _configobj: https://pypi.python.org/pypi/configobj/
+
 0.17.0 - 2013-02-01
 -------------------
 

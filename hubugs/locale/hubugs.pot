@@ -1,21 +1,21 @@
 # Translations template for hubugs.
-# Copyright (C) 2014 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the hubugs project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: hubugs 0.17.5\n"
+"Project-Id-Version: hubugs 0.18.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-04-17 14:47+0100\n"
+"POT-Creation-Date: 2016-05-16 21:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
+"Generated-By: Babel 2.1.1\n"
 
 #: hubugs/__init__.py:77
 msgid "Please report bugs to the JNRowe/hubugs project"
@@ -242,45 +242,45 @@ msgstr ""
 msgid "Project lookup failed.  Network or GitHub down?"
 msgstr ""
 
-#: hubugs/template.py:198
+#: hubugs/template.py:211
 msgid "No bugs found!"
 msgstr ""
 
-#: hubugs/template.py:252
+#: hubugs/template.py:265
 msgid "No message given"
 msgstr ""
 
-#: hubugs/template.py:254
+#: hubugs/template.py:267
 msgid "Message not edited"
 msgstr ""
 
-#: hubugs/utils.py:148
+#: hubugs/utils.py:151
 msgid "No GitHub user setting!"
 msgstr ""
 
-#: hubugs/utils.py:263
+#: hubugs/utils.py:272
 msgid "Unable to guess project from repository"
 msgstr ""
 
-#: hubugs/utils.py:279
+#: hubugs/utils.py:288
 msgid "Invalid project configuration, specify with `--project' option"
 msgstr ""
 
-#: hubugs/utils.py:322
+#: hubugs/utils.py:331
 msgid "No hubugs authorisation token found!  Run 'hubugs setup' to create a token"
 msgstr ""
 
-#: hubugs/utils.py:359
+#: hubugs/utils.py:368
 #, python-format
 msgid "Invalid project %r"
 msgstr ""
 
-#: hubugs/utils.py:379
+#: hubugs/utils.py:388
 #, python-format
 msgid "No such label %r"
 msgstr ""
 
-#: hubugs/utils.py:382
+#: hubugs/utils.py:391
 #, python-format
 msgid "%r label already exists"
 msgstr ""
