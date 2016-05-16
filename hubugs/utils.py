@@ -1,7 +1,7 @@
 #
 # coding=utf-8
 """utils - Utility functions for hubugs"""
-# Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
+# Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Matt Leighton <mleighy@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

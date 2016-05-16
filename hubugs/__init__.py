@@ -1,7 +1,7 @@
 #
 # coding=utf-8
 """hubugs - Simple client for GitHub issues"""
-# Copyright © 2010-2014  James Rowe <jnrowe@gmail.com>
+# Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Ben Griffiths
 #
 # This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ from . import _version
 __version__ = _version.dotted
 __date__ = _version.date
 __author__ = 'James Rowe <jnrowe@gmail.com>'
-__copyright__ = '2010-2014  James Rowe'
+__copyright__ = '2010-2016  James Rowe'
 __license__ = 'GNU General Public License Version 3'
 __credits__ = 'Ben Griffiths, Matt Leighton'
 __history__ = 'See git repository'
