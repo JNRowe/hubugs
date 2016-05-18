@@ -204,6 +204,12 @@ def get_git_config_val(key, default=None, local_only=False):
         output = check_output(cmd).strip()
     except subprocess.CalledProcessError:
         output = default
+    if output and output.startswith('!'):
+        try:
+            output = check_output(output[1:].split()).strip()
+        except subprocess.CalledProcessError:
+            print("Whoops!")
+            sys.exit(97)
     return output
 
 
