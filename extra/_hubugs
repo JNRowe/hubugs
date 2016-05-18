@@ -60,27 +60,32 @@ case "$words[1]" in
 (close)
     _arguments '--help[show help message and exit]' \
         '--stdin[read message from standard input]' \
-        '--message=[comment text]:message text: '
+        '--message=[comment text]:message text: ' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (comment)
     _arguments '--help[show help message and exit]' \
         '--stdin[read message from standard input]' \
-        '--message=[comment text]:message text: '
+        '--message=[comment text]:message text: ' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (edit)
     _arguments '--help[show help message and exit]' \
-        '--stdin[read message from standard input]'
+        '--stdin[read message from standard input]' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (label)
     _arguments '--help[show help message and exit]' \
         '--add=[add label to issue]:select label: ' \
-        '--remove=[remove label from issue]:select label: '
+        '--remove=[remove label from issue]:select label: ' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (list)
     _arguments '--help[show help message and exit]' \
         '--state=[state of bugs to operate on]:select state:(open closed all)' \
         '--label=[list bugs with specified label]:select label: ' \
-        '--order=[sort order for listing bugs]:select order:(number updated)'
+        '--order=[sort order for listing bugs]:select order:(number updated)' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (milestone)
     _arguments '--help[show help message and exit]'
@@ -100,7 +105,8 @@ case "$words[1]" in
 (reopen)
     _arguments '--help[show help message and exit]' \
         '--stdin[read message from standard input]' \
-        '--message=[comment text]:message text: '
+        '--message=[comment text]:message text: ' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (setup)
     _arguments '--help[show help message and exit]' \
@@ -117,7 +123,8 @@ case "$words[1]" in
         '--full[show bug including comments]' \
         '--patch[display patches for pull requests]' \
         '--patch-only[display only the patch content of pull requests]' \
-        '--browse[open bug in web browser]'
+        '--browse[open bug in web browser]' \
+        '*:bug number:_guard "[0-9]#" "numeric value"'
     ;;
 (*)
     ;;
