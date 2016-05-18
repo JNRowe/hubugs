@@ -151,8 +151,9 @@ def text_parser(f):
 
 
 def label_parser(f):
-    f = click.option('-a', '--add', nargs=-1, help=_('Add label to issue.'))(f)
-    f = click.option('-c', '--create', nargs=-1,
+    f = click.option('-a', '--add', multiple=True,
+                     help=_('Add label to issue.'))(f)
+    f = click.option('-c', '--create', multiple=True,
                      help=_('Create new label and add to issue.'))(f)
     return f
 
@@ -197,7 +198,7 @@ def setup(globs, local):
 
 
 @cli.command(name='list', help=_('Listing bugs.'))
-@click.option('-l', '--label', nargs=-1,
+@click.option('-l', '--label', multiple=True,
               help=_('List bugs with specified label.'))
 @click.option('-p', '--page', help=_('Page number.'), type=click.INT,
               default=1)
@@ -414,7 +415,8 @@ def reopen(globs, stdin, message, bugs):
 
 @cli.command(help=_('Labelling bugs.'))
 @label_parser
-@click.option('-r', '--remove', nargs=-1, help=_('Remove label from issue.'))
+@click.option('-r', '--remove', multiple=True,
+              help=_('Remove label from issue.'))
 @click.option('-l', '--list', is_flag=True, help=_('List available labels.'))
 @click.argument('bugs', nargs=-1, required=False, type=click.INT)
 @click.pass_obj
