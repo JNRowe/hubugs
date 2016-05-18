@@ -90,7 +90,8 @@ class ProjectNameParamType(click.ParamType):
 
 @click.group(help=_('Simple client for GitHub issues.'),
              epilog=_('Please report bugs to '
-                      'https://github.com/JNRowe/hubugs/issues'))
+                      'https://github.com/JNRowe/hubugs/issues'),
+             context_settings={'help_option_names': ['-h', '--help']})
 @click.version_option(_version.dotted)
 @click.option('--pager/--no-pager', help=_('Pass output through a pager.'))
 @click.option('-p', '--project', type=ProjectNameParamType(),
