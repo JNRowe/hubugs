@@ -47,7 +47,6 @@ try:
 except ImportError:
     pass
 
-import argparse
 import atexit
 import errno
 import getpass
@@ -56,11 +55,10 @@ import os
 # Used by raw_input, when imported
 import readline  # NOQA
 import sys
-import webbrowser
 
 from base64 import b64encode
 
-import aaargh
+import click
 import httplib2
 
 logging.basicConfig(level=logging.ERROR,
@@ -73,65 +71,113 @@ from . import (template, utils)
 from .i18n import _
 
 
-APP = aaargh.App(description=__doc__.splitlines()[0].split('-', 1)[1],
-                 epilog=_('Please report bugs to the JNRowe/hubugs project'))
+class ProjectNameParamType(click.ParamType):
+
+    """Project name parameter parser."""
+
+    name = 'project'
+
+    def convert(self, value, param, ctx):
+        """Set fully qualified GitHub project name."""
+        if not '/' in value:
+            user = os.getenv('GITHUB_USER',
+                             utils.get_git_config_val('github.user'))
+            if not user:
+                self.fail(_('No GitHub user setting!'))
+            value = '%s/%s' % (user, value)
+        return value
+
+
+@click.group(help=_('Simple client for GitHub issues.'),
+             epilog=_('Please report bugs at '
+                      'https://github.com/JNRowe/hubugs/issues'),
+             context_settings={'help_option_names': ['-h', '--help']})
+@click.version_option(_version.dotted)
+@click.option('--pager/--no-pager', help=_('Pass output through a pager.'))
+@click.option('-p', '--project', type=ProjectNameParamType(),
+              help=_('GitHub project to operate on.'))
+@click.option('-u', '--host-url',
+              default=utils.get_git_config_val('hubugs.host-url',
+                                               'https://api.github.com'),
+              help=_('GitHub Enterprise host to connect to.'))
+@click.pass_context
+def cli(ctx, pager, project, host_url):
+    """Main command entry point.
+
+    :param click.Context ctx: Current command context
+    :param bool pager: Whether to page output
+    :param str project: GitHub project name
+    :param str host: Hostname to connect to
+    """
+    ctx.obj = utils.setup_environment(project, host_url)
+    ctx.obj.update({
+        'host_url': host_url,
+        'pager': pager,
+        'project': project,
+    })
+
 
 # Convenience wrappers for defining command arguments
-# pylint: disable-msg=C0103
-bugs_parser = argparse.ArgumentParser(add_help=False)
-bugs_parser.add_argument('bugs', nargs='+', type=int,
-                         help=_('bug number(s) to operate on'))
-
-message_parser = argparse.ArgumentParser(add_help=False)
-message_parser.add_argument('-m', '--message', help=_('comment text'))
-
-attrib_parser = argparse.ArgumentParser(add_help=False)
-attrib_parser.add_argument('-o', '--order', default='number',
-                           choices=['number', 'updated'],
-                           help=_('sort order for listing bugs'))
-attrib_parser.add_argument('-s', '--state', default='open',
-                           choices=['open', 'closed', 'all'],
-                           help=_('state of bugs to operate on'))
-
-stdin_parser = argparse.ArgumentParser(add_help=False)
-stdin_parser.add_argument('--stdin', action='store_true',
-                          help=_('read message from standard input'))
-
-text_parser = argparse.ArgumentParser(add_help=False)
-text_parser.add_argument('title', help=_('title for the new bug'), nargs='?')
-text_parser.add_argument('body', help=_('body for the new bug'), nargs='?')
-
-label_parser = argparse.ArgumentParser(add_help=False)
-label_parser.add_argument('-a', '--add', action='append', default=[],
-                          help=_('add label to issue'), metavar='label')
-label_parser.add_argument('-c', '--create', action='append', default=[],
-                          help=_('create new label and add to issue'),
-                          metavar='label')
-# pylint: enable-msg=C0103
+def bugs_parser(f):
+    f = click.argument('bugs', nargs=-1, type=click.INT)(f)
+    return f
 
 
-@APP.cmd(help=_('setup GitHub access token'))
-@APP.cmd_arg('--local', action='store_true',
-             help=_('set access token for local repository only'))
-def setup(args):
+def message_parser(f):
+    f = click.option('-m', '--message', help=_('Comment text.'))(f)
+    return f
+
+
+def attrib_parser(f):
+    f = click.option('-o', '--order', default='number',
+                     type=click.Choice(['number', 'updated']),
+                     help=_('Sort order for listing bugs.'))(f)
+    f = click.option('-s', '--state', default='open',
+                     type=click.Choice(['open', 'closed', 'all']),
+                     help=_('State of bugs to operate on.'))(f)
+    return f
+
+
+def stdin_parser(f):
+    f = click.option('--stdin', is_flag=True,
+                     help=_('Read message from standard input.'))(f)
+    return f
+
+
+def text_parser(f):
+    f = click.option('--title')(f)
+    f = click.option('--body')(f)
+    return f
+
+
+def label_parser(f):
+    f = click.option('-a', '--add', multiple=True,
+                     help=_('Add label to issue.'))(f)
+    f = click.option('-c', '--create', multiple=True,
+                     help=_('Create new label and add to issue.'))(f)
+    return f
+
+
+@cli.command(help=_('Setup GitHub access token.'))
+@click.option('--local/--no-local',
+              help=_('Set access token for local repository only.'))
+@click.pass_obj
+def setup(globs, local):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
-        print(utils.warn(_('Falling back on bundled certificates')))
+        utils.warn(_('Falling back on bundled certificates'))
     if utils.CURL_CERTS:
-        print(utils.warn(_('Using certs specified in $CURL_CERTS')))
+        utils.warn(_('Using certs specified in $CURL_CERTS'))
     default_user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user',
                                                       getpass.getuser()))
-    try:
-        user = raw_input(_('GitHub user? [%s] ') % default_user)
-        if not user:
-            user = default_user
-        password = getpass.getpass(_('GitHub password? '))
-    except KeyboardInterrupt:
-        return
+    user = click.prompt(_('GitHub user'), default_user)
+    if not user:
+        user = default_user
+    password = click.prompt(_('GitHub password'), hide_input=True,
+                            confirmation_prompt=True)
 
-    result = raw_input(_('Support private repositories? [Y/n] '))
-    private = result.lower() == _('y')
+    private = click.confirm(_('Support private repositories'))
 
     data = {
         'scopes': ['repo' if private else 'public_repo'],
@@ -144,300 +190,321 @@ def setup(args):
     header = {
         'Authorization': 'Basic ' + b64encode(':'.join([user, password]))
     }
-    r, auth = args.req_post('https://api.github.com/authorizations', body=data,
-                            headers=header, model='Authorisation')
-    utils.set_git_config_val('hubugs.token', auth.token, args.local)
-    print(utils.success(_('Configuration complete!')))
+    r, auth = globs.req_post('https://api.github.com/authorizations',
+                             body=data, headers=header, model='Authorisation',
+                             token=False)
+    utils.set_git_config_val('hubugs.token', auth.token, local)
+    utils.success(_('Configuration complete!'))
 
 
-@APP.cmd(name='list', help=_('listing bugs'), parents=[attrib_parser, ])
-@APP.cmd_arg('-l', '--label', help=_('list bugs with specified label'),
-             metavar='label', action='append')
-@APP.cmd_arg('-p', '--page', help=_('page number'), type=int, default=1,
-             metavar='number')
-@APP.cmd_arg('-r', '--pull-requests', action='store_true',
-             help=_('list only pull requests'))
-def list_bugs(args):
+@cli.command(name='list', help=_('Listing bugs.'))
+@click.option('-l', '--label', multiple=True,
+              help=_('List bugs with specified label.'))
+@click.option('-p', '--page', help=_('Page number.'), type=click.INT,
+              default=1)
+@click.option('-r', '--pull-requests', is_flag=True,
+              help=_('List only pull requests.'))
+@attrib_parser
+@click.pass_obj
+def list_bugs(globs, label, page, pull_requests, order, state):
     """Listing bugs."""
     bugs = []
     params = {}
-    if args.pull_requests:
+    if pull_requests:
         # FIXME: Dirty solution to supporting PRs only, needs rethink
-        url = '%s/repos/%s/pulls' % (args.host_url, args.project)
+        url = '%s/repos/%s/pulls' % (globs.host_url, globs.project)
     else:
         url = ''
-    if args.page != 1:
-        params['page'] = args.page
-    if args.label:
-        params['labels'] = ','.join(args.label)
+    if page != 1:
+        params['page'] = page
+    if label:
+        params['labels'] = ','.join(label)
 
-    states = ['open', 'closed'] if args.state == 'all' else [args.state, ]
+    states = ['open', 'closed'] if state == 'all' else [state, ]
     for state in states:
         _params = params.copy()
         _params['state'] = state
-        r, _bugs = args.req_get(url, params=_params, model='Issue')
+        r, _bugs = globs.req_get(url, params=_params, model='Issue')
         bugs.extend(_bugs)
 
-    result = template.display_bugs(bugs, args.order, state=args.state,
-                                   project=args.repo_obj)
+    result = template.display_bugs(bugs, order, state=state,
+                                   project=globs.repo_obj())
     if result:
-        utils.pager(result, pager=args.pager)
+        utils.pager(result, pager=globs.pager)
 
 
-@APP.cmd(help=_('searching bugs'), parents=[attrib_parser, ])
-@APP.cmd_arg('term', help=_('term to search bugs for'))
-def search(args):
+@cli.command(help=_('Searching bugs.'))
+@attrib_parser
+@click.argument('term')
+@click.pass_obj
+def search(globs, order, state, term):
     """Searching bugs."""
     # This chunk of code is horrific, as is the models.from_search() that is
     # required to support it.  However, without search support in API v3 there
     # is no realistic way around it.
     from .models import from_search
-    search_url = '%s/legacy/issues/search/%%s/%%s/%%s' % args.host_url
-    states = ['open', 'closed'] if args.state == 'all' else [args.state, ]
+    search_url = '%s/legacy/issues/search/%%s/%%s/%%s' % globs.host_url
+    states = ['open', 'closed'] if state == 'all' else [state, ]
     bugs = []
     for state in states:
-        r, c = args.req_get(search_url % (args.project, state, args.term),
-                            model='issue')
+        r, c = globs.req_get(search_url % (globs.project, state, term),
+                             model='issue')
         _bugs = [from_search(d) for d in c.issues]
         bugs.extend(_bugs)
-    result = template.display_bugs(bugs, args.order, term=args.term,
-                                   state=args.state, project=args.repo_obj)
+    result = template.display_bugs(bugs, order, term=term, state=state,
+                                   project=globs.repo_obj())
     if result:
-        utils.pager(result, pager=args.pager)
+        utils.pager(result, pager=globs.pager)
 
 
-@APP.cmd(help=_('displaying bugs'), parents=[bugs_parser, ])
-@APP.cmd_arg('-f', '--full', action='store_true',
-             help=_('show bug including comments'))
-@APP.cmd_arg('-p', '--patch', action='store_true',
-             help=_('display patches for pull requests'))
-@APP.cmd_arg('-o', '--patch-only', action='store_true',
-             help=_('display only the patch content of pull requests'))
-@APP.cmd_arg('-b', '--browse', action='store_true',
-             help=_('open bug in web browser'))
-def show(args):
+@cli.command(help=_('Displaying bugs.'))
+@click.option('-f', '--full/--no-full', help=_('Show bug including comments.'))
+@click.option('-p', '--patch/--no-patch', is_flag=True,
+              help=_('Display patches for pull requests.'))
+@click.option('-o', '--patch-only', is_flag=True,
+              help=_('Display only the patch content of pull requests.'))
+@click.option('-b', '--browse', is_flag=True,
+              help=_('Open bug in web browser.'))
+@bugs_parser
+@click.pass_obj
+def show(globs, full, patch, patch_only, browse, bugs):
     """Displaying bugs."""
     results = []
     tmpl = template.get_template('view', '/issue.txt')
-    for bug_no in args.bugs:
-        if args.browse:
-            webbrowser.open_new_tab('https://github.com/%s/issues/%d'
-                                    % (args.project, bug_no))
+    for bug_no in bugs:
+        if browse:
+            click.launch('https://github.com/%s/issues/%d'
+                         % (globs.project, bug_no))
             continue
-        r, bug = args.req_get(bug_no, model='Issue')
+        r, bug = globs.req_get(bug_no, model='Issue')
 
-        if args.full and bug.comments:
-            r, comments = args.req_get('%s/comments' % bug_no, model='Comment')
+        if full and bug.comments:
+            r, comments = globs.req_get('%s/comments' % bug_no,
+                                        model='Comment')
         else:
             comments = []
-        if (args.patch or args.patch_only) and bug.pull_request:
-            url = '%s/repos/%s/pulls/%s' % (args.host_url, args.project,
+        if (patch or patch_only) and bug.pull_request:
+            url = '%s/repos/%s/pulls/%s' % (globs.host_url, globs.project,
                                             bug_no)
             headers = {'Accept': 'application/vnd.github.patch'}
-            r, c = args.req_get(url, headers=headers, is_json=False)
+            r, c = globs.req_get(url, headers=headers, is_json=False)
             patch = c.decode('utf-8')
         else:
             patch = None
         results.append(tmpl.render(bug=bug, comments=comments, full=True,
-                                   patch=patch, patch_only=args.patch_only,
-                                   project=args.repo_obj))
+                                   patch=patch, patch_only=patch_only,
+                                   project=globs.repo_obj()))
     if results:
-        utils.pager('\n'.join(results), pager=args.pager)
+        utils.pager('\n'.join(results), pager=globs.pager)
 
 
-@APP.cmd(name='open', help=_('opening new bugs'),
-         parents=[label_parser, stdin_parser, text_parser])
-def open_bug(args):
+@cli.command(name='open', help=_('Opening new bugs.'))
+@label_parser
+@stdin_parser
+@text_parser
+@click.pass_obj
+def open_bug(globs, add, create, stdin, title, body):
     """Opening new bugs."""
-    utils.sync_labels(args)
-    if args.stdin:
-        text = sys.stdin.readlines()
-    elif not args.title:
+    utils.sync_labels(globs, add, create)
+    if stdin:
+        text = click.get_text_stream('stdin').readlines()
+    elif not title:
         text = template.edit_text('open').splitlines()
-    if args.stdin or not args.title:
+    if stdin or not title:
         title = text[0]
         body = '\n'.join(text[1:])
     else:
-        title = args.title
-        body = args.body
-    data = {'title': title, 'body': body, 'labels': args.add + args.create}
-    r, bug = args.req_post('', body=data, model='Issue')
-    print(utils.success(_('Bug %d opened') % bug.number))
+        title = title
+        body = body
+    data = {'title': title, 'body': body, 'labels': add + create}
+    r, bug = globs.req_post('', body=data, model='Issue')
+    utils.success(_('Bug %d opened') % bug.number)
 
 
-@APP.cmd(help=_('commenting on bugs'),
-         parents=[bugs_parser, stdin_parser, message_parser])
-def comment(args):
+@cli.command(help=_('Commenting on bugs.'))
+@message_parser
+@stdin_parser
+@bugs_parser
+@click.pass_obj
+def comment(globs, message, stdin, bugs):
     """Commenting on bugs."""
-    if args.stdin:
-        message = sys.stdin.read()
-    elif args.message:
-        message = args.message
+    if stdin:
+        message = click.get_text_stream().read()
+    elif message:
+        message = message
     else:
         message = template.edit_text()
-    for bug in args.bugs:
-        args.req_post('%s/comments' % bug, body={'body': message},
-                      model='Comment')
+    for bug in bugs:
+        globs.req_post('%s/comments' % bug, body={'body': message},
+                       model='Comment')
 
 
-@APP.cmd(help=_('editing bugs'),
-         parents=[bugs_parser, stdin_parser, text_parser])
-def edit(args):
+@cli.command(help=_('Editing bugs.'))
+@stdin_parser
+@text_parser
+@bugs_parser
+@click.pass_obj
+def edit(globs, stdin, title, body, bugs):
     """Editing bugs."""
-    if (args.title or args.stdin) and len(args.bugs) > 1:
+    if (title or stdin) and len(bugs) > 1:
         raise ValueError(_('Can not use --stdin or command line title/body '
                            'with multiple bugs'))
-    for bug in args.bugs:
-        if args.stdin:
-            text = sys.stdin.readlines()
-        elif not args.title:
-            r, current = args.req_get(bug, model='Issue')
+    for bug in bugs:
+        if stdin:
+            text = click.get_text_stream().readlines()
+        elif not title:
+            r, current = globs.req_get(bug, model='Issue')
             current_data = {'title': current.title, 'body': current.body}
             text = template.edit_text('open', current_data).splitlines()
-        if args.stdin or not args.title:
+        if stdin or not title:
             title = text[0]
             body = '\n'.join(text[1:])
         else:
-            title = args.title
-            body = args.body
+            title = title
+            body = body
 
         data = {'title': title, 'body': body}
-        args.req_post(bug, body=data, model='Issue')
+        globs.req_post(bug, body=data, model='Issue')
 
 
-@APP.cmd(help=_('closing bugs'),
-         parents=[bugs_parser, stdin_parser, message_parser])
-def close(args):
+@cli.command(help=_('Closing bugs.'))
+@stdin_parser
+@message_parser
+@bugs_parser
+@click.pass_obj
+def close(globs, stdin, message, bugs):
     """Closing bugs."""
-    if args.stdin:
-        message = sys.stdin.read()
-    elif not args.message:
+    if stdin:
+        message = click.get_text_stream().read()
+    elif not message:
         try:
             message = template.edit_text()
         except template.EmptyMessageError:
             # Message isn't required for closing, but it is good practice
             message = None
     else:
-        message = args.message
-    for bug in args.bugs:
+        message = message
+    for bug in bugs:
         if message:
-            args.req_post('%s/comments' % bug, body={'body': message},
-                          model='Comment')
-        args.req_post(bug, body={'state': 'closed'}, model='Issue')
+            globs.req_post('%s/comments' % bug, body={'body': message},
+                           model='Comment')
+        globs.req_post(bug, body={'state': 'closed'}, model='Issue')
 
 
-@APP.cmd(help=_('reopening closed bugs'),
-         parents=[bugs_parser, stdin_parser, message_parser])
-def reopen(args):
+@cli.command(help=_('Reopening closed bugs.'))
+@stdin_parser
+@message_parser
+@bugs_parser
+@click.pass_obj
+def reopen(globs, stdin, message, bugs):
     """Reopening closed bugs."""
-    if args.stdin:
-        message = sys.stdin.read()
-    elif not args.message:
+    if stdin:
+        message = click.get_text_stream().read()
+    elif not message:
         try:
             message = template.edit_text()
         except template.EmptyMessageError:
             # Message isn't required for reopening, but it is good practice
             message = None
-    else:
-        message = args.message
-    for bug in args.bugs:
+    for bug in bugs:
         if message:
-            args.req_post('%s/comments' % bug, body={'body': message},
-                          model='Comment')
-        args.req_post(bug, body={'state': 'open'}, model='Issue')
+            globs.req_post('%s/comments' % bug, body={'body': message},
+                           model='Comment')
+        globs.req_post(bug, body={'state': 'open'}, model='Issue')
 
 
-@APP.cmd(help=_('labelling bugs'), parents=[label_parser, ])
-@APP.cmd_arg('-r', '--remove', action='append', default=[],
-             help=_('remove label from issue'), metavar='label')
-@APP.cmd_arg('-l', '--list', action='store_true',
-             help=_('list available labels'))
-@APP.cmd_arg('bugs', nargs='*', type=int,
-             help=_('bug number(s) to operate on'))
-def label(args):
+@cli.command(help=_('Labelling bugs.'))
+@label_parser
+@click.option('-r', '--remove', multiple=True,
+              help=_('Remove label from issue.'))
+@click.option('-l', '--list', is_flag=True, help=_('List available labels.'))
+@click.argument('bugs', nargs=-1, required=False, type=click.INT)
+@click.pass_obj
+def label(globs, add, create, remove, list, bugs):
     """Labelling bugs."""
-    label_names = utils.sync_labels(args)
+    label_names = utils.sync_labels(globs, add, create)
 
-    if args.list:
-        print(', '.join(sorted(label_names)))
+    if list:
+        click.echo(', '.join(sorted(label_names)))
         return
 
-    for bug_no in args.bugs:
-        r, bug = args.req_get(bug_no, model='Issue')
+    for bug_no in bugs:
+        r, bug = globs.req_get(bug_no, model='Issue')
         labels = [label.name for label in bug.labels]
-        labels.extend(args.add + args.create)
+        labels.extend(add + create)
 
-        for string in args.remove:
+        for string in remove:
             labels.remove(string)
-        args.req_post(bug_no, body={'labels': labels}, model='Label')
+        globs.req_post(bug_no, body={'labels': labels}, model='Label')
 
 
-@APP.cmd(help=_('issue milestones'))
-@APP.cmd_arg('milestone', help=_('milestone to assign to'))
-@APP.cmd_arg('bugs', nargs='*', type=int,
-             help=_('bug number(s) to operate on'))
-def milestone(args):
+@cli.command(help=_('Issue milestones.'))
+@click.argument('milestone')
+@click.argument('bugs', nargs=-1, required=False, type=click.INT)
+@click.pass_obj
+def milestone(globs, milestone, bugs):
     """Issue milestones."""
-    milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
-    r, milestones = args.req_get(milestones_url, model='Milestone')
+    milestones_url = '%s/repos/%s/milestones' % (globs.host_url, globs.project)
+    r, milestones = globs.req_get(milestones_url, model='Milestone')
 
     milestone_mapping = dict((m.title, m.number) for m in milestones)
 
     try:
-        milestone = milestone_mapping[args.milestone]
+        milestone = milestone_mapping[milestone]
     except KeyError:
-        raise ValueError(_('No such milestone %r') % args.milestone)
+        raise ValueError(_('No such milestone %r') % milestone)
 
-    for bug_no in args.bugs:
-        args.req_post(bug_no, body={'milestone': milestone}, model='Milestone')
+    for bug_no in bugs:
+        globs.req_post(bug_no, body={'milestone': milestone},
+                       model='Milestone')
 
 
-@APP.cmd(help=_('repository milestones'))
-@APP.cmd_arg('-o', '--order', default='number',
-             choices=['due_date', 'completeness'],
-             help=_('sort order for listing bugs'))
-@APP.cmd_arg('-s', '--state', default='open',
-             choices=['open', 'closed'],
-             help=_('state of milestones to operate on'))
-@APP.cmd_arg('-c', '--create', help=_('create new milestone'),
-             metavar='milestone')
-@APP.cmd_arg('-l', '--list', action='store_true',
-             help=_('list available milestones'))
-def milestones(args):
+@cli.command(help=_('Repository milestones.'))
+@click.option('-o', '--order', default='number',
+              type=click.Choice(['number', 'due_date', 'completeness']),
+              help=_('Sort order for listing bugs.'))
+@click.option('-s', '--state', default='open',
+              type=click.Choice(['open', 'closed']),
+              help=_('State of milestones to operate on.'))
+@click.option('-c', '--create', help=_('Create new milestone.'))
+@click.option('-l', '--list', is_flag=True,
+              help=_('List available milestones.'))
+@click.pass_obj
+def milestones(globs, order, state, create, list):
     """Repository milestones."""
-    if not args.list and not args.create:
-        print(utils.fail('No action specified!'))
+    if not list and not create:
+        utils.fail('No action specified!')
         return 1
-    milestones_url = '%s/repos/%s/milestones' % (args.host_url, args.project)
-    r, milestones = args.req_get(milestones_url, model='Milestone')
+    milestones_url = '%s/repos/%s/milestones' % (globs.host_url, globs.project)
+    r, milestones = globs.req_get(milestones_url, model='Milestone')
 
-    if args.list:
+    if list:
         tmpl = template.get_template('view', '/list_milestones.txt')
         columns = utils.T.width if utils.T.width else 80
         max_id = max(i.number for i in milestones)
         id_len = len(str(max_id))
 
-        result = tmpl.render(milestones=milestones, order=args.order,
-                             state=args.state, project=args.repo_obj,
+        result = tmpl.render(milestones=milestones, order=order, state=state,
+                             project=globs.repo_obj(),
                              id_len=id_len, max_title=columns - id_len - 2)
         if result:
-            utils.pager(result, pager=args.pager)
-    elif args.create:
-        data = {'title': args.create}
-        r, milestone = args.req_post('', body=data, model='Milestone')
-        print(utils.success(_('Milestone %d created' % milestone.number)))
+            utils.pager(result, pager=globs.pager)
+    elif create:
+        data = {'title': create}
+        r, milestone = globs.req_post('', body=data, model='Milestone')
+        utils.success(_('Milestone %d created' % milestone.number))
 
 
-@APP.cmd(name='report-bug', help=_('report a new bug against hubugs'))
-def report_bug(args):
+@cli.command(help=_('Report a new bug against hubugs.'))
+@click.pass_obj
+def report_bug(globs):
     """Report a new bug against hubugs."""
-    local = args.project == 'JNRowe/hubugs'
-    args.project = 'JNRowe/hubugs'
+    local = globs.project == 'JNRowe/hubugs'
+    globs.project = 'JNRowe/hubugs'
 
-    import blessings, html2text, jinja2, pygments  # NOQA
+    import html2text, jinja2, pygments  # NOQA
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
-                     for m in (aaargh, blessings, html2text, httplib2, jinja2,
-                               pygments)])
+                     for m in (click, html2text, httplib2, jinja2, pygments)])
     data = {
         'local': local,
         'sys': sys,
@@ -449,10 +516,9 @@ def report_bug(args):
     title = text[0]
     body = '\n'.join(text[1:])
 
-    data = {'title': title, 'body': body, 'labels': args.add + args.create}
-    r, bug = args.req_post('', body=data, model='Issue')
-    print(utils.success(_('Bug %d opened against hubugs, thanks!')
-                        % bug.number))
+    data = {'title': title, 'body': body}
+    r, bug = globs.req_post('', body=data, model='Issue')
+    utils.success(_('Bug %d opened against hubugs, thanks!') % bug.number)
 
 
 def main():
@@ -461,35 +527,17 @@ def main():
     :rtype: ``int``
     :return: Exit code
     """
-    APP.arg('--version', action='version',
-            version='%%(prog)s %s' % __version__)
-    APP.arg('--pager', metavar='pager',
-            default=utils.get_git_config_val('hubugs.pager',
-                                             os.getenv('PAGER')),
-            help=_('pass output through a pager'))
-    APP.arg('--no-pager', action='store_false', dest='pager',
-            help=_('do not pass output through pager'))
-    APP.arg('-p', '--project', action=utils.ProjectAction,
-            help=_('GitHub project to operate on'), metavar='project')
-    APP.arg('-u', '--host-url',
-            default=utils.get_git_config_val('hubugs.host-url',
-                                             'https://api.github.com'),
-            help=_('GitHub Enterprise host to connect to'), metavar='url')
-
-    args = APP._parser.parse_args()
-
     try:
-        utils.setup_environment(args)
-        args._func(args)
+        cli()
     except utils.HttpClientError as error:
-        print(utils.fail(error.content['message']))
+        utils.fail(error.content[0])
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        print(utils.fail(_('Project lookup failed.  Network or GitHub down?')))
+        utils.fail(_('Project lookup failed.  Network or GitHub down?'))
         return errno.ENXIO
     except (utils.RepoError) as error:
-        print(utils.fail(error.message))
+        utils.fail(error.message)
         return errno.EINVAL
     except (EnvironmentError, ValueError) as error:
-        print(utils.fail(error.message))
+        utils.fail(error.message)
         return errno.EINVAL

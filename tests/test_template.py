@@ -19,7 +19,6 @@
 
 from collections import namedtuple
 from datetime import (datetime, timedelta)
-from os import getenv
 from unittest import TestCase
 
 from expecter import expect
@@ -29,27 +28,18 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
-from tests.utils import (TerminalTypeError, unicode)
-
-
-# We only test forced styling output of blessings, as blessings handles the
-# sys.stdout.isatty() flipping
-template.utils.T = template.utils.blessings.Terminal(force_styling=True)
+from tests.utils import (unicode)
 
 
 class Colourise(TestCase):
     @params(
-        ('red', unicode('\x1b[31'), unicode('\x1b[38;5;1m')),
-        ('on blue', unicode('\x1b[44m'), unicode('\x1b[48;5;4m')),
-        ('bold', unicode('\x1b[1m'), unicode('\x1b[1m')),
+        ('red', None, {}, unicode('\x1b[31')),
+        (None, 'blue', {}, unicode('\x1b[44m')),
+        (None, None, {'bold': True}, unicode('\x1b[1m')),
     )
-    def test_color(self, attribute, linux_result, rxvt_result):
-        if getenv('TERM') == 'linux':
-            expect(template.colourise('s', attribute)).contains(linux_result)
-        elif getenv('TERM').startswith('rxvt'):
-            expect(template.colourise('s', attribute)).contains(rxvt_result)
-        else:
-            raise TerminalTypeError(getenv('TERM'))
+    def test_color(self, fg, bg, attributes, expected):
+        output = template.colourise('s', fg, bg, **attributes)
+        expect(output).contains(expected)
 
     def test_invalid_colour(self):
         with expect.raises(TypeError):
@@ -89,7 +79,7 @@ class EditText(TestCase):
         return response.pop()
 
     @staticmethod
-    def check_call_side_effect(args):
+    def popen_side_effect(args, **kwargs):
         open(args[1], 'a').write('Some message')
 
     @patch('subprocess.check_call')
@@ -98,19 +88,19 @@ class EditText(TestCase):
         with expect.raises(template.EmptyMessageError):
             template.edit_text()
 
-    @patch('subprocess.check_call')
+    @patch('subprocess.Popen')
     @patch('os.path.getmtime')
-    def test_message(self, getmtime, check_call):
+    def test_message(self, getmtime, Popen):
         getmtime.side_effect = self.getmtime_side_effect
-        check_call.side_effect = self.check_call_side_effect
+        Popen.side_effect = self.popen_side_effect
 
         expect(template.edit_text()) == 'Some message'
 
-    @patch('subprocess.check_call')
+    @patch('subprocess.Popen')
     @patch('os.path.getmtime')
-    def test_message_comments(self, getmtime, check_call):
+    def test_message_comments(self, getmtime, Popen):
         getmtime.side_effect = self.getmtime_side_effect
-        check_call.side_effect = self.check_call_side_effect
+        Popen.side_effect = self.popen_side_effect
 
         expect(template.edit_text()) == 'Some message'
 

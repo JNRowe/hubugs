@@ -18,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import argparse
 import json
 import os
 import re
@@ -32,7 +31,7 @@ try:  # For Python 3
 except ImportError:
     from urllib import urlencode  # NOQA
 
-import blessings
+import click
 import configobj
 import httplib2
 
@@ -43,8 +42,6 @@ from .i18n import _
 PY3K = sys.version_info[0] == 3
 if PY3K:
     unicode = str
-
-T = blessings.Terminal()
 
 try:
     # httplib2 0.8 and above support setting certs via ca_certs_locater module,
@@ -88,7 +85,7 @@ def _colourise(text, colour):
     :rtype: ``str``
     :return: Colourised text, if possible
     """
-    return getattr(T, colour.replace(' ', '_'))(text)
+    return click.termui.secho(text, fg=colour, bold=True)
 
 
 def success(text):
@@ -98,7 +95,7 @@ def success(text):
     :rtype: ``str``
     :return: Bright green text, if possible
     """
-    return _colourise(text, 'bright green')
+    return _colourise(text, 'green')
 
 
 def fail(text):
@@ -108,7 +105,7 @@ def fail(text):
     :rtype: ``str``
     :return: Bright red text, if possible
     """
-    return _colourise(text, 'bright red')
+    return _colourise(text, 'red')
 
 
 def warn(text):
@@ -118,7 +115,54 @@ def warn(text):
     :rtype: ``str``
     :return: Bright yellow text, if possible
     """
-    return _colourise(text, 'bright yellow')
+    return _colourise(text, 'yellow')
+
+
+class AttrDict(dict):
+
+    """Dictionary with attribute access.
+
+    .. seealso:: :obj:`dict`
+    """
+
+    def __contains__(self, key):
+        """Check for item membership
+
+        :param object key: Key to test for
+        :rtype: :obj:`bool`
+        """
+        return hasattr(self, key) or super(AttrDict, self).__contains__(key)
+
+    def __getattr__(self, key):
+        """Support item access via dot notation
+
+        :param object key: Key to fetch
+        """
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(key)
+
+    def __setattr__(self, key, value):
+        """Support item assignment via dot notation
+
+        :param object key: Key to set value for
+        :param object value: Value to set key to
+        """
+        try:
+            self[key] = value
+        except:
+            raise AttributeError(key)
+
+    def __delattr__(self, key):
+        """Support item deletion via dot notation
+
+        :param object key: Key to delete
+        """
+        try:
+            del self[key]
+        except KeyError:
+            raise AttributeError(key)
 
 
 class HttpClientError(ValueError):
@@ -134,20 +178,6 @@ class HttpClientError(ValueError):
 class RepoError(ValueError):
 
     """Error raised for invalid repository values."""
-
-
-class ProjectAction(argparse.Action):
-
-    """argparse action class for setting project."""
-
-    def __call__(self, parser, namespace, project, option_string=None):
-        """Set fully qualified GitHub project name."""
-        if not '/' in project:
-            user = os.getenv('GITHUB_USER', get_git_config_val('github.user'))
-            if not user:
-                raise parser.error(_('No GitHub user setting!'))
-            project = '%s/%s' % (user, project)
-        namespace.project = project
 
 
 def check_output(args, **kwargs):
@@ -286,33 +316,24 @@ def get_repo():
                           "`--project' option"))
 
 
-def pager(text, pager='less'):
+def pager(text, pager=False):
     """Pass output through pager.
 
     :param str text: Text to page
     :param bool pager: Pager to use
     """
     if pager:
-        if 'less' in pager and 'LESS' not in os.environ:
-            os.environ['LESS'] = 'FRSX'
-        pager = subprocess.Popen([pager, ], stdin=subprocess.PIPE)
-        if PY3K:
-            pager.communicate(text.encode())
-        else:
-            pager.communicate(text)
+        click.echo_via_pager(text)
     else:
-        print(text)
+        click.echo(text)
 
 
-def setup_environment(args):
-    """Configure execution environment for commands dispatch.
+def setup_environment(project, host_url):
+    """Configure execution environment for commands dispatch."""
+    env = AttrDict()
 
-    :param argparse.Namespace args: argparse namespace to operate on
-    """
-    if not args.project:
-        args.project = get_repo()
-
-    command = args._func.__name__
+    if not project:
+        project = get_repo()
 
     http = get_github_api()
 
@@ -321,21 +342,20 @@ def setup_environment(args):
         'User-Agent': _version.web,
     }
 
-    # We use manual auth when calling setup
-    if not command == 'setup':
-        token = os.getenv('HUBUGS_TOKEN', get_git_config_val('hubugs.token'))
-        if not token:
-            raise EnvironmentError(_('No hubugs authorisation token found!  '
-                                     "Run 'hubugs setup' to create a token"))
+    token = os.getenv('HUBUGS_TOKEN', get_git_config_val('hubugs.token', None))
+    if token:
         HEADERS['Authorization'] = 'token %s' % token
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
-                    model=None, is_json=True):
+                    model=None, is_json=True, token=True):
         lheaders = HEADERS.copy()
+        if token and 'Authorization' not in lheaders:
+            raise EnvironmentError(_('No hubugs authorisation token found!  '
+                                     "Run 'hubugs setup' to create a token"))
         if headers:
             lheaders.update(headers)
         if not isinstance(url, (str, unicode)) or not url.startswith('http'):
-            url = '%s/repos/%s/issues%s%s' % (args.host_url, args.project,
+            url = '%s/repos/%s/issues%s%s' % (host_url, project,
                                               '/' if url else '', url)
         if params:
             url += '?' + urlencode(params)
@@ -350,43 +370,35 @@ def setup_environment(args):
             raise HttpClientError(str(r.status), r, c)
         return r, c
 
-    args.req_get = http_method
-    args.req_post = partial(http_method, method='POST')
+    env['req_get'] = http_method
+    env['req_post'] = partial(http_method, method='POST')
 
-    # Make the repository information available, if it will be useful
-    # Note: We skip this step for `show -b' for speed, see #20
-    if not command == 'setup' and not (command == 'show'
-                                       and args.browse is True):
-        try:
-            r, c = args.req_get('%s/repos/%s' % (args.host_url, args.project),
-                                model='Repo')
-        except HttpClientError as e:
-            if e.content['message'] == 'Not Found':
-                raise RepoError(_('Invalid project %r') % args.project)
-            raise
-        args.repo_obj = c
-        if not args.repo_obj.has_issues:
-            raise RepoError(("Issues aren't enabled for %r") % args.project)
+    def repo_obj():
+        r, c = http_method('%s/repos/%s' % (host_url, project), model='Repo')
+        if not c.has_issues:
+            raise RepoError(("Issues aren't enabled for %r") % project)
+    env['repo_obj'] = repo_obj
+    return env
 
 
-def sync_labels(args):
+def sync_labels(globs, add, create):
     """Manage labels for a project.
 
-    :param argparse.Namespace args: argparse namespace to operate on
+    :param AttrDict globs: Global argument configuration
     :rtype: ``list``
     :return: List of project's label names
     """
-    labels_url = '%s/repos/%s/labels' % (args.host_url, args.project)
-    r, c = args.req_get(labels_url, model='Label')
+    labels_url = '%s/repos/%s/labels' % (globs.host_url, globs.project)
+    r, c = globs.req_get(labels_url, model='Label')
     label_names = [label.name for label in c]
 
-    for label in args.add:
+    for label in add:
         if label not in label_names:
             raise ValueError(_('No such label %r') % label)
-    for label in args.create:
+    for label in create:
         if label in label_names:
-            print(warn(_('%r label already exists') % label))
+            warn(_('%r label already exists') % label)
         else:
             data = {'name': label, 'color': '000000'}
-            args.req_post(labels_url, body=data, model='Label')
-    return label_names + args.add + args.create
+            globs.req_post(labels_url, body=data, model='Label')
+    return label_names + add + create

@@ -17,24 +17,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import argparse
-
-from os import getenv
 from subprocess import CalledProcessError
 from unittest import TestCase
 
+from click import BadParameter
 from expecter import expect
 from mock import (Mock, patch)
 from nose2.tools import params
 
+from hubugs import ProjectNameParamType
 from hubugs import utils
-
-from tests.utils import (TerminalTypeError, unicode)
-
-
-# We only test forced styling output of blessings, as blessings handles the
-# sys.stdout.isatty() flipping
-utils.T = utils.blessings.Terminal(force_styling=True)
 
 
 def fake_env(key, default=None):
@@ -47,29 +39,7 @@ def fake_env(key, default=None):
     return fake_data[key]
 
 
-@params(
-    (utils.success, unicode('\x1b[310m'), unicode('\x1b[38;5;10m')),
-    (utils.fail, unicode('\x1b[39m'), unicode('\x1b[38;5;9m')),
-    (utils.warn, unicode('\x1b[311m'), unicode('\x1b[38;5;11m')),
-)
-def test_colouriser(f, linux_result, rxvt_result):
-    if getenv('TERM') == 'linux':
-        expect(f('test')).contains(linux_result)
-    elif getenv('TERM').startswith('rxvt'):
-        expect(f('test')).contains(rxvt_result)
-    else:
-        raise TerminalTypeError(getenv('TERM'))
-
-
-class ProjectAction(TestCase):
-    def setUp(self):
-        self.parser = argparse.ArgumentParser('test_parser')
-        # Stub out ._print_message() to stop help messages being displayed on
-        # stderr during tests.
-        self.parser._print_message = Mock(return_value=True)
-        self.namespace = argparse.Namespace()
-        self.action = utils.ProjectAction([], '')
-
+class TestProjectNameParamType(TestCase):
     @params(
         ('misc-overlay', 'JNRowe/misc-overlay'),
         ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
@@ -82,16 +52,18 @@ class ProjectAction(TestCase):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = 'JNRowe'
 
-        self.action(self.parser, self.namespace, repo)
-        expect(self.namespace.project) == expected
+        p = ProjectNameParamType()
+        p.convert(repo, None, None) == expected
 
     @patch('hubugs.utils.get_github_api')
     @patch('hubugs.utils.get_git_config_val')
     def test_no_user(self, get_git_config_val, get_github_api):
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = None
-        with expect.raises(SystemExit):
-            self.action(self.parser, self.namespace, 'misc-overlay')
+
+        p = ProjectNameParamType()
+        with expect.raises(BadParameter):
+            p.convert('misc-overlay', None, None)
 
 
 class GetGitConfigVal(TestCase):
