@@ -23,10 +23,3 @@ if version_info[0] == 3:
     unicode = str
 else:
     unicode = unicode
-
-
-class TerminalTypeError(EnvironmentError):
-
-    """Unsupported terminal type for tests"""
-
-    pass

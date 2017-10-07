@@ -78,44 +78,38 @@ else:
 
 # Set up informational message functions
 def _colourise(text, colour):
-    """Colour text, if possible.
+    """Display colourised text, if possible.
 
     :param str text: Text to colourise
     :param str colour: Colour to display text in
     :rtype: ``str``
     :return: Colourised text, if possible
     """
-    return click.termui.secho(text, fg=colour, bold=True)
+    click.termui.secho(text, fg=colour, bold=True)
 
 
 def success(text):
     """Output a success message.
 
     :param str text:  Text to format
-    :rtype: ``str``
-    :return: Bright green text, if possible
     """
-    return _colourise(text, 'green')
+    _colourise(text, 'green')
 
 
 def fail(text):
     """Output a failure message.
 
     :param str text:  Text to format
-    :rtype: ``str``
-    :return: Bright red text, if possible
     """
-    return _colourise(text, 'red')
+    _colourise(text, 'red')
 
 
 def warn(text):
     """Output a warning message.
 
     :param str text:  Text to format
-    :rtype: ``str``
-    :return: Bright yellow text, if possible
     """
-    return _colourise(text, 'yellow')
+    _colourise(text, 'yellow')
 
 
 class AttrDict(dict):
