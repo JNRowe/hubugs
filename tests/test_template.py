@@ -94,7 +94,7 @@ class EditText(TestCase):
 
 class Markdown(TestCase):
     def test_basic(self):
-        assert_equals(template.markdown('### hello'), '<h3>hello</h3>\n')
+        expect(template.markdown('### hello')) == '<h3>hello</h3>\n'
 
 
 class Html2Text(TestCase):
