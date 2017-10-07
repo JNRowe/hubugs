@@ -74,41 +74,22 @@ class Highlight(TestCase):
 
 
 class EditText(TestCase):
-    @staticmethod
-    def getmtime_side_effect(file, response=list(range(100))):
-        return response.pop()
-
-    @staticmethod
-    def popen_side_effect(args, **kwargs):
-        open(args[1], 'a').write('Some message')
-
-    @patch('subprocess.check_call')
-    def test_no_message(self, check_call):
-        check_call.return_value = True
+    @patch('click.edit')
+    def test_no_message(self, edit):
+        edit.return_value = None
         with expect.raises(template.EmptyMessageError):
             template.edit_text()
 
-    @patch('subprocess.Popen')
-    @patch('os.path.getmtime')
-    def test_message(self, getmtime, Popen):
-        getmtime.side_effect = self.getmtime_side_effect
-        Popen.side_effect = self.popen_side_effect
-
+    @patch('click.edit')
+    def test_message(self, edit):
+        edit.return_value = 'Some message'
         expect(template.edit_text()) == 'Some message'
 
-    @patch('subprocess.Popen')
-    @patch('os.path.getmtime')
-    def test_message_comments(self, getmtime, Popen):
-        getmtime.side_effect = self.getmtime_side_effect
-        Popen.side_effect = self.popen_side_effect
-
-        expect(template.edit_text()) == 'Some message'
-
-    @patch('subprocess.check_call')
-    def test_message_prefill(self, check_call):
-        check_call.return_value = True
-        with expect.raises(template.EmptyMessageError):
-            template.edit_text('open', data={'title': 'Some message'})
+    @patch('click.edit')
+    def test_message_prefill(self, edit):
+        edit.side_effect = lambda t, *args, **kwargs: t
+        data = {'title': 'Some message'}
+        expect(template.edit_text('open', data)) == data['title']
 
 
 class Markdown(TestCase):
