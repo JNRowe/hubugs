@@ -176,7 +176,7 @@ def setup(globs, local):
     if not user:
         user = default_user
     password = click.prompt(_('GitHub password'), hide_input=True,
-                            confirmation_prompt=True)
+                            confirmation_prompt=False)
 
     private = click.confirm(_('Support private repositories'))
 
