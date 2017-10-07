@@ -239,18 +239,17 @@ def list_bugs(globs, label, page, pull_requests, order, state):
 @click.pass_obj
 def search(globs, order, state, term):
     """Searching bugs."""
-    # This chunk of code is horrific, as is the models.from_search() that is
-    # required to support it.  However, without search support in API v3 there
-    # is no realistic way around it.
-    from .models import from_search
-    search_url = '%s/legacy/issues/search/%%s/%%s/%%s' % globs.host_url
+    search_url = '%s/search/issues' % globs.host_url
     states = ['open', 'closed'] if state == 'all' else [state, ]
+    params = {
+        'q': term,
+        'repo': globs.project,
+    }
     bugs = []
     for state in states:
-        r, c = globs.req_get(search_url % (globs.project, state, term),
-                             model='issue')
-        _bugs = [from_search(d) for d in c.issues]
-        bugs.extend(_bugs)
+        params['state'] = state
+        r, c = globs.req_get(search_url, params=params, model='issue')
+        bugs.extend(c.issues)
     result = template.display_bugs(bugs, order, term=term, state=state,
                                    project=globs.repo_obj())
     if result:
