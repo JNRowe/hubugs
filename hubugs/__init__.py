@@ -79,7 +79,7 @@ class ProjectNameParamType(click.ParamType):
 
     def convert(self, value, param, ctx):
         """Set fully qualified GitHub project name."""
-        if not '/' in value:
+        if '/' not in value:
             user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user'))
             if not user:

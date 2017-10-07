@@ -337,18 +337,18 @@ def setup_environment(project, host_url):
 
     http = get_github_api()
 
-    HEADERS = {
+    base_headers = {
         'Accept': 'application/vnd.github.v3+json',
         'User-Agent': _version.web,
     }
 
     token = os.getenv('HUBUGS_TOKEN', get_git_config_val('hubugs.token', None))
     if token:
-        HEADERS['Authorization'] = 'token %s' % token
+        base_headers['Authorization'] = 'token %s' % token
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
                     model=None, is_json=True, token=True):
-        lheaders = HEADERS.copy()
+        lheaders = base_headers.copy()
         if token and 'Authorization' not in lheaders:
             raise EnvironmentError(_('No hubugs authorisation token found!  '
                                      "Run 'hubugs setup' to create a token"))
