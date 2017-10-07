@@ -95,6 +95,7 @@ class ProjectNameParamType(click.ParamType):
 @click.version_option(_version.dotted)
 @click.option('--pager/--no-pager', help=_('Pass output through a pager.'))
 @click.option('-p', '--project', type=ProjectNameParamType(),
+              default=utils.get_repo(),
               help=_('GitHub project to operate on.'))
 @click.option('-u', '--host-url',
               default=utils.get_git_config_val('hubugs.host-url',
