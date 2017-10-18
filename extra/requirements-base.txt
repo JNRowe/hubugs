@@ -3,4 +3,4 @@ configobj>=5.0.0
 html2text==2017.10.4
 httplib2>=0.7.4
 misaka>=1.0.2
-Pygments
+Pygments==2.2.0
