@@ -1,2 +1,2 @@
-sphinx
-sphinxcontrib-cheeseshop
+sphinx==1.6.4
+sphinxcontrib-cheeseshop==0.2
