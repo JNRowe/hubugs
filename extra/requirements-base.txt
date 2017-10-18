@@ -1,6 +1,6 @@
 click>=6.2
 configobj>=5.0.0
-html2text
+html2text==2017.10.4
 httplib2>=0.7.4
 misaka>=1.0.2
 Pygments
