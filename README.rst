@@ -19,8 +19,8 @@ Requirements
 ------------
 
 ``hubugs`` requires Python_ v3.5 or newer.  ``hubugs``’s mandatory dependencies
-outside of the standard library are click_, configobj_, html2text_, httplib2_,
-Jinja_, misaka_ and Pygments_.
+outside of the standard library are click_, html2text_, httplib2_, Jinja_,
+misaka_ and Pygments_.
 
 Configuration
 -------------
@@ -83,7 +83,6 @@ reproduce the problem, or even better a patch!
 .. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _Python: http://www.python.org/
 .. _click: https://pypi.org/projects/click/
-.. _configobj: https://pypi.org/projects/configobj/
 .. _Jinja: http://jinja.pocoo.org/
 .. _html2text: https://pypi.org/projects/html2text/
 .. _httplib2: https://pypi.org/projects/httplib2/
