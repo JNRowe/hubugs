@@ -67,7 +67,7 @@ def get_template(group, name):
     :return: Jinja template instance
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
-    return ENV.get_template('%s/%s/%s' % (template_set, group, name))
+    return ENV.get_template('/'.join([template_set, group, name]))
 
 
 def jinja_filter(func):
@@ -183,14 +183,14 @@ def relative_time(timestamp):
             break
 
     if i == 1 and name in ('year', 'month', 'week'):
-        result = 'last %s' % name
+        result = 'last {}'.format(name)
     elif i == 1 and name == 'day':
         result = 'yesterday'
     elif i == 1 and name == 'hour':
         result = 'about an hour ago'
     else:
-        result = 'about %s %s%s ago' % (i if i > 10 else numstr[i], name,
-                                        's' if i > 1 else '')
+        result = 'about {} {}{} ago'.format(i if i > 10 else numstr[i], name,
+                                            's' if i > 1 else '')
     return result
 
 
@@ -238,7 +238,7 @@ def edit_text(edit_type='default', data=None):
     :raise EmptyMessageError: No message given
     :raise EmptyMessageError: Message not edited
     """
-    template = get_template('edit', '%s.mkd' % edit_type)
+    template = get_template('edit', '{}.mkd'.format(edit_type))
     comment_char = utils.get_git_config_val('core.commentchar', '#')
     if not data:
         data = {}

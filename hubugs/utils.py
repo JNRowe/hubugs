@@ -311,7 +311,7 @@ def setup_environment(project, host_url):
 
     token = os.getenv('HUBUGS_TOKEN', get_git_config_val('hubugs.token', None))
     if token:
-        base_headers['Authorization'] = 'token %s' % token
+        base_headers['Authorization'] = 'token {}'.format(token)
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
                     model=None, is_json=True, token=True):
@@ -322,8 +322,8 @@ def setup_environment(project, host_url):
         if headers:
             lheaders.update(headers)
         if not isinstance(url, str) or not url.startswith('http'):
-            url = '%s/repos/%s/issues%s%s' % (host_url, project,
-                                              '/' if url else '', url)
+            url = '{}/repos/{}/issues{}{}'.format(host_url, project,
+                                                  '/' if url else '', url)
         if params:
             url += '?' + urlencode(params)
         if is_json and body:
@@ -341,9 +341,11 @@ def setup_environment(project, host_url):
     env['req_post'] = partial(http_method, method='POST')
 
     def repo_obj():
-        r, c = http_method('%s/repos/%s' % (host_url, project), model='Repo')
+        r, c = http_method('{}/repos/{}'.format(host_url, project),
+                           model='Repo')
         if not c.has_issues:
-            raise RepoError(("Issues aren't enabled for %r") % project)
+            raise RepoError(
+                _("Issues aren't enabled for {:!r}").format(project))
     env['repo_obj'] = repo_obj
     return env
 
@@ -355,16 +357,16 @@ def sync_labels(globs, add, create):
     :rtype: ``list``
     :return: List of project's label names
     """
-    labels_url = '%s/repos/%s/labels' % (globs.host_url, globs.project)
+    labels_url = '{}/repos/{}/labels'.format(globs.host_url, globs.project)
     r, c = globs.req_get(labels_url, model='Label')
     label_names = [label.name for label in c]
 
     for label in add:
         if label not in label_names:
-            raise ValueError(_('No such label %r') % label)
+            raise ValueError(_('No such label {!r}').format(label))
     for label in create:
         if label in label_names:
-            warn(_('%r label already exists') % label)
+            warn(_('{!r} label already exists').format(label))
         else:
             data = {'name': label, 'color': '000000'}
             globs.req_post(labels_url, body=data, model='Label')
