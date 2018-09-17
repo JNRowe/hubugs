@@ -82,12 +82,12 @@ reproduce the problem, or even better a patch!
 
 .. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _Python: http://www.python.org/
-.. _click: https://pypi.python.org/pypi/click/
-.. _configobj: https://pypi.python.org/pypi/configobj/
+.. _click: https://pypi.org/projects/click/
+.. _configobj: https://pypi.org/projects/configobj/
 .. _Jinja: http://jinja.pocoo.org/
-.. _html2text: https://pypi.python.org/pypi/html2text/
-.. _httplib2: https://pypi.python.org/pypi/httplib2
-.. _misaka: https://pypi.python.org/pypi/misaka/
+.. _html2text: https://pypi.org/projects/html2text/
+.. _httplib2: https://pypi.org/projects/httplib2/
+.. _misaka: https://pypi.org/projects/misaka/
 .. _Pygments: http://pygments.org/
 .. _OAuth: http://oauth.net/
 .. _GitHub settings: https://github.com/settings/applications/

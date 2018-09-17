@@ -1,1 +1,2 @@
-requirements.txt
+-r requirements-base.txt
+Jinja2>=2

@@ -29,6 +29,6 @@ Therefore:
 
 .. _GitHub: https://github.com/
 .. _thoroughly documented API: http://developer.github.com/v3/
-.. _command line interface: https://pypi.python.org/pypi/click/
+.. _command line interface: https://pypi.org/projects/click/
 .. _templates: http://jinja.pocoo.org/
 .. _cached and compressed: http://code.google.com/p/httplib2/

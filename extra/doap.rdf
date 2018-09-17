@@ -15,7 +15,7 @@
     </description>
  
     <homepage rdf:resource="https://github.com/JNRowe/hubugs" />
-    <download-page rdf:resource="https://pypi.python.org/pypi/hubugs/" />
+    <download-page rdf:resource="https://pypi.org/projects/hubugs/" />
     <bug-database rdf:resource="http://github.com/JNRowe/hubugs/issues" />
     <repository>
         <GitRepository>
