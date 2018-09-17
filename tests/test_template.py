@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """test_template - Test templating handling"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #

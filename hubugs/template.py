@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """template - Template utilities for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #

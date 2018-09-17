@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """i18n - internationalisation support for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #

@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """hubugs - Simple client for GitHub issues"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Ben Griffiths
