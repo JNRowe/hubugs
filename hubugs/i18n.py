@@ -20,7 +20,7 @@ import gettext
 
 from os import path
 
-PACKAGE_LOCALE = path.join(path.realpath(path.dirname(__file__)), 'locale')
+PACKAGE_LOCALE = path.join(path.dirname(__file__), 'locale')
 
 gettext.install('hubugs', PACKAGE_LOCALE)
 
