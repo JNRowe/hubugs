@@ -31,6 +31,7 @@ import click
 import httplib2
 
 from jnrbase.attrdict import AttrDict
+from jnrbase.colourise import warn
 
 from . import (_version, models)
 
@@ -41,42 +42,6 @@ try:
     CA_CERTS = ca_certs_locater.get()
 except ImportError:
     CA_CERTS = None
-
-
-# Set up informational message functions
-def _colourise(text, colour):
-    """Display colourised text, if possible.
-
-    :param str text: Text to colourise
-    :param str colour: Colour to display text in
-    :rtype: ``str``
-    :return: Colourised text, if possible
-    """
-    click.termui.secho(text, fg=colour, bold=True)
-
-
-def success(text):
-    """Output a success message.
-
-    :param str text:  Text to format
-    """
-    _colourise(text, 'green')
-
-
-def fail(text):
-    """Output a failure message.
-
-    :param str text:  Text to format
-    """
-    _colourise(text, 'red')
-
-
-def warn(text):
-    """Output a warning message.
-
-    :param str text:  Text to format
-    """
-    _colourise(text, 'yellow')
 
 
 class HttpClientError(ValueError):
