@@ -18,9 +18,9 @@ Introduction
 Requirements
 ------------
 
-``hubugs`` requires Python_ v2.6 or newer, including Python 3.  ``hubugs``'s
-mandatory dependencies outside of the standard library are click_, configobj_,
-html2text_, httplib2_, Jinja_, misaka_ and Pygments_.
+``hubugs`` requires Python_ v3.5 or newer.  ``hubugs``’s mandatory dependencies
+outside of the standard library are click_, configobj_, html2text_, httplib2_,
+Jinja_, misaka_ and Pygments_.
 
 Configuration
 -------------

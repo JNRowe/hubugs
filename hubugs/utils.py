@@ -25,11 +25,7 @@ import subprocess
 import sys
 
 from functools import partial
-
-try:  # For Python 3
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode  # NOQA
+from urllib.parse import urlencode
 
 import click
 import configobj
@@ -38,10 +34,6 @@ import httplib2
 from . import (_version, models)
 
 from .i18n import _
-
-PY3K = sys.version_info[0] == 3
-if PY3K:
-    unicode = str
 
 try:
     # httplib2 0.8 and above support setting certs via ca_certs_locater module,
@@ -174,27 +166,6 @@ class RepoError(ValueError):
     """Error raised for invalid repository values."""
 
 
-def check_output(args, **kwargs):
-    """Simple check_output implementation for Python 2.6 compatibility.
-
-    :param list args: Command and arguments to call
-    :rtype: ``str``
-    :return: Command output
-    :raise subprocess.CalledProcessError: If command execution fails
-    """
-    try:
-        output = subprocess.check_output(args, **kwargs)
-    except AttributeError:
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            raise subprocess.CalledProcessError(retcode, args[0])
-    if PY3K:
-        output = output.decode()
-    return output
-
-
 def get_github_api():
     """Create a GitHub API instance.
 
@@ -225,14 +196,15 @@ def get_git_config_val(key, default=None, local_only=False):
         cmd.append('--local')
     cmd.extend(['--get', key])
     try:
-        output = check_output(cmd).strip()
+        output = subprocess.check_output(cmd, encoding='utf-8').strip()
     except subprocess.CalledProcessError:
         output = default
     if output and output.startswith('!'):
         try:
-            output = check_output(output[1:].split()).strip()
+            output = subprocess.check_output(output[1:].split(),
+                                             encoding='utf-8').strip()
         except subprocess.CalledProcessError:
-            print("Whoops!")
+            print('Whoops!')
             sys.exit(97)
     return output
 
@@ -248,7 +220,8 @@ def set_git_config_val(key, value, local_only=False):
     if not local_only:
         cmd.append('--global')
     cmd.extend([key, value])
-    check_output(cmd, stderr=subprocess.STDOUT).strip()
+    subprocess.check_output(cmd, stderr=subprocess.STDOUT,
+                            encoding='utf-8').strip()
 
 
 def get_editor():
@@ -259,7 +232,8 @@ def get_editor():
     :rtype: ``list`` of ``str``
     :return: Users chosen editor, or ``vi`` if not set
     """
-    return check_output(['git', 'var', 'GIT_EDITOR']).strip().split()
+    return subprocess.check_output(['git', 'var', 'GIT_EDITOR'],
+                                   encoding='utf-8').strip().split()
 
 
 def get_repo():
@@ -278,7 +252,9 @@ def get_repo():
     data = get_git_config_val('remote.origin.url', local_only=True)
     if not data:
         try:
-            root = check_output(['hg', 'root'], stderr=subprocess.PIPE).strip()
+            root = subprocess.check_output(['hg', 'root'],
+                                           stderr=subprocess.PIPE,
+                                           encoding='utf-8').strip()
         except (OSError, subprocess.CalledProcessError):
             # No mercurial install, or not in a mercurial tree
             pass
@@ -348,7 +324,7 @@ def setup_environment(project, host_url):
                                      "Run 'hubugs setup' to create a token"))
         if headers:
             lheaders.update(headers)
-        if not isinstance(url, (str, unicode)) or not url.startswith('http'):
+        if not isinstance(url, str) or not url.startswith('http'):
             url = '%s/repos/%s/issues%s%s' % (host_url, project,
                                               '/' if url else '', url)
         if params:
