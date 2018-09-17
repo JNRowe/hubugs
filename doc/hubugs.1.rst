@@ -18,18 +18,18 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-:mod:`hubugs` is a very simple client for working with GitHub's issue tracker.
-It allows you to perform all the issue related tasks you'd normally perform from
+:mod:`hubugs` is a very simple client for working with GitHub’s issue tracker.
+It allows you to perform all the issue related tasks you’d normally perform from
 the command line.
 
 OPTIONS
 -------
 
 --version
-    show program's version number and exit
+    show program’s version number and exit
 
 -h, --help
-    show program's help message and exit
+    show program’s help message and exit
 
 --pager <pager>
     pass output through a pager
@@ -40,7 +40,7 @@ OPTIONS
 -p <project>, --project=<project>
     GitHub project to operate on.  You can supply just ``<project>`` if you wish
     to work on one of your own projects, or ``<user>/<project>`` to operate on
-    another user's repository.  Default is derived from the ``hubugs.project``
+    another user’s repository.  Default is derived from the ``hubugs.project``
     setting in the git config or the current repository, if possible.
 
 -u <url>, --host-url=<url>
@@ -198,7 +198,7 @@ setting in your git configuration files.  For example::
 
     ▶ git config --global hubugs.templates my_templates
 
-You can also set project specific template sets by editing a repository's
+You can also set project specific template sets by editing a repository’s
 config.  See :manpage:`git-config(1)`.
 
 You can set a default value for the ``--pager`` and ``--host-url`` options by

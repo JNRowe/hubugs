@@ -18,7 +18,7 @@ Templates are loaded from directories in the following order:
 * If it exists, ``${XDG_DATA_HOME:~/.local/share}/hubugs/templates``
 * Any :file:`hubugs/templates` directory in the directories specified by
   :envvar:`XDG_DATA_DIRS`
-* The package's ``templates`` directory
+* The package’s ``templates`` directory
 
 For information on the usage of :envvar:`XDG_DATA_HOME` and
 :envvar:`XDG_DATA_DIRS` read `XDG Base Directory Specification`_.
@@ -42,7 +42,7 @@ setting in your git configuration files.  For example::
 
     ▶ git config --global hubugs.templates my_templates
 
-You can also set project specific template sets by editing a repository's
+You can also set project specific template sets by editing a repository’s
 config.  See :manpage:`git-config(1)`.
 
 Naming
@@ -80,7 +80,7 @@ View group
 
 .. data:: project(Repository)
 
-   The current project's repository data.  See :ref:`repo_objects-label`.
+   The current project’s repository data.  See :ref:`repo_objects-label`.
 
 .. data:: bugs(list)
 
@@ -108,7 +108,7 @@ View group
 
 .. data:: project(Repository)
 
-   The current project's repository data.  See :ref:`repo_objects-label`.
+   The current project’s repository data.  See :ref:`repo_objects-label`.
 
 .. data:: bug(list)
 
@@ -148,19 +148,19 @@ Edit group
 
 .. data:: comment_char(str)
 
-   The character to use for comments in templates, defaults to '#'. See
+   The character to use for comments in templates, defaults to ``#``.  See
    ``core.commentchar`` in :manpage:`git-config(1)`
 
 All groups
 ''''''''''
 
 Jinja templates support object attribute and method access, so an individual
-``bug`` object's :data:`~Bug.created_at` attribute can be called with a
+``bug`` object’s :data:`~Bug.created_at` attribute can be called with a
 :meth:`~datetime.datetime.strftime` method for custom date output.  For example,
 ``{{ bug.created_at.strftime("%a, %e %b %Y %H:%M:%S %z") }}`` can be used to
 output an :rfc:`2822`-style date stamp.
 
-If you're authoring your own templates and you find you need extra data for
+If you’re authoring your own templates and you find you need extra data for
 their generation open an issue_.
 
 Filters
@@ -181,7 +181,7 @@ Filters
 This filter applies a colour to text, if possible.
 
 
-For example, to show a bug's ``title`` attribute in red::
+For example, to show a bug’s ``title`` attribute in red::
 
     {{ bug.title | colourise('red') }}
 
@@ -238,7 +238,7 @@ In the default templates it is used to render bug bodies::
 This filter is used to generate a human-readable relative timestamp from a
 :class:`~python:datetime.datetime` object.
 
-For example, to display a bug's ``created_at`` attribute as a relative time::
+For example, to display a bug’s ``created_at`` attribute as a relative time::
 
     {{ bug.created_at | relative_time }}
 

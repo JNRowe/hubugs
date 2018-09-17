@@ -32,9 +32,9 @@ from email.utils import parseaddr
 
 __doc__ += """.
 
-``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
+``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
 
-.. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
+.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
 
 .. moduleauthor:: `{} <mailto:{}>`__
 """.format(*parseaddr(__author__))

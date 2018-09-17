@@ -3,7 +3,7 @@ Usage
 
 The :program:`hubugs` script is the main workhorse of :mod:`hubugs`.
 
-Let's start with some basic examples:
+Let’s start with some basic examples:
 
 .. code-block:: sh
 
@@ -45,11 +45,11 @@ Options
 
 .. option:: --version
 
-   show program's version number and exit
+   show program’s version number and exit
 
 .. option:: -h, --help
 
-   show program's help message and exit
+   show program’s help message and exit
 
 .. option:: --pager <pager>
 

@@ -101,7 +101,7 @@ class Html2Text(TestCase):
 
     def test_width(self):
         para = """<p>This is a long paragraph that needs wrapping to work so it
-        doesn't make you want to claw your eyes out."""
+        doesn’t make you want to claw your eyes out."""
         expect(template.html2text(para).count('\n')) == 1
         # FIXME: Recent html2text version have changed API
         if isinstance(h2t_version, str) and h2t_version <= '2014.4.5':

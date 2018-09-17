@@ -2,7 +2,7 @@ Background
 ==========
 
 GitHub_ provide a great issue tracker for small projects.  It is simple, light
-and fast.  There's only one problem for me, I prefer command line tools for
+and fast.  There’s only one problem for me, I prefer command line tools for
 these tasks.
 
 Luckily, the issue tracker exposes your data via a `thoroughly documented API`_,
@@ -12,7 +12,7 @@ away.
 The requirements
 ----------------
 
-I live at the command line, data that isn't easily manageable from there may as
+I live at the command line, data that isn’t easily manageable from there may as
 well not exist in my eyes.  Therefore:
 
     A simple `command line interface`_ is priority one.
