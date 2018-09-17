@@ -185,7 +185,7 @@ def get_git_config_val(key, default=None, local_only=False):
     """Fetch a git configuration value.
 
     :param str key: Configuration value to fetch
-    :param str default: Default value to use, if key isn't set
+    :param str default: Default value to use, if key isn’t set
     :param bool local_only: Fetch configuration values from repo config only
     :rtype: ``str``
     :return: Git config value, if set
@@ -355,7 +355,7 @@ def sync_labels(globs, add, create):
 
     :param AttrDict globs: Global argument configuration
     :rtype: ``list``
-    :return: List of project's label names
+    :return: List of project’s label names
     """
     labels_url = '{}/repos/{}/labels'.format(globs.host_url, globs.project)
     r, c = globs.req_get(labels_url, model='Label')

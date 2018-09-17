@@ -6,14 +6,14 @@ hubugs - Simple client for GitHub issues
 
 .. warning::
 
-   I don't really use GitHub anymore, so this package is somewhat orphaned.  It
-   should still work *and* I will fix bugs when they're pointed out, but
+   I don’t really use GitHub anymore, so this package is somewhat orphaned.  It
+   should still work *and* I will fix bugs when they’re pointed out, but
    ``hubugs`` is frankly quite a low priority for me.
 
 Introduction
 ------------
 
-``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
+``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
 
 Requirements
 ------------
@@ -47,7 +47,7 @@ If you wish to set the authorisation token from the command line you can use the
 Contributors
 ------------
 
-I'd like to thank the following people who have contributed to ``hubugs``.
+I’d like to thank the following people who have contributed to ``hubugs``.
 
 Patches
 '''''''
@@ -68,8 +68,8 @@ Ideas
 * Jules Marleau
 * Siddiq Shamoon
 
-If I've forgotten to include your name I wholeheartedly apologise.  Just drop me
-a mail_ and I'll update the list!
+If I’ve forgotten to include your name I wholeheartedly apologise.  Just drop me
+a mail_ and I’ll update the list!
 
 Bugs
 ----
@@ -77,10 +77,10 @@ Bugs
 If you find any problems, bugs or just have a question about this package either
 file an issue_ or drop me a mail_.
 
-If you've found a problem please attempt to include a minimal testcase so I can
+If you’ve found a problem please attempt to include a minimal testcase so I can
 reproduce the problem, or even better a patch!
 
-.. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
+.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
 .. _Python: http://www.python.org/
 .. _click: https://pypi.org/projects/click/
 .. _configobj: https://pypi.org/projects/configobj/
