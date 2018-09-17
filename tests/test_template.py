@@ -20,11 +20,11 @@ from collections import namedtuple
 from datetime import (datetime, timedelta)
 from unittest import TestCase
 
-from expecter import expect
 from html2text import __version__ as h2t_version
 from mock import patch
 from nose2.tools import params
 from pygments import (formatters, lexers)
+from pytest import raises
 
 from hubugs import template
 
@@ -37,10 +37,10 @@ class Colourise(TestCase):
     )
     def test_color(self, fg, bg, attributes, expected):
         output = template.colourise('s', fg, bg, **attributes)
-        expect(output).contains(expected)
+        assert expected in output
 
     def test_invalid_colour(self):
-        with expect.raises(TypeError):
+        with raises(TypeError):
             template.colourise('s', 'mauve with a hint of green')
 
 
@@ -52,60 +52,59 @@ class Highlight(TestCase):
     def test_highlight(self, pyg_highlight):
         pyg_highlight.side_effect = self.pyg_side_effect
         result = template.highlight('+++ a\n--- b\n+Test\n')
-        expect(isinstance(result.args[2], lexers.DiffLexer)) == True
-        expect(isinstance(result.args[3],
-                          formatters.terminal.TerminalFormatter)) == True
+        assert isinstance(result.args[2], lexers.DiffLexer)
+        assert isinstance(result.args[3],
+                          formatters.terminal.TerminalFormatter)
 
     @patch('hubugs.template.pyg_highlight')
     def test_highlight_lexer(self, pyg_highlight):
         pyg_highlight.side_effect = self.pyg_side_effect
         result = template.highlight('True', 'python')
-        expect(isinstance(result.args[2], lexers.PythonLexer)) == True
+        assert isinstance(result.args[2], lexers.PythonLexer)
 
     @patch('hubugs.template.pyg_highlight')
     def test_highlight_formatter(self, pyg_highlight):
         pyg_highlight.side_effect = self.pyg_side_effect
         result = template.highlight('True', formatter='terminal256')
-        expect(isinstance(result.args[3],
-                          formatters.terminal256.Terminal256Formatter)) \
-            == True
+        assert isinstance(result.args[3],
+                          formatters.terminal256.Terminal256Formatter)
 
 
 class EditText(TestCase):
     @patch('click.edit')
     def test_no_message(self, edit):
         edit.return_value = None
-        with expect.raises(template.EmptyMessageError):
+        with raises(template.EmptyMessageError):
             template.edit_text()
 
     @patch('click.edit')
     def test_message(self, edit):
         edit.return_value = 'Some message'
-        expect(template.edit_text()) == 'Some message'
+        assert template.edit_text() == 'Some message'
 
     @patch('click.edit')
     def test_message_prefill(self, edit):
         edit.side_effect = lambda t, *args, **kwargs: t
         data = {'title': 'Some message'}
-        expect(template.edit_text('open', data)) == data['title']
+        assert template.edit_text('open', data) == data['title']
 
 
 class Markdown(TestCase):
     def test_basic(self):
-        expect(template.markdown('### hello')) == '<h3>hello</h3>\n'
+        assert template.markdown('### hello') == '<h3>hello</h3>\n'
 
 
 class Html2Text(TestCase):
     def test_basic(self):
-        expect(template.html2text('<h3>hello</h3>')) == '### hello'
+        assert template.html2text('<h3>hello</h3>') == '### hello'
 
     def test_width(self):
         para = """<p>This is a long paragraph that needs wrapping to work so it
         doesn’t make you want to claw your eyes out."""
-        expect(template.html2text(para).count('\n')) == 1
+        assert template.html2text(para).count('\n') == 1
         # FIXME: Recent html2text version have changed API
         if isinstance(h2t_version, str) and h2t_version <= '2014.4.5':
-            expect(template.html2text(para, width=20).count('\n')) == 1
+            assert template.html2text(para, width=20).count('\n') == 1
 
 
 @params(
@@ -122,7 +121,7 @@ class Html2Text(TestCase):
 )
 def test_relative_time(delta, result):
     dt = datetime.utcnow() - timedelta(**delta)
-    expect(template.relative_time(dt)) == result
+    assert template.relative_time(dt) == result
 
 
 @params(
@@ -131,8 +130,7 @@ def test_relative_time(delta, result):
 )
 def test_get_template(group, name):
     t = template.get_template(group, name)
-    expect(t.filename.endswith('/templates/default/%s/%s' % (group, name))) \
-        == True
+    assert t.filename.endswith('/templates/default/%s/%s' % (group, name))
 
 
 @patch('hubugs.template.ENV')
@@ -143,4 +141,4 @@ def test_jinja_filter(env):
         pass
 
     template.jinja_filter(null_func)
-    expect(template.ENV.filters['null_func']) == null_func
+    assert template.ENV.filters['null_func'] == null_func
