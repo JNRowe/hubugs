@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """utils - Utility functions for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Matt Leighton <mleighy@gmail.com>
@@ -25,11 +24,7 @@ import subprocess
 import sys
 
 from functools import partial
-
-try:  # For Python 3
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode  # NOQA
+from urllib.parse import urlencode
 
 import click
 import configobj
@@ -39,41 +34,11 @@ from . import (_version, models)
 
 from .i18n import _
 
-PY3K = sys.version_info[0] == 3
-if PY3K:
-    unicode = str
-
 try:
-    # httplib2 0.8 and above support setting certs via ca_certs_locater module,
-    # making this dirty mess even dirtier
-    assert [int(i) for i in httplib2.__version__.split('.')] >= [0, 8]
     import ca_certs_locater
-except (AssertionError, ImportError):
-    _HTTPLIB2_BUNDLE = os.path.realpath(os.path.dirname(httplib2.CA_CERTS))
-    SYSTEM_CERTS = \
-        not _HTTPLIB2_BUNDLE.startswith(os.path.dirname(httplib2.__file__))
-    CA_CERTS = None
-    CURL_CERTS = False
-    if not SYSTEM_CERTS and sys.platform.startswith('linux'):
-        for cert_file in ['/etc/ssl/certs/ca-certificates.crt',
-                          '/etc/pki/tls/certs/ca-bundle.crt']:
-            if os.path.exists(cert_file):
-                CA_CERTS = cert_file
-                SYSTEM_CERTS = True
-                break
-    elif not SYSTEM_CERTS and sys.platform.startswith('freebsd'):
-        if os.path.exists('/usr/local/share/certs/ca-root-nss.crt'):
-            CA_CERTS = '/usr/local/share/certs/ca-root-nss.crt'
-            SYSTEM_CERTS = True
-    elif os.path.exists(os.getenv('CURL_CA_BUNDLE', '')):
-        CA_CERTS = os.getenv('CURL_CA_BUNDLE')
-        CURL_CERTS = True
-    if not SYSTEM_CERTS and not CURL_CERTS:
-        CA_CERTS = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'GitHub_certs.crt')
-else:
     CA_CERTS = ca_certs_locater.get()
-    CURL_CERTS = False
+except ImportError:
+    CA_CERTS = None
 
 
 # Set up informational message functions
@@ -174,27 +139,6 @@ class RepoError(ValueError):
     """Error raised for invalid repository values."""
 
 
-def check_output(args, **kwargs):
-    """Simple check_output implementation for Python 2.6 compatibility.
-
-    :param list args: Command and arguments to call
-    :rtype: ``str``
-    :return: Command output
-    :raise subprocess.CalledProcessError: If command execution fails
-    """
-    try:
-        output = subprocess.check_output(args, **kwargs)
-    except AttributeError:
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            raise subprocess.CalledProcessError(retcode, args[0])
-    if PY3K:
-        output = output.decode()
-    return output
-
-
 def get_github_api():
     """Create a GitHub API instance.
 
@@ -215,7 +159,7 @@ def get_git_config_val(key, default=None, local_only=False):
     """Fetch a git configuration value.
 
     :param str key: Configuration value to fetch
-    :param str default: Default value to use, if key isn't set
+    :param str default: Default value to use, if key isn’t set
     :param bool local_only: Fetch configuration values from repo config only
     :rtype: ``str``
     :return: Git config value, if set
@@ -225,14 +169,15 @@ def get_git_config_val(key, default=None, local_only=False):
         cmd.append('--local')
     cmd.extend(['--get', key])
     try:
-        output = check_output(cmd).strip()
+        output = subprocess.check_output(cmd, encoding='utf-8').strip()
     except subprocess.CalledProcessError:
         output = default
     if output and output.startswith('!'):
         try:
-            output = check_output(output[1:].split()).strip()
+            output = subprocess.check_output(output[1:].split(),
+                                             encoding='utf-8').strip()
         except subprocess.CalledProcessError:
-            print("Whoops!")
+            print('Whoops!')
             sys.exit(97)
     return output
 
@@ -248,7 +193,8 @@ def set_git_config_val(key, value, local_only=False):
     if not local_only:
         cmd.append('--global')
     cmd.extend([key, value])
-    check_output(cmd, stderr=subprocess.STDOUT).strip()
+    subprocess.check_output(cmd, stderr=subprocess.STDOUT,
+                            encoding='utf-8').strip()
 
 
 def get_editor():
@@ -259,7 +205,8 @@ def get_editor():
     :rtype: ``list`` of ``str``
     :return: Users chosen editor, or ``vi`` if not set
     """
-    return check_output(['git', 'var', 'GIT_EDITOR']).strip().split()
+    return subprocess.check_output(['git', 'var', 'GIT_EDITOR'],
+                                   encoding='utf-8').strip().split()
 
 
 def get_repo():
@@ -278,16 +225,16 @@ def get_repo():
     data = get_git_config_val('remote.origin.url', local_only=True)
     if not data:
         try:
-            root = check_output(['hg', 'root'], stderr=subprocess.PIPE).strip()
+            root = subprocess.check_output(['hg', 'root'],
+                                           stderr=subprocess.PIPE,
+                                           encoding='utf-8').strip()
         except (OSError, subprocess.CalledProcessError):
             # No mercurial install, or not in a mercurial tree
             pass
         else:
             conf = configobj.ConfigObj(os.path.join(root, '.hg', 'hgrc'))
-            try:
+            with contextlib.suppress(KeyError):
                 data = conf['paths']['default']
-            except KeyError:
-                pass
 
     if not data:
         raise RepoError(_('Unable to guess project from repository'))
@@ -338,7 +285,7 @@ def setup_environment(project, host_url):
 
     token = os.getenv('HUBUGS_TOKEN', get_git_config_val('hubugs.token', None))
     if token:
-        base_headers['Authorization'] = 'token %s' % token
+        base_headers['Authorization'] = 'token {}'.format(token)
 
     def http_method(url, method='GET', params=None, body=None, headers=None,
                     model=None, is_json=True, token=True):
@@ -348,9 +295,9 @@ def setup_environment(project, host_url):
                                      "Run 'hubugs setup' to create a token"))
         if headers:
             lheaders.update(headers)
-        if not isinstance(url, (str, unicode)) or not url.startswith('http'):
-            url = '%s/repos/%s/issues%s%s' % (host_url, project,
-                                              '/' if url else '', url)
+        if not isinstance(url, str) or not url.startswith('http'):
+            url = '{}/repos/{}/issues{}{}'.format(host_url, project,
+                                                  '/' if url else '', url)
         if params:
             url += '?' + urlencode(params)
         if is_json and body:
@@ -368,9 +315,11 @@ def setup_environment(project, host_url):
     env['req_post'] = partial(http_method, method='POST')
 
     def repo_obj():
-        r, c = http_method('%s/repos/%s' % (host_url, project), model='Repo')
+        r, c = http_method('{}/repos/{}'.format(host_url, project),
+                           model='Repo')
         if not c.has_issues:
-            raise RepoError(("Issues aren't enabled for %r") % project)
+            raise RepoError(
+                _("Issues aren't enabled for {:!r}").format(project))
     env['repo_obj'] = repo_obj
     return env
 
@@ -380,18 +329,18 @@ def sync_labels(globs, add, create):
 
     :param AttrDict globs: Global argument configuration
     :rtype: ``list``
-    :return: List of project's label names
+    :return: List of project’s label names
     """
-    labels_url = '%s/repos/%s/labels' % (globs.host_url, globs.project)
+    labels_url = '{}/repos/{}/labels'.format(globs.host_url, globs.project)
     r, c = globs.req_get(labels_url, model='Label')
     label_names = [label.name for label in c]
 
     for label in add:
         if label not in label_names:
-            raise ValueError(_('No such label %r') % label)
+            raise ValueError(_('No such label {!r}').format(label))
     for label in create:
         if label in label_names:
-            warn(_('%r label already exists') % label)
+            warn(_('{!r} label already exists').format(label))
         else:
             data = {'name': label, 'color': '000000'}
             globs.req_post(labels_url, body=data, model='Label')

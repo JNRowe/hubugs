@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-# coding=utf-8
+#! /usr/bin/env python3
 """hubugs - Simple client for GitHub issues"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #

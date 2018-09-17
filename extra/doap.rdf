@@ -7,10 +7,10 @@
     <shortname>hubugs</shortname>
 
     <shortdesc xml:lang="en">
-        A very simple client for working with GitHub's issue tracker
+        A very simple client for working with GitHub’s issue tracker
     </shortdesc>
     <description xml:lang="en">
-        hubugs is a very simple client for working with GitHub's issue
+        hubugs is a very simple client for working with GitHub’s issue
         tracker from the command line.
     </description>
 

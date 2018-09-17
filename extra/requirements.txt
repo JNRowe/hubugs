@@ -1,2 +1,7 @@
--r requirements-base.txt
+click>=6.2
+configobj>=5.0.0
+html2text
+httplib2>=0.8.0
 Jinja2>=2
+misaka>=1.0.2
+Pygments

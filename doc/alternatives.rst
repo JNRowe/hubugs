@@ -14,7 +14,7 @@ highlight any possible bias I may have shown in comparing them ;)
 
 ghi_ is a great issues client, written in Ruby_.
 
-I personally didn't like the "feel" of the command line interface, and wanted
+I personally didn’t like the “feel” of the command line interface, and wanted
 slightly different output.
 
 :mod:`hubugs` provides the following advantages:
@@ -30,9 +30,9 @@ and has the following disadvantages:
 ``github-cli``
 --------------
 
-github-cli_ is a fantastic command-line client for GitHub's issues, written in
+github-cli_ is a fantastic command-line client for GitHub’s issues, written in
 Python_.  I really liked ``github-cli`` to the extent of authoring a few
-patches, but just didn't find it comfortable to use in the long run [#]_.
+patches, but just didn’t find it comfortable to use in the long run [#]_.
 
 :mod:`hubugs` provides the following advantages:
 
@@ -49,7 +49,7 @@ and has the following disadvantages:
   be a problem for some users
 
 .. [#] If you look at the timeline for the `hubugs repository`_ and my
-   `github-cli fork`_ you'll see I was using ``github-cli`` for a few months
+   `github-cli fork`_ you’ll see I was using ``github-cli`` for a few months
    after spiking :mod:`hubugs`.
 
 .. _mail: jnrowe@gmail.com

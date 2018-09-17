@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """test_attrdict - Test AttrDict support"""
 # Copyright © 2010, 2011, 2012, 2013, 2014  James Rowe <jnrowe@gmail.com>
 #

@@ -6,8 +6,8 @@ User-visible changes
 0.18.0 - 2016-05-16
 -------------------
 
-* Support for httplib2_ v0.8's ``ca_certs_locater``
-* Support for git's ``core.commentchar`` in templates
+* Support for httplib2_ v0.8’s ``ca_certs_locater``
+* Support for git’s ``core.commentchar`` in templates
 * Requires configobj_
 * misaka_ is required [again], as GitHub no longer provide pre-formatted HTML
 
@@ -139,7 +139,7 @@ User-visible changes
 0.6.0 - 2011-04-09
 ------------------
 
-* Display an issue's pull request in default templates
+* Display an issue’s pull request in default templates
 * Include pull request patch output with ``--patch`` option
 * New template filter ``highlight`` for passing text through Pygments_
 
@@ -148,7 +148,7 @@ User-visible changes
 0.5.0 - 2011-03-10
 ------------------
 
-* Support for editing an existing bug's title and/or summary
+* Support for editing an existing bug’s title and/or summary
 * Support for re-opening closed bugs
 * GitHub authorisation values can be read from the environment using
   ``GITHUB_USER`` and ``GITHUB_TOKEN``
