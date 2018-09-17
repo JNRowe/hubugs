@@ -18,6 +18,7 @@
 #
 
 import collections
+import contextlib
 import datetime
 
 # We used to use tight, explicit bindings for API objects but the desire to
@@ -38,10 +39,8 @@ def object_hook(d, name='unknown'):
     if '_links' in d:
         d.pop('_links')
     for k, v in d.items():
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             d[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%SZ')
-        except (TypeError, ValueError):
-            pass
     return collections.namedtuple(d.get('type', name), d.keys())(**d)
 
 
