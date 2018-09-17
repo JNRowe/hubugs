@@ -13,25 +13,25 @@
         hubugs is a very simple client for working with GitHub's issue
         tracker from the command line.
     </description>
- 
+
     <homepage rdf:resource="https://github.com/JNRowe/hubugs" />
     <download-page rdf:resource="https://pypi.org/projects/hubugs/" />
-    <bug-database rdf:resource="http://github.com/JNRowe/hubugs/issues" />
+    <bug-database rdf:resource="https://github.com/JNRowe/hubugs/issues" />
     <repository>
         <GitRepository>
-            <location rdf:resource="git://github.com/JNRowe/hubugs.git" />
+            <location rdf:resource="https://github.com/JNRowe/hubugs.git" />
             <browse rdf:resource="https://github.com/JNRowe/hubugs" />
         </GitRepository>
     </repository>
     <created>2014-02-03</created>
     <license rdf:resource="http://spdx.org/licenses/GPL-3.0+" />
     <programming-language>Python</programming-language>
-   
+
     <maintainer>
         <foaf:Person>
             <foaf:name>James Rowe</foaf:name>
             <mbox rdf:resource="mailto:jnrowe@gmail.com" />
-            <rdfs:homepage rdf:resource="http://jnrowe.github.io" />
+            <rdfs:homepage rdf:resource="https://jnrowe.github.io" />
         </foaf:Person>
     </maintainer>
 </Project>
