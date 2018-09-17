@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import configparser
 import json
 import os
 import re
@@ -27,7 +28,6 @@ from functools import partial
 from urllib.parse import urlencode
 
 import click
-import configobj
 import httplib2
 
 from . import (_version, models)
@@ -258,9 +258,11 @@ def get_repo():
             # No mercurial install, or not in a mercurial tree
             pass
         else:
-            conf = configobj.ConfigObj(os.path.join(root, '.hg', 'hgrc'))
-            with contextlib.suppress(KeyError):
-                data = conf['paths']['default']
+            conf = configparser.ConfigParser()
+            conf.read(os.path.join(root, '.hg', 'hgrc'))
+            with contextlib.suppress(configparser.NoSectionError,
+                                     configparser.NoOptionError):
+                data = conf.get('paths', 'default')
 
     if not data:
         raise RepoError(_('Unable to guess project from repository'))
