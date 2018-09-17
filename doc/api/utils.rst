@@ -25,11 +25,3 @@ Git/GitHub support
 .. autofunction:: set_git_config_val
 .. autofunction:: get_repo
 .. autofunction:: sync_labels
-
-Text formatting
-'''''''''''''''
-
-.. autofunction:: _colourise
-.. autofunction:: success
-.. autofunction:: fail
-.. autofunction:: warn

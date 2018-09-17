@@ -26,6 +26,7 @@ import html2text as html2
 import jinja2
 import misaka
 
+from jnrbase.colourise import success
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
@@ -205,7 +206,7 @@ def display_bugs(bugs, order, **extras):
     :return: Rendered template output
     """
     if not bugs:
-        return utils.success(_('No bugs found!'))
+        return success(_('No bugs found!'))
 
     # Match ordering method to bug attribute
     if order == 'updated':
