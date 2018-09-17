@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-# coding=utf-8
 """setup.py - Setuptools tasks and config for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
