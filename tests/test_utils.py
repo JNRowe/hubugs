@@ -20,9 +20,9 @@ from subprocess import CalledProcessError
 from unittest import TestCase
 
 from click import BadParameter
-from expecter import expect
 from mock import (Mock, patch)
 from nose2.tools import params
+from pytest import raises
 
 from hubugs import ProjectNameParamType
 from hubugs import utils
@@ -61,7 +61,7 @@ class TestProjectNameParamType(TestCase):
         get_git_config_val.return_value = None
 
         p = ProjectNameParamType()
-        with expect.raises(BadParameter):
+        with raises(BadParameter):
             p.convert('misc-overlay', None, None)
 
 
@@ -69,28 +69,28 @@ class GetGitConfigVal(TestCase):
     @patch('subprocess.check_output')
     def test_valid_key(self, check_output):
         check_output.return_value = 'JNRowe'
-        expect(utils.get_git_config_val('github.user')) == 'JNRowe'
+        assert utils.get_git_config_val('github.user') == 'JNRowe'
 
     @patch('subprocess.check_output')
     def test_invalid_key(self, check_output):
         check_output.return_value = ''
-        expect(utils.get_git_config_val('no_such_key')) == ''
+        assert utils.get_git_config_val('no_such_key') == ''
 
     @patch('subprocess.check_output')
     def test_command_error(self, check_output):
         check_output.side_effect = CalledProcessError('255', 'cmd')
-        expect(utils.get_git_config_val('github.user')) is None
+        assert utils.get_git_config_val('github.user') is None
 
 
 class GetEditor(TestCase):
     def test_git_editor_envvar(self):
         with patch.dict('os.environ', {'EDITOR': 'custom git editor'},
                         clear=True):
-            expect(utils.get_editor()) == ['custom', 'git', 'editor']
+            assert utils.get_editor() == ['custom', 'git', 'editor']
 
     def test_editor_environment_editor(self):
         with patch.dict('os.environ', {'EDITOR': 'editor'}, clear=True):
-            expect(utils.get_editor()) == ['editor', ]
+            assert utils.get_editor() == ['editor', ]
 
 
 class GetRepo(TestCase):
@@ -113,7 +113,7 @@ class GetRepo(TestCase):
     def test_repo_url(self, repo, get_git_config_val):
         # side_effect to skip hubugs.project call
         get_git_config_val.side_effect = [None, repo]
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
+        assert utils.get_repo() == 'JNRowe/misc-overlay'
 
     @params(
         'git://github.com/misc-overlay.git',
@@ -124,11 +124,11 @@ class GetRepo(TestCase):
     def test_broken_url(self, repo, get_git_config_val):
         # side_effect to skip hubugs.project call
         get_git_config_val.side_effect = [None, repo]
-        with expect.raises(ValueError):
+        with raises(ValueError):
             utils.get_repo()
 
     @patch('hubugs.utils.get_git_config_val')
     def test_config_project(self, get_git_config_val):
         # side_effect to skip hubugs.project call
         get_git_config_val.return_value = 'JNRowe/misc-overlay'
-        expect(utils.get_repo()) == 'JNRowe/misc-overlay'
+        assert utils.get_repo() == 'JNRowe/misc-overlay'
