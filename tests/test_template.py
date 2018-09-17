@@ -29,14 +29,12 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
-from tests.utils import (unicode)
-
 
 class Colourise(TestCase):
     @params(
-        ('red', None, {}, unicode('\x1b[31')),
-        (None, 'blue', {}, unicode('\x1b[44m')),
-        (None, None, {'bold': True}, unicode('\x1b[1m')),
+        ('red', None, {}, '\x1b[31'),
+        (None, 'blue', {}, '\x1b[44m'),
+        (None, None, {'bold': True}, '\x1b[1m'),
     )
     def test_color(self, fg, bg, attributes, expected):
         output = template.colourise('s', fg, bg, **attributes)

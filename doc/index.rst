@@ -15,8 +15,8 @@
 :mod:`hubugs` is a very simple client for working with `GitHub's issue
 tracker`_ from the command line.
 
-It is written in Python_, and works with Python 2.6 and newer(including Python
-3).  :mod:`hubugs` is released under the `GPL v3`_
+It is written in Python_, and works with Python 3.5 and newer.  :mod:`hubugs` is
+released under the `GPL v3`_
 
 :Git repository:  https://github.com/JNRowe/hubugs/
 :Issue tracker:  https://github.com/JNRowe/hubugs/issues/

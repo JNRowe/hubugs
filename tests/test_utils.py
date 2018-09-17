@@ -67,17 +67,17 @@ class TestProjectNameParamType(TestCase):
 
 
 class GetGitConfigVal(TestCase):
-    @patch('hubugs.utils.check_output')
+    @patch('subprocess.check_output')
     def test_valid_key(self, check_output):
         check_output.return_value = 'JNRowe'
         expect(utils.get_git_config_val('github.user')) == 'JNRowe'
 
-    @patch('hubugs.utils.check_output')
+    @patch('subprocess.check_output')
     def test_invalid_key(self, check_output):
         check_output.return_value = ''
         expect(utils.get_git_config_val('no_such_key')) == ''
 
-    @patch('hubugs.utils.check_output')
+    @patch('subprocess.check_output')
     def test_command_error(self, check_output):
         check_output.side_effect = CalledProcessError('255', 'cmd')
         expect(utils.get_git_config_val('github.user')) is None

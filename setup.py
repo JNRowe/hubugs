@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # coding=utf-8
 """setup.py - Setuptools tasks and config for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from sys import version_info
 from warnings import warn
 
 from setuptools import setup
@@ -43,12 +42,7 @@ def parse_requires(file):
             deps.append(dep)
     return deps
 
-try:
-    install_requires = parse_requires('requirements-py%s%s.txt'
-                                      % version_info[:2])
-except IOError:
-    warn('Unsupported Python version please open an issue!', RuntimeWarning)
-    install_requires = parse_requires('requirements.txt')
+install_requires = parse_requires('requirements.txt')
 
 setup(
     name='hubugs',
@@ -78,14 +72,9 @@ setup(
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Communications',
         'Topic :: Internet',
         'Topic :: Software Development',

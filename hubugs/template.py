@@ -176,8 +176,7 @@ def relative_time(timestamp):
     match_names = ['year', 'month', 'week', 'day', 'hour', 'minute', 'second']
 
     delta = datetime.datetime.utcnow() - timestamp
-    # Switch to delta.total_seconds, if 2.6 support is dropped
-    seconds = delta.days * 86400 + delta.seconds
+    seconds = delta.total_seconds()
     for scale in matches:
         i = seconds // scale
         if i:
