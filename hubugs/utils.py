@@ -40,7 +40,7 @@ try:
     assert [int(i) for i in httplib2.__version__.split('.')] >= [0, 8]
     import ca_certs_locater
 except (AssertionError, ImportError):
-    _HTTPLIB2_BUNDLE = os.path.realpath(os.path.dirname(httplib2.CA_CERTS))
+    _HTTPLIB2_BUNDLE = os.path.dirname(httplib2.CA_CERTS)
     SYSTEM_CERTS = \
         not _HTTPLIB2_BUNDLE.startswith(os.path.dirname(httplib2.__file__))
     CA_CERTS = None
