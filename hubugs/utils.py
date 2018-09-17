@@ -260,10 +260,8 @@ def get_repo():
             pass
         else:
             conf = configobj.ConfigObj(os.path.join(root, '.hg', 'hgrc'))
-            try:
+            with contextlib.suppress(KeyError):
                 data = conf['paths']['default']
-            except KeyError:
-                pass
 
     if not data:
         raise RepoError(_('Unable to guess project from repository'))
