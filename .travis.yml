@@ -7,6 +7,6 @@ install:
   - pip install .
   - pip install coveralls
 script:
-  - nose2 tests
+  - pytest tests
 after_success:
   - coveralls

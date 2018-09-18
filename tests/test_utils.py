@@ -17,7 +17,6 @@
 #
 
 from subprocess import CalledProcessError
-from unittest import TestCase
 
 from click import BadParameter
 from mock import (Mock, patch)
@@ -38,25 +37,24 @@ def fake_env(key, default=None):
     return fake_data[key]
 
 
-class TestProjectNameParamType(TestCase):
-    @params(
-        ('misc-overlay', 'JNRowe/misc-overlay'),
-        ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
-        ('ask/python-github2', 'ask/python-github2'),
-    )
-    @patch('hubugs.utils.get_github_api')
-    @patch('hubugs.utils.get_git_config_val')
-    def test_repo_name(self, repo, expected, get_git_config_val,
-                       get_github_api):
+@params(
+    ('misc-overlay', 'JNRowe/misc-overlay'),
+    ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
+    ('ask/python-github2', 'ask/python-github2'),
+)
+def test_ProjectNameParamType_repo_name(repo, expected):
+    with patch('hubugs.utils.get_github_api') as get_github_api, \
+         patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = 'JNRowe'
 
         p = ProjectNameParamType()
         p.convert(repo, None, None) == expected
 
-    @patch('hubugs.utils.get_github_api')
-    @patch('hubugs.utils.get_git_config_val')
-    def test_no_user(self, get_git_config_val, get_github_api):
+
+def test_ProjectNameParamType_no_user():
+    with patch('hubugs.utils.get_github_api') as get_github_api, \
+         patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         get_github_api().repos.show = Mock(return_value=True)
         get_git_config_val.return_value = None
 
@@ -65,70 +63,78 @@ class TestProjectNameParamType(TestCase):
             p.convert('misc-overlay', None, None)
 
 
-class GetGitConfigVal(TestCase):
-    @patch('subprocess.check_output')
-    def test_valid_key(self, check_output):
+def test_GetGitConfigVal_valid_key():
+    with patch('subprocess.check_output') as check_output:
         check_output.return_value = 'JNRowe'
+
         assert utils.get_git_config_val('github.user') == 'JNRowe'
 
-    @patch('subprocess.check_output')
-    def test_invalid_key(self, check_output):
+
+def test_GetGitConfigVal_invalid_key():
+    with patch('subprocess.check_output') as check_output:
         check_output.return_value = ''
+
         assert utils.get_git_config_val('no_such_key') == ''
 
-    @patch('subprocess.check_output')
-    def test_command_error(self, check_output):
+
+def test_GetGitConfigVal_command_error():
+    with patch('subprocess.check_output') as check_output:
         check_output.side_effect = CalledProcessError('255', 'cmd')
+
         assert utils.get_git_config_val('github.user') is None
 
 
-class GetEditor(TestCase):
-    def test_git_editor_envvar(self):
-        with patch.dict('os.environ', {'EDITOR': 'custom git editor'},
-                        clear=True):
-            assert utils.get_editor() == ['custom', 'git', 'editor']
-
-    def test_editor_environment_editor(self):
-        with patch.dict('os.environ', {'EDITOR': 'editor'}, clear=True):
-            assert utils.get_editor() == ['editor', ]
+def test_GetEditor_git_editor_envvar():
+    with patch.dict('os.environ', {'EDITOR': 'custom git editor'},
+                    clear=True):
+        assert utils.get_editor() == ['custom', 'git', 'editor']
 
 
-class GetRepo(TestCase):
-    @params(
-        'git@github.com:JNRowe/misc-overlay.git',
-        'git@github.com:JNRowe/misc-overlay',
-        'git://github.com/JNRowe/misc-overlay.git',
-        'git://github.com/JNRowe/misc-overlay',
-        'https://JNRowe@github.com/JNRowe/misc-overlay.git',
-        'https://JNRowe@github.com/JNRowe/misc-overlay',
-        'http://JNRowe@github.com/JNRowe/misc-overlay.git',
-        'http://JNRowe@github.com/JNRowe/misc-overlay',
-        'http://github.com/JNRowe/misc-overlay.git',
-        'http://github.com/JNRowe/misc-overlay',
+def test_GetEditor_editor_environment_editor():
+    with patch.dict('os.environ', {'EDITOR': 'editor'}, clear=True):
+        assert utils.get_editor() == ['editor', ]
 
-        # hg-git
-        'git+ssh://git@github.com:JNRowe/misc-overlay.git',
-    )
-    @patch('hubugs.utils.get_git_config_val')
-    def test_repo_url(self, repo, get_git_config_val):
+
+@params(
+    'git@github.com:JNRowe/misc-overlay.git',
+    'git@github.com:JNRowe/misc-overlay',
+    'git://github.com/JNRowe/misc-overlay.git',
+    'git://github.com/JNRowe/misc-overlay',
+    'https://JNRowe@github.com/JNRowe/misc-overlay.git',
+    'https://JNRowe@github.com/JNRowe/misc-overlay',
+    'http://JNRowe@github.com/JNRowe/misc-overlay.git',
+    'http://JNRowe@github.com/JNRowe/misc-overlay',
+    'http://github.com/JNRowe/misc-overlay.git',
+    'http://github.com/JNRowe/misc-overlay',
+
+    # hg-git
+    'git+ssh://git@github.com:JNRowe/misc-overlay.git',
+)
+def test_GetRepo_repo_url(repo):
+    with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         # side_effect to skip hubugs.project call
         get_git_config_val.side_effect = [None, repo]
+
         assert utils.get_repo() == 'JNRowe/misc-overlay'
 
-    @params(
-        'git://github.com/misc-overlay.git',
-        None,
-        'http://example.com/dog.git',
-    )
-    @patch('hubugs.utils.get_git_config_val')
-    def test_broken_url(self, repo, get_git_config_val):
+
+@params(
+    'git://github.com/misc-overlay.git',
+    None,
+    'http://example.com/dog.git',
+)
+def test_GetRepo_broken_url(repo):
+    with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         # side_effect to skip hubugs.project call
         get_git_config_val.side_effect = [None, repo]
+
         with raises(ValueError):
             utils.get_repo()
 
-    @patch('hubugs.utils.get_git_config_val')
-    def test_config_project(self, get_git_config_val):
+
+def test_GetRepo_config_project():
+    with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         # side_effect to skip hubugs.project call
         get_git_config_val.return_value = 'JNRowe/misc-overlay'
+
         assert utils.get_repo() == 'JNRowe/misc-overlay'

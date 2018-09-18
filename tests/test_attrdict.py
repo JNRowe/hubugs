@@ -16,13 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from unittest import TestCase
-
 from hubugs.utils import AttrDict
 
 
-class AttrDictTest(TestCase):
-    def setUp(self):
+class TestAttrDict:
+    def setup_method(self, method):
         self.ad = AttrDict(carrots=3, snacks=0)
 
     def test_base(self):
