@@ -46,7 +46,7 @@ html_theme_options = {
 try:
     html_last_updated_fmt = check_output(['git', 'log',
                                           "--pretty=format:'%ad [%h]'",
-                                          '--date=short', '-n1'])
+                                          '--date=short', '-n1']).decode()
 except CalledProcessError:
     pass
 
