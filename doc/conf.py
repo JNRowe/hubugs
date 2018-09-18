@@ -28,8 +28,7 @@ sys.path.insert(0, root_dir)
 import hubugs
 
 extensions = \
-    ['sphinx.ext.%s' % ext for ext in ['autodoc', 'intersphinx', ]] \
-    + ['sphinxcontrib.%s' % ext for ext in ['cheeseshop']]
+    ['sphinx.ext.%s' % ext for ext in ['autodoc', 'extlinks', 'intersphinx', ]]
 
 master_doc = 'index'
 source_suffix = '.rst'
@@ -59,4 +58,8 @@ intersphinx_mapping = {
     'jinja': ('http://jinja.pocoo.org/docs/',
               os.getenv('SPHINX_JINJA_OBJECTS')),
     'python': ('http://docs.python.org/', os.getenv('SPHINX_PYTHON_OBJECTS')),
+}
+
+extlinks = {
+    'pypi': ('https://pypi.org/project/%s/', ''),
 }
