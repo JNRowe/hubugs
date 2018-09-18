@@ -46,60 +46,50 @@ def pyg_side_effect(*args, **kwargs):
     return namedtuple('Call', 'args kwargs')(args, kwargs)
 
 
-def test_highlight():
-    with patch('hubugs.template.pyg_highlight') as pyg_highlight, \
-         patch('sys.stdout.isatty') as isatty:
-        pyg_highlight.side_effect = pyg_side_effect
-        isatty.side_effect = lambda: True
+def test_highlight(monkeypatch):
+    monkeypatch.setattr('hubugs.template.pyg_highlight', pyg_side_effect)
+    monkeypatch.setattr('sys.stdout.isatty', lambda: True)
 
-        result = template.highlight('+++ a\n--- b\n+Test\n')
-        assert isinstance(result.args[1], lexers.DiffLexer)
-        assert isinstance(result.args[2],
-                          formatters.terminal.TerminalFormatter)
+    result = template.highlight('+++ a\n--- b\n+Test\n')
+    assert isinstance(result.args[1], lexers.DiffLexer)
+    assert isinstance(result.args[2], formatters.terminal.TerminalFormatter)
 
 
-def test_highlight_lexer():
-    with patch('hubugs.template.pyg_highlight') as pyg_highlight, \
-         patch('sys.stdout.isatty') as isatty:
-        pyg_highlight.side_effect = pyg_side_effect
-        isatty.side_effect = lambda: True
+def test_highlight_lexer(monkeypatch):
+    monkeypatch.setattr('hubugs.template.pyg_highlight', pyg_side_effect)
+    monkeypatch.setattr('sys.stdout.isatty', lambda: True)
 
-        result = template.highlight('True', 'python')
-        assert isinstance(result.args[1], lexers.PythonLexer)
+    result = template.highlight('True', 'python')
+    assert isinstance(result.args[1], lexers.PythonLexer)
 
 
-def test_highlight_formatter():
-    with patch('hubugs.template.pyg_highlight') as pyg_highlight, \
-         patch('sys.stdout.isatty') as isatty:
-        pyg_highlight.side_effect = pyg_side_effect
-        isatty.side_effect = lambda: True
+def test_highlight_formatter(monkeypatch):
+    monkeypatch.setattr('hubugs.template.pyg_highlight', pyg_side_effect)
+    monkeypatch.setattr('sys.stdout.isatty', lambda: True)
 
-        result = template.highlight('True', formatter='terminal256')
-        assert isinstance(result.args[2],
-                          formatters.terminal256.Terminal256Formatter)
+    result = template.highlight('True', formatter='terminal256')
+    assert isinstance(result.args[2],
+                      formatters.terminal256.Terminal256Formatter)
 
 
-def test_EditText_no_message():
-    with patch('click.edit') as edit:
-        edit.return_value = None
+def test_EditText_no_message(monkeypatch):
+    monkeypatch.setattr('click.edit', lambda *args, **kwargs: None)
 
-        with raises(template.EmptyMessageError):
-            template.edit_text()
-
-
-def test_EditText_message():
-    with patch('click.edit') as edit:
-        edit.return_value = 'Some message'
-
-        assert template.edit_text() == 'Some message'
+    with raises(template.EmptyMessageError):
+        template.edit_text()
 
 
-def test_EditText_message_prefill():
-    with patch('click.edit') as edit:
-        edit.side_effect = lambda t, *args, **kwargs: t
+def test_EditText_message(monkeypatch):
+    monkeypatch.setattr('click.edit', lambda *args, **kwargs: 'Some message')
 
-        data = {'title': 'Some message'}
-        assert template.edit_text('open', data) == data['title']
+    assert template.edit_text() == 'Some message'
+
+
+def test_EditText_message_prefill(monkeypatch):
+    monkeypatch.setattr('click.edit', lambda t, *args, **kwargs: t)
+
+    data = {'title': 'Some message'}
+    assert template.edit_text('open', data) == data['title']
 
 
 def test_Markdown_basic():
@@ -145,12 +135,11 @@ def test_get_template(group, name):
     assert t.filename.endswith('/templates/default/%s/%s' % (group, name))
 
 
-def test_jinja_filter():
-    with patch('hubugs.template.ENV') as env:
-        env.filters = {}
+def test_jinja_filter(monkeypatch):
+    monkeypatch.setattr('hubugs.template.ENV.filters', {})
 
-        def null_func():
-            pass
+    def null_func():
+        pass
 
-        template.jinja_filter(null_func)
-        assert template.ENV.filters['null_func'] == null_func
+    template.jinja_filter(null_func)
+    assert template.ENV.filters['null_func'] == null_func
