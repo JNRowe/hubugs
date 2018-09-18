@@ -20,8 +20,7 @@ from subprocess import CalledProcessError
 
 from click import BadParameter
 from mock import (Mock, patch)
-from nose2.tools import params
-from pytest import raises
+from pytest import mark, raises
 
 from hubugs import ProjectNameParamType
 from hubugs import utils
@@ -37,11 +36,11 @@ def fake_env(key, default=None):
     return fake_data[key]
 
 
-@params(
+@mark.parametrize('repo, expected', [
     ('misc-overlay', 'JNRowe/misc-overlay'),
     ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
     ('ask/python-github2', 'ask/python-github2'),
-)
+])
 def test_ProjectNameParamType_repo_name(repo, expected):
     with patch('hubugs.utils.get_github_api') as get_github_api, \
          patch('hubugs.utils.get_git_config_val') as get_git_config_val:
@@ -95,7 +94,7 @@ def test_GetEditor_editor_environment_editor():
         assert utils.get_editor() == ['editor', ]
 
 
-@params(
+@mark.parametrize('repo', [
     'git@github.com:JNRowe/misc-overlay.git',
     'git@github.com:JNRowe/misc-overlay',
     'git://github.com/JNRowe/misc-overlay.git',
@@ -109,7 +108,7 @@ def test_GetEditor_editor_environment_editor():
 
     # hg-git
     'git+ssh://git@github.com:JNRowe/misc-overlay.git',
-)
+])
 def test_GetRepo_repo_url(repo):
     with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         # side_effect to skip hubugs.project call
@@ -118,11 +117,11 @@ def test_GetRepo_repo_url(repo):
         assert utils.get_repo() == 'JNRowe/misc-overlay'
 
 
-@params(
+@mark.parametrize('repo', [
     'git://github.com/misc-overlay.git',
     None,
     'http://example.com/dog.git',
-)
+])
 def test_GetRepo_broken_url(repo):
     with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
         # side_effect to skip hubugs.project call

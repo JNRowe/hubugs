@@ -21,18 +21,17 @@ from datetime import (datetime, timedelta)
 
 from html2text import __version__ as h2t_version
 from mock import patch
-from nose2.tools import params
 from pygments import (formatters, lexers)
-from pytest import raises
+from pytest import mark, raises
 
 from hubugs import template
 
 
-@params(
+@mark.parametrize('fg, bg, attributes, expected', [
     ('red', None, {}, '\x1b[31'),
     (None, 'blue', {}, '\x1b[44m'),
     (None, None, {'bold': True}, '\x1b[1m'),
-)
+])
 def test_Colourise_color(fg, bg, attributes, expected):
     output = template.colourise('s', fg, bg, **attributes)
     assert expected in output
@@ -120,7 +119,7 @@ def test_Html2Text_width():
         assert template.html2text(para, width=20).count('\n') == 1
 
 
-@params(
+@mark.parametrize('delta, result', [
     ({'days': 365, }, 'last year'),
     ({'days': 70, }, 'about two months ago'),
     ({'days': 30, }, 'last month'),
@@ -131,16 +130,16 @@ def test_Html2Text_width():
     ({'hours': 1, }, 'about an hour ago'),
     ({'minutes': 6, }, 'about six minutes ago'),
     ({'seconds': 12, }, 'about 12 seconds ago'),
-)
+])
 def test_relative_time(delta, result):
     dt = datetime.utcnow() - timedelta(**delta)
     assert template.relative_time(dt) == result
 
 
-@params(
+@mark.parametrize('group, name', [
     ('edit', 'default.mkd'),
     ('view', 'issue.txt'),
-)
+])
 def test_get_template(group, name):
     t = template.get_template(group, name)
     assert t.filename.endswith('/templates/default/%s/%s' % (group, name))
