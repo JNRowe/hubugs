@@ -19,21 +19,10 @@
 from subprocess import CalledProcessError
 
 from click import BadParameter
-from mock import (Mock, patch)
 from pytest import mark, raises
 
 from hubugs import ProjectNameParamType
 from hubugs import utils
-
-
-def fake_env(key, default=None):
-    """Fake environment settings used for os.getenv mocking."""
-    fake_data = {
-        'HUBUGS_TOKEN': 'xxx',
-        'HOME': '/home/JNRowe',
-        'XDG_CACHE_HOME': 'cache_dir',
-    }
-    return fake_data[key]
 
 
 @mark.parametrize('repo, expected', [
@@ -41,57 +30,56 @@ def fake_env(key, default=None):
     ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
     ('ask/python-github2', 'ask/python-github2'),
 ])
-def test_ProjectNameParamType_repo_name(repo, expected):
-    with patch('hubugs.utils.get_github_api') as get_github_api, \
-         patch('hubugs.utils.get_git_config_val') as get_git_config_val:
-        get_github_api().repos.show = Mock(return_value=True)
-        get_git_config_val.return_value = 'JNRowe'
+def test_ProjectNameParamType_repo_name(repo, expected, monkeypatch):
+    monkeypatch.setattr(
+        'hubugs.utils.get_github_api',
+        lambda: utils.AttrDict(repos=utils.AttrDict(show=lambda: True)))
+    monkeypatch.setattr('hubugs.utils.get_git_config_val', lambda _: 'JNRowe')
 
-        p = ProjectNameParamType()
-        p.convert(repo, None, None) == expected
-
-
-def test_ProjectNameParamType_no_user():
-    with patch('hubugs.utils.get_github_api') as get_github_api, \
-         patch('hubugs.utils.get_git_config_val') as get_git_config_val:
-        get_github_api().repos.show = Mock(return_value=True)
-        get_git_config_val.return_value = None
-
-        p = ProjectNameParamType()
-        with raises(BadParameter):
-            p.convert('misc-overlay', None, None)
+    p = ProjectNameParamType()
+    p.convert(repo, None, None) == expected
 
 
-def test_GetGitConfigVal_valid_key():
-    with patch('subprocess.check_output') as check_output:
-        check_output.return_value = 'JNRowe'
+def test_ProjectNameParamType_no_user(monkeypatch):
+    monkeypatch.setattr(
+        'hubugs.utils.get_github_api',
+        lambda: utils.AttrDict(repos=utils.AttrDict(show=lambda: True)))
+    monkeypatch.setattr('hubugs.utils.get_git_config_val', lambda _: None)
 
-        assert utils.get_git_config_val('github.user') == 'JNRowe'
-
-
-def test_GetGitConfigVal_invalid_key():
-    with patch('subprocess.check_output') as check_output:
-        check_output.return_value = ''
-
-        assert utils.get_git_config_val('no_such_key') == ''
+    p = ProjectNameParamType()
+    with raises(BadParameter):
+        p.convert('misc-overlay', None, None)
 
 
-def test_GetGitConfigVal_command_error():
-    with patch('subprocess.check_output') as check_output:
-        check_output.side_effect = CalledProcessError('255', 'cmd')
+def test_GetGitConfigVal_valid_key(monkeypatch):
+    monkeypatch.setattr('subprocess.check_output',
+                        lambda *args, **kwargs: 'JNRowe')
 
-        assert utils.get_git_config_val('github.user') is None
-
-
-def test_GetEditor_git_editor_envvar():
-    with patch.dict('os.environ', {'EDITOR': 'custom git editor'},
-                    clear=True):
-        assert utils.get_editor() == ['custom', 'git', 'editor']
+    assert utils.get_git_config_val('github.user') == 'JNRowe'
 
 
-def test_GetEditor_editor_environment_editor():
-    with patch.dict('os.environ', {'EDITOR': 'editor'}, clear=True):
-        assert utils.get_editor() == ['editor', ]
+def test_GetGitConfigVal_invalid_key(monkeypatch):
+    monkeypatch.setattr('subprocess.check_output', lambda *args, **kwargs: '')
+
+    assert utils.get_git_config_val('no_such_key') == ''
+
+
+def test_GetGitConfigVal_command_error(monkeypatch):
+    def raise_error(*args, **kwargs):
+        raise CalledProcessError('255', 'cmd')
+    monkeypatch.setattr('subprocess.check_output', raise_error)
+
+    assert utils.get_git_config_val('github.user') is None
+
+
+def test_GetEditor_git_editor_envvar(monkeypatch):
+    monkeypatch.setenv('EDITOR', 'custom git editor')
+    assert utils.get_editor() == ['custom', 'git', 'editor']
+
+
+def test_GetEditor_editor_environment_editor(monkeypatch):
+    monkeypatch.setenv('EDITOR', 'editor')
+    assert utils.get_editor() == ['editor', ]
 
 
 @mark.parametrize('repo', [
@@ -109,12 +97,13 @@ def test_GetEditor_editor_environment_editor():
     # hg-git
     'git+ssh://git@github.com:JNRowe/misc-overlay.git',
 ])
-def test_GetRepo_repo_url(repo):
-    with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
-        # side_effect to skip hubugs.project call
-        get_git_config_val.side_effect = [None, repo]
+def test_GetRepo_repo_url(repo, monkeypatch):
+    # side_effect to skip hubugs.project call
+    results = [repo, None]
+    monkeypatch.setattr('hubugs.utils.get_git_config_val',
+                        lambda *args, **kwargs: results.pop())
 
-        assert utils.get_repo() == 'JNRowe/misc-overlay'
+    assert utils.get_repo() == 'JNRowe/misc-overlay'
 
 
 @mark.parametrize('repo', [
@@ -122,18 +111,18 @@ def test_GetRepo_repo_url(repo):
     None,
     'http://example.com/dog.git',
 ])
-def test_GetRepo_broken_url(repo):
-    with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
-        # side_effect to skip hubugs.project call
-        get_git_config_val.side_effect = [None, repo]
+def test_GetRepo_broken_url(repo, monkeypatch):
+    # side_effect to skip hubugs.project call
+    results = [repo, None]
+    monkeypatch.setattr('hubugs.utils.get_git_config_val',
+                        lambda *args, **kwargs: results.pop())
 
-        with raises(ValueError):
-            utils.get_repo()
+    with raises(ValueError):
+        utils.get_repo()
 
 
-def test_GetRepo_config_project():
-    with patch('hubugs.utils.get_git_config_val') as get_git_config_val:
-        # side_effect to skip hubugs.project call
-        get_git_config_val.return_value = 'JNRowe/misc-overlay'
+def test_GetRepo_config_project(monkeypatch):
+    monkeypatch.setattr('hubugs.utils.get_git_config_val',
+                        lambda *args, **kwargs: 'JNRowe/misc-overlay')
 
-        assert utils.get_repo() == 'JNRowe/misc-overlay'
+    assert utils.get_repo() == 'JNRowe/misc-overlay'
