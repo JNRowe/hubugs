@@ -53,13 +53,13 @@ def test_ProjectNameParamType_no_user(monkeypatch):
 
 def test_GetGitConfigVal_valid_key(monkeypatch):
     monkeypatch.setattr('subprocess.check_output',
-                        lambda *args, **kwargs: 'JNRowe')
+                        lambda *args, **kwargs: b'JNRowe')
 
     assert utils.get_git_config_val('github.user') == 'JNRowe'
 
 
 def test_GetGitConfigVal_invalid_key(monkeypatch):
-    monkeypatch.setattr('subprocess.check_output', lambda *args, **kwargs: '')
+    monkeypatch.setattr('subprocess.check_output', lambda *args, **kwargs: b'')
 
     assert utils.get_git_config_val('no_such_key') == ''
 

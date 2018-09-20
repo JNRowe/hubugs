@@ -169,13 +169,13 @@ def get_git_config_val(key, default=None, local_only=False):
         cmd.append('--local')
     cmd.extend(['--get', key])
     try:
-        output = subprocess.check_output(cmd, encoding='utf-8').strip()
+        output = subprocess.check_output(cmd).decode().strip()
     except subprocess.CalledProcessError:
         output = default
     if output and output.startswith('!'):
         try:
-            output = subprocess.check_output(output[1:].split(),
-                                             encoding='utf-8').strip()
+            output = subprocess.check_output(output[1:].split())
+            output = output.decode().strip()
         except subprocess.CalledProcessError:
             print('Whoops!')
             sys.exit(97)
@@ -193,8 +193,7 @@ def set_git_config_val(key, value, local_only=False):
     if not local_only:
         cmd.append('--global')
     cmd.extend([key, value])
-    subprocess.check_output(cmd, stderr=subprocess.STDOUT,
-                            encoding='utf-8').strip()
+    subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
 def get_editor():
@@ -205,8 +204,8 @@ def get_editor():
     :rtype: ``list`` of ``str``
     :return: Users chosen editor, or ``vi`` if not set
     """
-    return subprocess.check_output(['git', 'var', 'GIT_EDITOR'],
-                                   encoding='utf-8').strip().split()
+    output = subprocess.check_output(['git', 'var', 'GIT_EDITOR'])
+    return output.decode().strip().split()
 
 
 def get_repo():
@@ -226,8 +225,8 @@ def get_repo():
     if not data:
         try:
             root = subprocess.check_output(['hg', 'root'],
-                                           stderr=subprocess.PIPE,
-                                           encoding='utf-8').strip()
+                                           stderr=subprocess.PIPE)
+            root = root.decode().strip()
         except (OSError, subprocess.CalledProcessError):
             # No mercurial install, or not in a mercurial tree
             pass
