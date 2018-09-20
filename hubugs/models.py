@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """models - GitHub models for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
@@ -18,6 +17,7 @@
 #
 
 import collections
+import contextlib
 import datetime
 
 # We used to use tight, explicit bindings for API objects but the desire to
@@ -38,10 +38,8 @@ def object_hook(d, name='unknown'):
     if '_links' in d:
         d.pop('_links')
     for k, v in d.items():
-        try:
+        with contextlib.suppress(TypeError, ValueError):
             d[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%SZ')
-        except (TypeError, ValueError):
-            pass
     return collections.namedtuple(d.get('type', name), d.keys())(**d)
 
 
@@ -65,27 +63,27 @@ def from_search(obj):
     :returns: API v2 issue mangled to look like a API v3 result
     """
 
-    avatar_url = ('https://secure.gravatar.com/avatar/%s?d='
-                  'https://a248.e.akamai.net/assets.github.com%%2F'
-                  'images%%2Fgravatars%%2Fgravatar-140.png')
-    label_url = 'https://api.github.com/repos/%s/%s/labels/%s'
+    avatar_url = ('https://secure.gravatar.com/avatar/{}?d='
+                  'https://a248.e.akamai.net/assets.github.com%2F'
+                  'images%2Fgravatars%2Fgravatar-140.png')
+    label_url = 'https://api.github.com/repos/{}/{}/labels/{}'
 
     owner, project = obj.html_url.split('/')[3:5]
 
     d = obj.__dict__
     d['id'] = '<from search>'
     d['user'] = {
-        'avatar_url': avatar_url % obj.gravatar_id,
+        'avatar_url': avatar_url.format(obj.gravatar_id),
         'gravatar_id': obj.gravatar_id,
         'login': obj.user,
-        'url': 'https://api.github.com/users/%s' % obj.user,
+        'url': 'https://api.github.com/users/{}'.format(obj.user),
     }
     if 'closed_by' in obj._fields:
         d['closed_by'] = {
-            'avatar_url': avatar_url % obj.closed_by,
+            'avatar_url': avatar_url.format(obj.closed_by),
             'gravatar_id': obj.gravatar_id,
             'login': obj.user,
-            'url': 'https://api.github.com/users/%s' % obj.user,
+            'url': 'https://api.github.com/users/{}'.format(obj.user),
         }
         d['closed_at'] = _v2_conv_timestamp(obj.closed_at)
     d['created_at'] = _v2_conv_timestamp(obj.created_at)
@@ -96,7 +94,7 @@ def from_search(obj):
             labels.append({
                 'color': '000000',
                 'name': name,
-                'url': label_url % (owner, project, name)
+                'url': label_url.format(owner, project, name)
             })
         d['labels'] = labels
     return object_hook(d, 'issue')

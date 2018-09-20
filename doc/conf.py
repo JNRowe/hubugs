@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """conf - Sphinx configuration information"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
@@ -22,7 +21,7 @@ import sys
 
 from subprocess import (CalledProcessError, check_output)
 
-root_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+root_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, root_dir)
 
 import hubugs

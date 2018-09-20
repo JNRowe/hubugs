@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """test_template - Test templating handling"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
@@ -29,14 +28,12 @@ from pygments import (formatters, lexers)
 
 from hubugs import template
 
-from tests.utils import (unicode)
-
 
 class Colourise(TestCase):
     @params(
-        ('red', None, {}, unicode('\x1b[31')),
-        (None, 'blue', {}, unicode('\x1b[44m')),
-        (None, None, {'bold': True}, unicode('\x1b[1m')),
+        ('red', None, {}, '\x1b[31'),
+        (None, 'blue', {}, '\x1b[44m'),
+        (None, None, {'bold': True}, '\x1b[1m'),
     )
     def test_color(self, fg, bg, attributes, expected):
         output = template.colourise('s', fg, bg, **attributes)
@@ -104,7 +101,7 @@ class Html2Text(TestCase):
 
     def test_width(self):
         para = """<p>This is a long paragraph that needs wrapping to work so it
-        doesn't make you want to claw your eyes out."""
+        doesn’t make you want to claw your eyes out."""
         expect(template.html2text(para).count('\n')) == 1
         # FIXME: Recent html2text version have changed API
         if isinstance(h2t_version, str) and h2t_version <= '2014.4.5':

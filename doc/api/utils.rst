@@ -14,7 +14,6 @@ Utilities
 Convenience functions
 '''''''''''''''''''''
 
-.. autofunction:: check_output
 .. autofunction:: get_editor
 .. autofunction:: pager
 

@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """hubugs - Simple client for GitHub issues"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Ben Griffiths
@@ -33,12 +32,12 @@ from email.utils import parseaddr
 
 __doc__ += """.
 
-``hubugs`` is a very simple client for working with `GitHub's issue tracker`_.
+``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
 
-.. _GitHub's issue tracker: http://github.com/blog/411-github-issue-tracker
+.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
 
-.. moduleauthor:: `%s <mailto:%s>`__
-""" % parseaddr(__author__)
+.. moduleauthor:: `{} <mailto:{}>`__
+""".format(*parseaddr(__author__))
 
 # This is here to workaround UserWarning messages caused by path fiddling in
 # dependencies
@@ -61,9 +60,8 @@ from base64 import b64encode
 import click
 import httplib2
 
-logging.basicConfig(level=logging.ERROR,
-                    format='%(asctime)s - %(message)s',
-                    datefmt='%Y-%m-%dT%H:%M:%S')
+logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(message)s',
+                    datefmt='%FT%T')
 atexit.register(logging.shutdown)
 
 
@@ -84,7 +82,7 @@ class ProjectNameParamType(click.ParamType):
                              utils.get_git_config_val('github.user'))
             if not user:
                 self.fail(_('No GitHub user setting!'))
-            value = '%s/%s' % (user, value)
+            value = '/'.join([user, value])
         return value
 
 
@@ -213,7 +211,7 @@ def list_bugs(globs, label, page, pull_requests, order, state):
     params = {}
     if pull_requests:
         # FIXME: Dirty solution to supporting PRs only, needs rethink
-        url = '%s/repos/%s/pulls' % (globs.host_url, globs.project)
+        url = '{}/repos/{}/pulls'.format(globs.host_url, globs.project)
     else:
         url = ''
     if page != 1:
@@ -240,7 +238,7 @@ def list_bugs(globs, label, page, pull_requests, order, state):
 @click.pass_obj
 def search(globs, order, state, term):
     """Searching bugs."""
-    search_url = '%s/search/issues' % globs.host_url
+    search_url = '{}/search/issues'.format(globs.host_url)
     states = ['open', 'closed'] if state == 'all' else [state, ]
     params = {
         'q': term,
@@ -273,19 +271,19 @@ def show(globs, full, patch, patch_only, browse, bugs):
     tmpl = template.get_template('view', '/issue.txt')
     for bug_no in bugs:
         if browse:
-            click.launch('https://github.com/%s/issues/%d'
-                         % (globs.project, bug_no))
+            click.launch('https://github.com/{}/issues/{:d}'.format(
+                globs.project, bug_no))
             continue
         r, bug = globs.req_get(bug_no, model='Issue')
 
         if full and bug.comments:
-            r, comments = globs.req_get('%s/comments' % bug_no,
+            r, comments = globs.req_get('{}/comments'.format(bug_no),
                                         model='Comment')
         else:
             comments = []
         if (patch or patch_only) and bug.pull_request:
-            url = '%s/repos/%s/pulls/%s' % (globs.host_url, globs.project,
-                                            bug_no)
+            url = '{}/repos/{}/pulls/{}'.format(globs.host_url, globs.project,
+                                                bug_no)
             headers = {'Accept': 'application/vnd.github.patch'}
             r, c = globs.req_get(url, headers=headers, is_json=False)
             patch = c.decode('utf-8')
@@ -318,7 +316,7 @@ def open_bug(globs, add, create, stdin, title, body):
         body = body
     data = {'title': title, 'body': body, 'labels': add + create}
     r, bug = globs.req_post('', body=data, model='Issue')
-    utils.success(_('Bug %d opened') % bug.number)
+    utils.success(_('Bug {:d} opened').format(bug.number))
 
 
 @cli.command(help=_('Commenting on bugs.'))
@@ -335,7 +333,7 @@ def comment(globs, message, stdin, bugs):
     else:
         message = template.edit_text()
     for bug in bugs:
-        globs.req_post('%s/comments' % bug, body={'body': message},
+        globs.req_post('{}/comments'.format(bug), body={'body': message},
                        model='Comment')
 
 
@@ -386,7 +384,7 @@ def close(globs, stdin, message, bugs):
         message = message
     for bug in bugs:
         if message:
-            globs.req_post('%s/comments' % bug, body={'body': message},
+            globs.req_post('{}/comments'.format(bug), body={'body': message},
                            model='Comment')
         globs.req_post(bug, body={'state': 'closed'}, model='Issue')
 
@@ -408,7 +406,7 @@ def reopen(globs, stdin, message, bugs):
             message = None
     for bug in bugs:
         if message:
-            globs.req_post('%s/comments' % bug, body={'body': message},
+            globs.req_post('{}/comments'.format(bug), body={'body': message},
                            model='Comment')
         globs.req_post(bug, body={'state': 'open'}, model='Issue')
 
@@ -444,7 +442,8 @@ def label(globs, add, create, remove, list, bugs):
 @click.pass_obj
 def milestone(globs, milestone, bugs):
     """Issue milestones."""
-    milestones_url = '%s/repos/%s/milestones' % (globs.host_url, globs.project)
+    milestones_url = '{}/repos/{}/milestones'.format(globs.host_url,
+                                                     globs.project)
     r, milestones = globs.req_get(milestones_url, model='Milestone')
 
     milestone_mapping = dict((m.title, m.number) for m in milestones)
@@ -452,7 +451,7 @@ def milestone(globs, milestone, bugs):
     try:
         milestone = milestone_mapping[milestone]
     except KeyError:
-        raise ValueError(_('No such milestone %r') % milestone)
+        raise ValueError(_('No such milestone {:!r}').format(milestone))
 
     for bug_no in bugs:
         globs.req_post(bug_no, body={'milestone': milestone},
@@ -475,7 +474,8 @@ def milestones(globs, order, state, create, list):
     if not list and not create:
         utils.fail('No action specified!')
         return 1
-    milestones_url = '%s/repos/%s/milestones' % (globs.host_url, globs.project)
+    milestones_url = '{}/repos/{}/milestones'.format(globs.host_url,
+                                                     globs.project)
     r, milestones = globs.req_get(milestones_url, model='Milestone')
 
     if list:
@@ -492,7 +492,7 @@ def milestones(globs, order, state, create, list):
     elif create:
         data = {'title': create}
         r, milestone = globs.req_post('', body=data, model='Milestone')
-        utils.success(_('Milestone %d created' % milestone.number))
+        utils.success(_('Milestone {:d} created').format(milestone.number))
 
 
 @cli.command(help=_('Report a new bug against hubugs.'))
@@ -518,7 +518,8 @@ def report_bug(globs):
 
     data = {'title': title, 'body': body}
     r, bug = globs.req_post('', body=data, model='Issue')
-    utils.success(_('Bug %d opened against hubugs, thanks!') % bug.number)
+    utils.success(
+        _('Bug {:d} opened against hubugs, thanks!').format(bug.number))
 
 
 def main():
@@ -536,8 +537,8 @@ def main():
         utils.fail(_('Project lookup failed.  Network or GitHub down?'))
         return errno.ENXIO
     except (utils.RepoError) as error:
-        utils.fail(error.message)
+        utils.fail(error.args[0])
         return errno.EINVAL
     except (EnvironmentError, ValueError) as error:
-        utils.fail(error.message)
+        utils.fail(error.args[1])
         return errno.EINVAL

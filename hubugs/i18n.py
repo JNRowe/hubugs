@@ -1,5 +1,4 @@
 #
-# coding=utf-8
 """i18n - internationalisation support for hubugs"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
@@ -21,7 +20,7 @@ import gettext
 
 from os import path
 
-PACKAGE_LOCALE = path.join(path.realpath(path.dirname(__file__)), 'locale')
+PACKAGE_LOCALE = path.join(path.dirname(__file__), 'locale')
 
 gettext.install('hubugs', PACKAGE_LOCALE)
 

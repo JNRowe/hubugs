@@ -44,7 +44,7 @@ Appendix
 
 .. attribute:: Bug.number(int)
 
-   The issue's number.
+   The issue’s number.
 
 .. attribute:: Bug.pull_request(PullRequest)
 
@@ -56,7 +56,7 @@ Appendix
 
 .. attribute:: Bug.title(str)
 
-   The issue's title.
+   The issue’s title.
 
 .. attribute:: Bug.updated_at(datetime.datetime)
 
@@ -173,7 +173,7 @@ Appendix
 
 .. attribute:: Repository.master_branch(str)
 
-   The repository's defined master branch
+   The repository’s defined master branch
 
 .. attribute:: Repository.mirror_url(str)
 
@@ -181,7 +181,7 @@ Appendix
 
 .. attribute:: Repository.name(str)
 
-   The repository's name
+   The repository’s name
 
 .. attribute:: Repository.open_issues(int)
 
@@ -197,7 +197,7 @@ Appendix
 
 .. attribute:: Repository.pushed_at(datetime.datetime)
 
-   The last time the repository's content was updated
+   The last time the repository’s content was updated
 
 .. attribute:: Repository.size(int)
 
@@ -214,7 +214,7 @@ Appendix
 
 .. attribute:: avatar_url(str)
 
-   The location of the user's avatar
+   The location of the user’s avatar
 
 .. attribute:: gravatar_id(str)
 
@@ -222,4 +222,4 @@ Appendix
 
 .. attribute:: login(str)
 
-   The user's login name on GitHub
+   The user’s login name on GitHub
