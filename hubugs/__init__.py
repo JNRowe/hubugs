@@ -60,6 +60,7 @@ from base64 import b64encode
 import click
 import httplib2
 
+from jnrbase import i18n
 from jnrbase.colourise import fail, success, warn
 
 
@@ -69,7 +70,9 @@ atexit.register(logging.shutdown)
 
 
 from . import (template, utils)
-from .i18n import _
+
+
+_, _N = i18n.setup(utils)
 
 
 class ProjectNameParamType(click.ParamType):

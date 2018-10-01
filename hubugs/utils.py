@@ -30,19 +30,21 @@ from urllib.parse import urlencode
 import click
 import httplib2
 
+from jnrbase import i18n
 from jnrbase.attrdict import AttrDict
 from jnrbase.colourise import warn
 from jnrbase.xdg_basedir import user_cache
 
 from . import (_version, models)
 
-from .i18n import _
-
 try:
     import ca_certs_locater
     CA_CERTS = ca_certs_locater.get()
 except ImportError:
     CA_CERTS = None
+
+
+_, _N = i18n.setup(_version)
 
 
 class HttpClientError(ValueError):
