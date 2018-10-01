@@ -32,6 +32,7 @@ import httplib2
 
 from jnrbase.attrdict import AttrDict
 from jnrbase.colourise import warn
+from jnrbase.xdg_basedir import user_cache
 
 from . import (_version, models)
 
@@ -65,14 +66,7 @@ def get_github_api():
     :rtype: ``httplib2.Http``
     :return: GitHub HTTP session
     """
-    if sys.platform == 'darwin':
-        user_cache_dir = os.path.expanduser('~/Library/Caches')
-    else:
-        user_cache_dir = os.path.join(os.getenv('HOME', '/'), '.cache')
-    xdg_cache_dir = os.getenv('XDG_CACHE_HOME')
-    cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, 'hubugs')
-
-    return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
+    return httplib2.Http(user_cache('hubugs'), ca_certs=CA_CERTS)
 
 
 def get_git_config_val(key, default=None, local_only=False):

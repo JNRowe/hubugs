@@ -26,6 +26,7 @@ import html2text as html2
 import jinja2
 import misaka
 
+from jnrbase import xdg_basedir
 from jnrbase.colourise import success
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
@@ -35,17 +36,9 @@ from . import utils
 from .i18n import _
 
 
-if sys.platform == 'darwin':
-    _USER_DATA_DIR = os.path.expanduser('~/Library/Application Support')
-else:
-    _USER_DATA_DIR = os.path.join(os.environ.get('HOME', '/'), '.local/share')
-
-USER_DATA_DIR = os.environ.get('XDG_DATA_HOME', _USER_DATA_DIR)
-SYSTEM_DATA_DIR = os.environ.get('XDG_DATA_DIRS',
-                                 '/usr/local/share/:/usr/share/').split(':')
-PKG_DATA_DIRS = [os.path.join(USER_DATA_DIR, 'hubugs', 'templates'), ]
-for directory in SYSTEM_DATA_DIR:
-    PKG_DATA_DIRS.append(os.path.join(directory, 'hubugs', 'templates'))
+PKG_DATA_DIRS = [os.path.join(xdg_basedir.user_data('hubugs'), 'templates'), ]
+for directory in xdg_basedir.get_data_dirs('hubugs'):
+    PKG_DATA_DIRS.append(os.path.join(directory, 'templates'))
 
 ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
     [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
