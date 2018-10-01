@@ -20,6 +20,8 @@ import collections
 import contextlib
 import datetime
 
+from jnrbase.iso_8601 import parse_datetime
+
 # We used to use tight, explicit bindings for API objects but the desire to
 # support Python 3 and the lack of a usable binding library has made it
 # necessary to use the loose dynamic binding implemented below.
@@ -39,7 +41,7 @@ def object_hook(d, name='unknown'):
         d.pop('_links')
     for k, v in d.items():
         with contextlib.suppress(TypeError, ValueError):
-            d[k] = datetime.datetime.strptime(v, '%Y-%m-%dT%H:%M:%SZ')
+            d[k] = parse_datetime(v).replace(tzinfo=None)
     return collections.namedtuple(d.get('type', name), d.keys())(**d)
 
 
@@ -48,9 +50,8 @@ def _v2_conv_timestamp(s):
 
     :param str s: Timestamp to parse
     """
-    zone = datetime.timedelta(hours=int(s[-5:-3]))
-    stamp = datetime.datetime.strptime(s[:-6], '%Y-%m-%dT%H:%M:%S')
-    return (stamp - zone).isoformat() + 'Z'
+    stamp = parse_datetime(s).astimezone(datetime.timezone.utc)
+    return stamp.isoformat()[:-6] + 'Z'
 
 
 def from_search(obj):
