@@ -26,15 +26,16 @@ import html2text as html2
 import jinja2
 import misaka
 
-from jnrbase import xdg_basedir
+from jnrbase import i18n, xdg_basedir
 from jnrbase.colourise import success
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
 
 from . import utils
-from .i18n import _
 
+
+_, _N = i18n.setup(utils)
 
 PKG_DATA_DIRS = [os.path.join(xdg_basedir.user_data('hubugs'), 'templates'), ]
 for directory in xdg_basedir.get_data_dirs('hubugs'):
