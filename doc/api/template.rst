@@ -18,7 +18,6 @@ Jinja filter support
 .. autofunction:: colourise
 .. autofunction:: highlight
 .. autofunction:: html2text
-.. autofunction:: relative_time
 
 User interface support
 ''''''''''''''''''''''

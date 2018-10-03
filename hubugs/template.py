@@ -28,6 +28,7 @@ import misaka
 
 from jnrbase import i18n, xdg_basedir
 from jnrbase.colourise import success
+from jnrbase.human_time import human_timestamp
 from pygments import highlight as pyg_highlight
 from pygments.formatters import get_formatter_by_name
 from pygments.lexers import get_lexer_by_name
@@ -44,6 +45,7 @@ for directory in xdg_basedir.get_data_dirs('hubugs'):
 ENV = jinja2.Environment(loader=jinja2.ChoiceLoader(
     [jinja2.FileSystemLoader(s) for s in PKG_DATA_DIRS]))
 ENV.loader.loaders.append(jinja2.PackageLoader('hubugs', 'templates'))
+ENV.filters['relative_time'] = human_timestamp
 
 
 class EmptyMessageError(ValueError):
@@ -140,53 +142,6 @@ def markdown(text):
     """
     extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
     return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
-
-
-@jinja_filter
-def relative_time(timestamp):
-    """Format a relative time.
-
-    Taken from bleeter_.  Duplication is evil, I know.
-
-    :param datetime.datetime timestamp: Event to generate relative timestamp
-        against
-    :rtype: ``str``
-    :return: Human readable date and time offset
-
-    .. _bleeter: http://jnrowe.github.com/bleeter/
-    """
-
-    numstr = '. a two three four five six seven eight nine ten'.split()
-
-    matches = [
-        60 * 60 * 24 * 365,
-        60 * 60 * 24 * 28,
-        60 * 60 * 24 * 7,
-        60 * 60 * 24,
-        60 * 60,
-        60,
-        1,
-    ]
-    match_names = ['year', 'month', 'week', 'day', 'hour', 'minute', 'second']
-
-    delta = datetime.datetime.utcnow() - timestamp
-    seconds = delta.total_seconds()
-    for scale in matches:
-        i = int(seconds // scale)
-        if i:
-            name = match_names[matches.index(scale)]
-            break
-
-    if i == 1 and name in ('year', 'month', 'week'):
-        result = 'last {}'.format(name)
-    elif i == 1 and name == 'day':
-        result = 'yesterday'
-    elif i == 1 and name == 'hour':
-        result = 'about an hour ago'
-    else:
-        result = 'about {} {}{} ago'.format(i if i > 10 else numstr[i], name,
-                                            's' if i > 1 else '')
-    return result
 
 
 def display_bugs(bugs, order, **extras):
