@@ -109,23 +109,6 @@ def test_Html2Text_width():
         assert template.html2text(para, width=20).count('\n') == 1
 
 
-@mark.parametrize('delta, result', [
-    ({'days': 365, }, 'last year'),
-    ({'days': 70, }, 'about two months ago'),
-    ({'days': 30, }, 'last month'),
-    ({'days': 21, }, 'about three weeks ago'),
-    ({'days': 4, }, 'about four days ago'),
-    ({'days': 1, }, 'yesterday'),
-    ({'hours': 5, }, 'about five hours ago'),
-    ({'hours': 1, }, 'about an hour ago'),
-    ({'minutes': 6, }, 'about six minutes ago'),
-    ({'seconds': 12, }, 'about 12 seconds ago'),
-])
-def test_relative_time(delta, result):
-    dt = datetime.utcnow() - timedelta(**delta)
-    assert template.relative_time(dt) == result
-
-
 @mark.parametrize('group, name', [
     ('edit', 'default.mkd'),
     ('view', 'issue.txt'),
