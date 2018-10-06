@@ -1,5 +1,5 @@
 #
-"""test_utils - Test utility functions"""
+"""test_utils - Test utility functions."""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
