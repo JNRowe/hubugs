@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-"""hubugs - Simple client for GitHub issues"""
+"""hubugs - Simple client for GitHub issues."""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify

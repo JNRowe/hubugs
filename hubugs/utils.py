@@ -1,5 +1,5 @@
 #
-"""utils - Utility functions for hubugs"""
+"""utils - Utility functions for hubugs."""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Matt Leighton <mleighy@gmail.com>
 #
