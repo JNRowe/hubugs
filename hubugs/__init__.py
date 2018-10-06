@@ -60,13 +60,19 @@ from base64 import b64encode
 import click
 import httplib2
 
+from jnrbase import i18n
+from jnrbase.colourise import fail, success, warn
+
+
 logging.basicConfig(level=logging.ERROR, format='%(asctime)s - %(message)s',
                     datefmt='%FT%T')
 atexit.register(logging.shutdown)
 
 
 from . import (template, utils)
-from .i18n import _
+
+
+_, _N = i18n.setup(utils)
 
 
 class ProjectNameParamType(click.ParamType):
@@ -164,9 +170,9 @@ def label_parser(f):
 def setup(globs, local):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
-        utils.warn(_('Falling back on bundled certificates'))
+        warn(_('Falling back on bundled certificates'))
     if utils.CURL_CERTS:
-        utils.warn(_('Using certs specified in $CURL_CERTS'))
+        warn(_('Using certs specified in $CURL_CERTS'))
     default_user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user',
                                                       getpass.getuser()))
@@ -193,7 +199,7 @@ def setup(globs, local):
                              body=data, headers=header, model='Authorisation',
                              token=False)
     utils.set_git_config_val('hubugs.token', auth.token, local)
-    utils.success(_('Configuration complete!'))
+    success(_('Configuration complete!'))
 
 
 @cli.command(name='list', help=_('Listing bugs.'))
@@ -316,7 +322,7 @@ def open_bug(globs, add, create, stdin, title, body):
         body = body
     data = {'title': title, 'body': body, 'labels': add + create}
     r, bug = globs.req_post('', body=data, model='Issue')
-    utils.success(_('Bug {:d} opened').format(bug.number))
+    success(_('Bug {:d} opened').format(bug.number))
 
 
 @cli.command(help=_('Commenting on bugs.'))
@@ -472,7 +478,7 @@ def milestone(globs, milestone, bugs):
 def milestones(globs, order, state, create, list):
     """Repository milestones."""
     if not list and not create:
-        utils.fail('No action specified!')
+        fail('No action specified!')
         return 1
     milestones_url = '{}/repos/{}/milestones'.format(globs.host_url,
                                                      globs.project)
@@ -492,7 +498,7 @@ def milestones(globs, order, state, create, list):
     elif create:
         data = {'title': create}
         r, milestone = globs.req_post('', body=data, model='Milestone')
-        utils.success(_('Milestone {:d} created').format(milestone.number))
+        success(_('Milestone {:d} created').format(milestone.number))
 
 
 @cli.command(help=_('Report a new bug against hubugs.'))
@@ -518,8 +524,7 @@ def report_bug(globs):
 
     data = {'title': title, 'body': body}
     r, bug = globs.req_post('', body=data, model='Issue')
-    utils.success(
-        _('Bug {:d} opened against hubugs, thanks!').format(bug.number))
+    success(_('Bug {:d} opened against hubugs, thanks!').format(bug.number))
 
 
 def main():
@@ -531,14 +536,14 @@ def main():
     try:
         cli()
     except utils.HttpClientError as error:
-        utils.fail(error.content[0])
+        fail(error.content[0])
         return errno.EINVAL
     except httplib2.ServerNotFoundError:
-        utils.fail(_('Project lookup failed.  Network or GitHub down?'))
+        fail(_('Project lookup failed.  Network or GitHub down?'))
         return errno.ENXIO
     except (utils.RepoError) as error:
-        utils.fail(error.args[0])
+        fail(error.args[0])
         return errno.EINVAL
     except (EnvironmentError, ValueError) as error:
-        utils.fail(error.args[1])
+        fail(error.args[1])
         return errno.EINVAL

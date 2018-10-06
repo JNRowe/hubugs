@@ -2,5 +2,6 @@ click>=6.2
 html2text
 httplib2>=0.8.0
 Jinja2>=2
+jnrbase[colour,iso_8601]>=v1.0.0
 misaka>=1.0.2
 Pygments

@@ -30,9 +30,12 @@ from urllib.parse import urlencode
 import click
 import httplib2
 
-from . import (_version, models)
+from jnrbase import i18n
+from jnrbase.attrdict import AttrDict
+from jnrbase.colourise import warn
+from jnrbase.xdg_basedir import user_cache
 
-from .i18n import _
+from . import (_version, models)
 
 try:
     import ca_certs_locater
@@ -41,87 +44,7 @@ except ImportError:
     CA_CERTS = None
 
 
-# Set up informational message functions
-def _colourise(text, colour):
-    """Display colourised text, if possible.
-
-    :param str text: Text to colourise
-    :param str colour: Colour to display text in
-    :rtype: ``str``
-    :return: Colourised text, if possible
-    """
-    click.termui.secho(text, fg=colour, bold=True)
-
-
-def success(text):
-    """Output a success message.
-
-    :param str text:  Text to format
-    """
-    _colourise(text, 'green')
-
-
-def fail(text):
-    """Output a failure message.
-
-    :param str text:  Text to format
-    """
-    _colourise(text, 'red')
-
-
-def warn(text):
-    """Output a warning message.
-
-    :param str text:  Text to format
-    """
-    _colourise(text, 'yellow')
-
-
-class AttrDict(dict):
-
-    """Dictionary with attribute access.
-
-    .. seealso:: :obj:`dict`
-    """
-
-    def __contains__(self, key):
-        """Check for item membership
-
-        :param object key: Key to test for
-        :rtype: :obj:`bool`
-        """
-        return hasattr(self, key) or super(AttrDict, self).__contains__(key)
-
-    def __getattr__(self, key):
-        """Support item access via dot notation
-
-        :param object key: Key to fetch
-        """
-        try:
-            return self[key]
-        except KeyError:
-            raise AttributeError(key)
-
-    def __setattr__(self, key, value):
-        """Support item assignment via dot notation
-
-        :param object key: Key to set value for
-        :param object value: Value to set key to
-        """
-        try:
-            self[key] = value
-        except:
-            raise AttributeError(key)
-
-    def __delattr__(self, key):
-        """Support item deletion via dot notation
-
-        :param object key: Key to delete
-        """
-        try:
-            del self[key]
-        except KeyError:
-            raise AttributeError(key)
+_, _N = i18n.setup(_version)
 
 
 class HttpClientError(ValueError):
@@ -145,14 +68,7 @@ def get_github_api():
     :rtype: ``httplib2.Http``
     :return: GitHub HTTP session
     """
-    if sys.platform == 'darwin':
-        user_cache_dir = os.path.expanduser('~/Library/Caches')
-    else:
-        user_cache_dir = os.path.join(os.getenv('HOME', '/'), '.cache')
-    xdg_cache_dir = os.getenv('XDG_CACHE_HOME')
-    cache_dir = os.path.join(xdg_cache_dir or user_cache_dir, 'hubugs')
-
-    return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
+    return httplib2.Http(user_cache('hubugs'), ca_certs=CA_CERTS)
 
 
 def get_git_config_val(key, default=None, local_only=False):
