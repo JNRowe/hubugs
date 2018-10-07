@@ -37,6 +37,7 @@ Contents
    faq
    alternatives
    release
+   todo
    api/index
    appendix
 
