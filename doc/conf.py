@@ -1,5 +1,5 @@
 #
-"""conf - Sphinx configuration information"""
+"""conf - Sphinx configuration information."""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -18,47 +18,60 @@
 
 import os
 import sys
-
-from subprocess import (CalledProcessError, check_output)
+from contextlib import suppress
+from subprocess import CalledProcessError, PIPE, run
 
 root_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.insert(0, root_dir)
 
-import hubugs
+import hubugs  # NOQA: E402
+
+on_rtd = 'READTHEDOCS' in os.environ
+if not on_rtd:
+    import sphinx_rtd_theme
 
 extensions = \
-    ['sphinx.ext.%s' % ext for ext in ['autodoc', 'extlinks', 'intersphinx', ]]
+    [f'sphinx.ext.{ext}' for ext in ['autodoc', 'extlinks', 'intersphinx']]
 
 master_doc = 'index'
 source_suffix = '.rst'
 
-project = u'hubugs'
-copyright = hubugs.__copyright__
+project = 'hubugs'
+copyright = '2010-2016  James Rowe'
 
-version = '.'.join(map(str, hubugs._version.tuple[:2]))
 release = hubugs._version.dotted
+version = release.rsplit('.', 1)[0]
+
+html_experimental_html5_writer = True
+modindex_common_prefix = ['hubugs.', ]
+
+# readthedocs.org handles this setup for their builds, but it is nice to see
+# approximately correct builds on the local system too
+if not on_rtd:
+    html_theme = "sphinx_rtd_theme"
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path(), ]
 
 pygments_style = 'sphinx'
-html_theme_options = {
-    'externalrefs': True,
-}
-try:
-    html_last_updated_fmt = check_output(['git', 'log',
-                                          "--pretty=format:'%ad [%h]'",
-                                          '--date=short', '-n1']).decode()
-except CalledProcessError:
-    pass
+with suppress(CalledProcessError):
+    proc = run(['git', 'log', "--pretty=format:'%ad [%h]'", '--date=short',
+                '-n1'],
+               stdout=PIPE)
+    html_last_updated_fmt = proc.stdout.decode()
 
 man_pages = [
-    ('hubugs.1', 'hubugs', u'hubugs Documentation', [u'James Rowe'], 1)
+    ('hubugs.1', 'hubugs', 'hubugs Documentation', ['James Rowe', ], 1)
 ]
 
-intersphinx_mapping = {
-    'jinja': ('http://jinja.pocoo.org/docs/',
-              os.getenv('SPHINX_JINJA_OBJECTS')),
-    'python': ('http://docs.python.org/', os.getenv('SPHINX_PYTHON_OBJECTS')),
-}
+# Autodoc extension settings
+autoclass_content = 'init'
+autodoc_default_flags = ['members', ]
 
-extlinks = {
-    'pypi': ('https://pypi.org/project/%s/', ''),
-}
+# intersphinx extension settings
+intersphinx_mapping = {
+    k: (v, os.getenv(f'SPHINX_{k.upper()}_OBJECTS'))
+    for k, v in {
+        'click': 'http://click.pocoo.org/6/',
+        'jinja': 'http://jinja.pocoo.org/docs/',
+        'jnrbase': 'https://jnrbase.readthedocs.io/en/latest/',
+        'python': 'https://docs.python.org/3/',
+}.items()}
