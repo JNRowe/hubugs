@@ -21,6 +21,8 @@ import operator
 import os
 import sys
 
+from typing import Callable, Dict, List, Optional
+
 import click
 import html2text as html2
 import jinja2
@@ -53,28 +55,28 @@ class EmptyMessageError(ValueError):
     pass
 
 
-def get_template(group, name):
+def get_template(group: str, name: str) -> jinja2.environment.Template:
     """Fetch a Jinja template instance.
 
     Args:
-        group (str): Template group identifier
-        name (str): Template name
+        group: Template group identifier
+        name: Template name
 
     Returns:
-        jinja2.environment.Template: Jinja template instance
+        Jinja template instance
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
     return ENV.get_template('/'.join([template_set, group, name]))
 
 
-def jinja_filter(func):
+def jinja_filter(func: Callable) -> Callable:
     """Simple decorator to add a new filter to Jinja environment.
 
     Args:
-        func (func): Function to add to Jinja environment
+        func: Function to add to Jinja environment
 
     Returns:
-        func: Unmodified function
+        Unmodified function
     """
     ENV.filters[func.__name__] = func
 
@@ -82,19 +84,20 @@ def jinja_filter(func):
 
 
 @jinja_filter
-def colourise(text, fg=None, bg=None, **kwargs):
+def colourise(text: str, fg: Optional[str] = None, bg: Optional[str] = None,
+              **kwargs)-> str:
     """Colourise text.
 
     Returns text untouched if colour output is not enabled
 
     Args:
-        text (str): Text to colourise
-        fg (str): Foreground colour
-        bg (str): Background colour
-        kwargs (dict): Formatting to apply to text
+        text: Text to colourise
+        fg: Foreground colour
+        bg: Background colour
+        kwargs: Formatting to apply to text
 
     Returns:
-        str: Colourised text, when possible
+        Colourised text, when possible
     """
     return click.style(text, fg, bg, **kwargs)
 # American spelling, just for Brandon Cady ;)
@@ -102,18 +105,19 @@ ENV.filters['colorize'] = ENV.filters['colourise']
 
 
 @jinja_filter
-def highlight(text, lexer='diff', formatter='terminal'):
+def highlight(text: str, lexer: Optional[str] = 'diff',
+              formatter: Optional[str] = 'terminal') -> str:
     """Highlight text with pygments.
 
     Returns text untouched if colour output is not enabled
 
     Args:
-        text (str): Text to highlight
-        lexer (str): Jinja lexer to use
-        formatter (str): Jinja formatter to use
+        text: Text to highlight
+        lexer: Jinja lexer to use
+        formatter: Jinja formatter to use
 
     Returns:
-        str: Syntax highlighted output, when possible
+        Syntax highlighted output, when possible
     """
     if sys.stdout.isatty():
         lexer = get_lexer_by_name(lexer)
@@ -124,16 +128,17 @@ def highlight(text, lexer='diff', formatter='terminal'):
 
 
 @jinja_filter
-def html2text(html, width=80, ascii_replacements=False):
+def html2text(html: str, width: Optional[int] = 80,
+              ascii_replacements: Optional[bool] = False) -> str:
     """HTML to plain text renderer.
 
     Args:
-        text (str): Text to process
-        width (int): Paragraph width
-        ascii_replacements (bool): Use psuedo-ascii replacements for Unicode
+        html: Text to process
+        width: Paragraph width
+        ascii_replacements: Use psuedo-ascii replacements for Unicode
 
     Returns:
-        str: Rendered text
+        Rendered text
     """
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
@@ -141,29 +146,29 @@ def html2text(html, width=80, ascii_replacements=False):
 
 
 @jinja_filter
-def markdown(text):
+def markdown(text: str) -> str:
     """Markdown to HTML renderer.
 
     Args:
-        text (str): Text to process
+        text: Text to process
 
     Returns:
-        str: Rendered HTML
+        Rendered HTML
     """
     extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
     return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
 
 
-def display_bugs(bugs, order, **extras):
+def display_bugs(bugs: List[Dict[str, str]], order: str, **extras) -> str:
     """Display bugs to users.
 
     Args:
-        bugs (list of ``models.Issue``): Bugs to display
-        order (str): Sorting order for displaying bugs
-        extras (dict): Additional values to pass to templates
+        bugs: Bugs to display
+        order: Sorting order for displaying bugs
+        extras: Additional values to pass to templates
 
     Returns:
-        str: Rendered template output
+        Rendered template output
     """
     if not bugs:
         return success('No bugs found!')
@@ -189,15 +194,16 @@ def display_bugs(bugs, order, **extras):
                            max_title=columns - id_len - 2, **extras)
 
 
-def edit_text(edit_type='default', data=None):
+def edit_text(edit_type: Optional[str] = 'default',
+              data: Optional[str] = None) -> str:
     """Edit data with external editor.
 
     Args:
-        edit_type (str): Template to use in editor
-        data (dict): Information to pass to template
+        edit_type: Template to use in editor
+        data: Information to pass to template
 
     Returns:
-        str: User supplied text
+        User supplied text
 
     Raises:
         EmptyMessageError: No message given

@@ -17,6 +17,7 @@
 #
 
 from subprocess import CalledProcessError
+from typing import Optional
 
 from click import BadParameter
 from pytest import mark, raises
@@ -30,7 +31,7 @@ from hubugs import utils
     ('JNRowe/misc-overlay', 'JNRowe/misc-overlay'),
     ('ask/python-github2', 'ask/python-github2'),
 ])
-def test_ProjectNameParamType_repo_name(repo, expected, monkeypatch):
+def test_ProjectNameParamType_repo_name(repo: str, expected: str, monkeypatch):
     monkeypatch.setattr(
         'hubugs.utils.get_github_api',
         lambda: utils.AttrDict(repos=utils.AttrDict(show=lambda: True)))
@@ -97,7 +98,7 @@ def test_GetEditor_editor_environment_editor(monkeypatch):
     # hg-git
     'git+ssh://git@github.com:JNRowe/misc-overlay.git',
 ])
-def test_GetRepo_repo_url(repo, monkeypatch):
+def test_GetRepo_repo_url(repo: str, monkeypatch):
     # side_effect to skip hubugs.project call
     results = [repo, None]
     monkeypatch.setattr('hubugs.utils.get_git_config_val',
@@ -111,7 +112,7 @@ def test_GetRepo_repo_url(repo, monkeypatch):
     None,
     'http://example.com/dog.git',
 ])
-def test_GetRepo_broken_url(repo, monkeypatch):
+def test_GetRepo_broken_url(repo: Optional[str], monkeypatch):
     # side_effect to skip hubugs.project call
     results = [repo, None]
     monkeypatch.setattr('hubugs.utils.get_git_config_val',

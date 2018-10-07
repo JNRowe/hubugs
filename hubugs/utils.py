@@ -25,6 +25,7 @@ import subprocess
 import sys
 
 from functools import partial
+from typing import List, Optional
 from urllib.parse import urlencode
 
 import click
@@ -75,16 +76,17 @@ def get_github_api():
     return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
 
 
-def get_git_config_val(key, default=None, local_only=False):
+def get_git_config_val(key: str, default: Optional[str] = None,
+                       local_only: Optional[bool] = False) -> str:
     """Fetch a git configuration value.
 
     Args:
-        key (str): Configuration value to fetch
-        default (str): Default value to use, if key isn’t set
-        local_only (bool): Fetch configuration values from repo config only
+        key: Configuration value to fetch
+        default: Default value to use, if key isn’t set
+        local_only: Fetch configuration values from repo config only
 
     Return:
-        str: Git config value, if set
+        Git config value, if set
     """
     cmd = ['git', 'config', ]
     if local_only:
@@ -104,13 +106,14 @@ def get_git_config_val(key, default=None, local_only=False):
     return output
 
 
-def set_git_config_val(key, value, local_only=False):
+def set_git_config_val(key: str, value: str,
+                       local_only: Optional[bool] = False):
     """Set a git configuration value.
 
     Args:
-        key (str): Configuration value to fetch
-        value (str): Value to set
-        local_only (bool): Set configuration values from repo config only
+        key: Configuration value to fetch
+        value: Value to set
+        local_only: Set configuration values from repo config only
     """
     cmd = ['git', 'config', ]
     if not local_only:
@@ -119,19 +122,19 @@ def set_git_config_val(key, value, local_only=False):
     subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
-def get_editor():
+def get_editor() -> List[str]:
     """Choose a suitable editor.
 
     See :manpage:`git-var(1)` for details.
 
     Return:
-        ``list`` of ``str``: Users chosen editor, or ``vi`` if not set
+        Users chosen editor, or ``vi`` if not set
     """
     output = subprocess.check_output(['git', 'var', 'GIT_EDITOR'])
     return output.decode().strip().split()
 
 
-def get_repo():
+def get_repo() -> str:
     """Extract GitHub project name from git/hg config.
 
     We check the git config for ``hubugs.project``, and then fall back to
@@ -139,7 +142,7 @@ def get_repo():
     satisfy the ``hg-git`` users.
 
     Returns:
-        str: GitHub project name, including user
+        GitHub project name, including user
     """
     data = get_git_config_val('hubugs.project', local_only=True)
     if data:
@@ -181,12 +184,12 @@ def get_repo():
                         "‘--project’ option")
 
 
-def pager(text, pager=False):
+def pager(text: str, pager: Optional[bool] = False):
     """Pass output through pager.
 
     Args:
-        text (str): Text to page
-        pager (bool): Pager to use
+        text: Text to page
+        pager: Pager to use
     """
     if pager:
         click.echo_via_pager(text)
@@ -249,14 +252,14 @@ def setup_environment(project, host_url):
     return env
 
 
-def sync_labels(globs, add, create):
+def sync_labels(globs: AttrDict, add, create) -> List[str]:
     """Manage labels for a project.
 
     Args:
-        globs (AttrDict): Global argument configuration
+        globs: Global argument configuration
 
     Returns:
-        list: List of project’s label names
+        List of project’s label names
     """
     labels_url = '{}/repos/{}/labels'.format(globs.host_url, globs.project)
     r, c = globs.req_get(labels_url, model='Label')
