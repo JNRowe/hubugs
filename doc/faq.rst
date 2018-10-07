@@ -1,6 +1,9 @@
 Frequently Asked Questions
 --------------------------
 
+.. contents::
+   :local:
+
 Do you accept template contributions?
 '''''''''''''''''''''''''''''''''''''
 
