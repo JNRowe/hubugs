@@ -1,17 +1,17 @@
+include .travis.yml
 include COPYING
 include *.rst
-
 include .coveragerc
-
-include doc/*.rst
 include doc/conf.py
-
+include extra/README.pip
 include extra/_hubugs
 include extra/doap.rdf
 include extra/requirements*.txt
-
 include hubugs.py
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
 
 include tests/*.py
+
+recursive-include .github *.rst
+recursive-include doc *.rst
