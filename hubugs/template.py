@@ -55,43 +55,43 @@ class EmptyMessageError(ValueError):
     pass
 
 
-def get_template(group: str, name: str) -> jinja2.environment.Template:
+def get_template(__group: str, __name: str) -> jinja2.environment.Template:
     """Fetch a Jinja template instance.
 
     Args:
-        group: Template group identifier
-        name: Template name
+        __group: Template group identifier
+        __name: Template name
 
     Returns:
         Jinja template instance
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
-    return ENV.get_template('/'.join([template_set, group, name]))
+    return ENV.get_template('/'.join([template_set, __group, __name]))
 
 
-def jinja_filter(func: Callable) -> Callable:
+def jinja_filter(__func: Callable) -> Callable:
     """Simple decorator to add a new filter to Jinja environment.
 
     Args:
-        func: Function to add to Jinja environment
+        __func: Function to add to Jinja environment
 
     Returns:
         Unmodified function
     """
-    ENV.filters[func.__name__] = func
+    ENV.filters[__func.__name__] = __func
 
-    return func
+    return __func
 
 
 @jinja_filter
-def colourise(text: str, fg: Optional[str] = None, bg: Optional[str] = None,
+def colourise(__text: str, fg: Optional[str] = None, bg: Optional[str] = None,
               **kwargs)-> str:
     """Colourise text.
 
     Returns text untouched if colour output is not enabled
 
     Args:
-        text: Text to colourise
+        __text: Text to colourise
         fg: Foreground colour
         bg: Background colour
         kwargs: Formatting to apply to text
@@ -99,20 +99,20 @@ def colourise(text: str, fg: Optional[str] = None, bg: Optional[str] = None,
     Returns:
         Colourised text, when possible
     """
-    return click.style(text, fg, bg, **kwargs)
+    return click.style(__text, fg, bg, **kwargs)
 # American spelling, just for Brandon Cady ;)
 ENV.filters['colorize'] = ENV.filters['colourise']
 
 
 @jinja_filter
-def highlight(text: str, lexer: Optional[str] = 'diff',
+def highlight(__text: str, lexer: Optional[str] = 'diff',
               formatter: Optional[str] = 'terminal') -> str:
     """Highlight text with pygments.
 
     Returns text untouched if colour output is not enabled
 
     Args:
-        text: Text to highlight
+        __text: Text to highlight
         lexer: Jinja lexer to use
         formatter: Jinja formatter to use
 
@@ -122,18 +122,18 @@ def highlight(text: str, lexer: Optional[str] = 'diff',
     if sys.stdout.isatty():
         lexer = get_lexer_by_name(lexer)
         formatter = get_formatter_by_name(formatter)
-        return pyg_highlight(text, lexer, formatter)
+        return pyg_highlight(__text, lexer, formatter)
     else:
-        return text
+        return __text
 
 
 @jinja_filter
-def html2text(html: str, width: Optional[int] = 80,
+def html2text(__html: str, width: Optional[int] = 80,
               ascii_replacements: Optional[bool] = False) -> str:
     """HTML to plain text renderer.
 
     Args:
-        html: Text to process
+        __html: Text to process
         width: Paragraph width
         ascii_replacements: Use psuedo-ascii replacements for Unicode
 
@@ -142,55 +142,55 @@ def html2text(html: str, width: Optional[int] = 80,
     """
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
-    return html2.html2text(html).strip()
+    return html2.html2text(__html).strip()
 
 
 @jinja_filter
-def markdown(text: str) -> str:
+def markdown(__text: str) -> str:
     """Markdown to HTML renderer.
 
     Args:
-        text: Text to process
+        __text: Text to process
 
     Returns:
         Rendered HTML
     """
     extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
-    return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
+    return misaka.html(__text, extensions, misaka.HTML_SKIP_HTML)
 
 
-def display_bugs(bugs: List[Dict[str, str]], order: str, **extras) -> str:
+def display_bugs(__bugs: List[Dict[str, str]], __order: str, **extras) -> str:
     """Display bugs to users.
 
     Args:
-        bugs: Bugs to display
-        order: Sorting order for displaying bugs
+        __bugs: Bugs to display
+        __order: Sorting order for displaying bugs
         extras: Additional values to pass to templates
 
     Returns:
         Rendered template output
     """
-    if not bugs:
+    if not __bugs:
         return success('No bugs found!')
 
     # Match ordering method to bug attribute
-    if order == 'updated':
+    if __order == 'updated':
         attr = 'updated_at'
     else:
-        attr = order
+        attr = __order
 
-    bugs = sorted(bugs, key=operator.attrgetter(attr))
+    __bugs = sorted(__bugs, key=operator.attrgetter(attr))
 
     # Default to 80 columns, when stdout is not a tty
     columns = click.get_terminal_size()[0]
 
     template = get_template('view', 'list.txt')
 
-    max_id = max(i.number for i in bugs)
+    max_id = max(i.number for i in __bugs)
     id_len = len(str(max_id))
     spacer = ' ' * (id_len - 2)
 
-    return template.render(bugs=bugs, spacer=spacer, id_len=id_len,
+    return template.render(bugs=__bugs, spacer=spacer, id_len=id_len,
                            max_title=columns - id_len - 2, **extras)
 
 

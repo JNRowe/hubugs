@@ -70,16 +70,16 @@ class ProjectNameParamType(click.ParamType):
 
     name = 'project'
 
-    def convert(self, value: str, param: Optional[click.Argument],
-                ctx: Optional[click.Context]) -> str:
+    def convert(self, __value: str, __param: Optional[click.Argument],
+                __ctx: Optional[click.Context]) -> str:
         """Set fully qualified GitHub project name."""
-        if '/' not in value:
+        if '/' not in __value:
             user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user'))
             if not user:
                 raise click.BadParameter('No GitHub user setting!')
-            value = '/'.join([user, value])
-        return value
+            __value = '/'.join([user, __value])
+        return __value
 
 
 @click.group(help='Simple client for GitHub issues.',
@@ -114,44 +114,44 @@ def cli(ctx: click.Context, pager: bool, project: str, host_url: str):
 
 
 # Convenience wrappers for defining command arguments
-def bugs_parser(f: Callable) -> Callable:
-    f = click.argument('bugs', nargs=-1, type=click.INT)(f)
-    return f
+def bugs_parser(__f: Callable) -> Callable:
+    __f = click.argument('bugs', nargs=-1, type=click.INT)(__f)
+    return __f
 
 
-def message_parser(f: Callable) -> Callable:
-    f = click.option('-m', '--message', help='Comment text.')(f)
-    return f
+def message_parser(__f: Callable) -> Callable:
+    __f = click.option('-m', '--message', help='Comment text.')(__f)
+    return __f
 
 
-def attrib_parser(f: Callable) -> Callable:
-    f = click.option('-o', '--order', default='number',
-                     type=click.Choice(['number', 'updated']),
-                     help='Sort order for listing bugs.')(f)
-    f = click.option('-s', '--state', default='open',
-                     type=click.Choice(['open', 'closed', 'all']),
-                     help='State of bugs to operate on.')(f)
-    return f
+def attrib_parser(__f: Callable) -> Callable:
+    __f = click.option('-o', '--order', default='number',
+                       type=click.Choice(['number', 'updated']),
+                       help='Sort order for listing bugs.')(__f)
+    __f = click.option('-s', '--state', default='open',
+                       type=click.Choice(['open', 'closed', 'all']),
+                       help='State of bugs to operate on.')(__f)
+    return __f
 
 
-def stdin_parser(f: Callable) -> Callable:
-    f = click.option('--stdin', is_flag=True,
-                     help='Read message from standard input.')(f)
-    return f
+def stdin_parser(__f: Callable) -> Callable:
+    __f = click.option('--stdin', is_flag=True,
+                       help='Read message from standard input.')(__f)
+    return __f
 
 
-def text_parser(f: Callable) -> Callable:
-    f = click.option('--title')(f)
-    f = click.option('--body')(f)
-    return f
+def text_parser(__f: Callable) -> Callable:
+    __f = click.option('--title')(__f)
+    __f = click.option('--body')(__f)
+    return __f
 
 
-def label_parser(f: Callable) -> Callable:
-    f = click.option('-a', '--add', multiple=True,
-                     help='Add label to issue.')(f)
-    f = click.option('-c', '--create', multiple=True,
-                     help='Create new label and add to issue.')(f)
-    return f
+def label_parser(__f: Callable) -> Callable:
+    __f = click.option('-a', '--add', multiple=True,
+                       help='Add label to issue.')(__f)
+    __f = click.option('-c', '--create', multiple=True,
+                       help='Create new label and add to issue.')(__f)
+    return __f
 
 
 @cli.command()
