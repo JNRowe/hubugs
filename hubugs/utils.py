@@ -175,7 +175,7 @@ def get_repo():
         return match.groups()[0]
     else:
         raise RepoError('Invalid project configuration, specify with '
-                        "`--project' option")
+                        "‘--project’ option")
 
 
 def pager(text, pager=False):
@@ -213,7 +213,7 @@ def setup_environment(project, host_url):
         lheaders = base_headers.copy()
         if token and 'Authorization' not in lheaders:
             raise EnvironmentError('No hubugs authorisation token found!  '
-                                   "Run 'hubugs setup' to create a token")
+                                   "Run ‘hubugs setup’ to create a token")
         if headers:
             lheaders.update(headers)
         if not isinstance(url, str) or not url.startswith('http'):
@@ -240,7 +240,7 @@ def setup_environment(project, host_url):
                            model='Repo')
         if not c.has_issues:
             raise RepoError(
-                "Issues aren't enabled for {:!r}".format(project))
+                "Issues aren’t enabled for {:!r}".format(project))
     env['repo_obj'] = repo_obj
     return env
 
