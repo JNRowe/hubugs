@@ -56,10 +56,12 @@ class EmptyMessageError(ValueError):
 def get_template(group, name):
     """Fetch a Jinja template instance.
 
-    :param str group: Template group identifier
-    :param str name: Template name
-    :rtype: ``jinja2.environment.Template``
-    :return: Jinja template instance
+    Args:
+        group (str): Template group identifier
+        name (str): Template name
+
+    Returns:
+        jinja2.environment.Template: Jinja template instance
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
     return ENV.get_template('/'.join([template_set, group, name]))
@@ -68,9 +70,11 @@ def get_template(group, name):
 def jinja_filter(func):
     """Simple decorator to add a new filter to Jinja environment.
 
-    :param func func: Function to add to Jinja environment
-    :rtype: ``func``
-    :returns: Unmodified function
+    Args:
+        func (func): Function to add to Jinja environment
+
+    Returns:
+        func: Unmodified function
     """
     ENV.filters[func.__name__] = func
 
@@ -83,12 +87,14 @@ def colourise(text, fg=None, bg=None, **kwargs):
 
     Returns text untouched if colour output is not enabled
 
-    :param str text: Text to colourise
-    :param str fg: Foreground colour
-    :param str bg: Background colour
-    :param dict kwargs: Formatting to apply to text
-    :rtype: ``str``
-    :return: Colourised text, when possible
+    Args:
+        text (str): Text to colourise
+        fg (str): Foreground colour
+        bg (str): Background colour
+        kwargs (dict): Formatting to apply to text
+
+    Returns:
+        str: Colourised text, when possible
     """
     return click.style(text, fg, bg, **kwargs)
 # American spelling, just for Brandon Cady ;)
@@ -101,11 +107,13 @@ def highlight(text, lexer='diff', formatter='terminal'):
 
     Returns text untouched if colour output is not enabled
 
-    :param str text: Text to highlight
-    :param str lexer: Jinja lexer to use
-    :param str formatter: Jinja formatter to use
-    :rtype: ``str``
-    :return: Syntax highlighted output, when possible
+    Args:
+        text (str): Text to highlight
+        lexer (str): Jinja lexer to use
+        formatter (str): Jinja formatter to use
+
+    Returns:
+        str: Syntax highlighted output, when possible
     """
     if sys.stdout.isatty():
         lexer = get_lexer_by_name(lexer)
@@ -119,11 +127,13 @@ def highlight(text, lexer='diff', formatter='terminal'):
 def html2text(html, width=80, ascii_replacements=False):
     """HTML to plain text renderer.
 
-    :param str text: Text to process
-    :param int width: Paragraph width
-    :param bool ascii_replacements: Use psuedo-ascii replacements for Unicode
-    :rtype: ``str``
-    :return: Rendered text
+    Args:
+        text (str): Text to process
+        width (int): Paragraph width
+        ascii_replacements (bool): Use psuedo-ascii replacements for Unicode
+
+    Returns:
+        str: Rendered text
     """
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
@@ -134,9 +144,11 @@ def html2text(html, width=80, ascii_replacements=False):
 def markdown(text):
     """Markdown to HTML renderer.
 
-    :param str text: Text to process
-    :rtype: ``str``
-    :return: Rendered HTML
+    Args:
+        text (str): Text to process
+
+    Returns:
+        str: Rendered HTML
     """
     extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
     return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
@@ -145,12 +157,13 @@ def markdown(text):
 def display_bugs(bugs, order, **extras):
     """Display bugs to users.
 
-    :type bugs: ``list` of ``models.Issue``
-    :param bugs: Bugs to display
-    :param str order: Sorting order for displaying bugs
-    :param dict extras: Additional values to pass to templates
-    :rtype: ``str``
-    :return: Rendered template output
+    Args:
+        bugs (list of ``models.Issue``): Bugs to display
+        order (str): Sorting order for displaying bugs
+        extras (dict): Additional values to pass to templates
+
+    Returns:
+        str: Rendered template output
     """
     if not bugs:
         return success('No bugs found!')
@@ -179,12 +192,16 @@ def display_bugs(bugs, order, **extras):
 def edit_text(edit_type='default', data=None):
     """Edit data with external editor.
 
-    :param str edit_type: Template to use in editor
-    :param dict data: Information to pass to template
-    :rtype: ``str``
-    :return: User supplied text
-    :raise EmptyMessageError: No message given
-    :raise EmptyMessageError: Message not edited
+    Args:
+        edit_type (str): Template to use in editor
+        data (dict): Information to pass to template
+
+    Returns:
+        str: User supplied text
+
+    Raises:
+        EmptyMessageError: No message given
+        EmptyMessageError: Message not edited
     """
     template = get_template('edit', '{}.mkd'.format(edit_type))
     comment_char = utils.get_git_config_val('core.commentchar', '#')

@@ -96,10 +96,11 @@ class ProjectNameParamType(click.ParamType):
 def cli(ctx, pager, project, host_url):
     """Main command entry point.
 
-    :param click.Context ctx: Current command context
-    :param bool pager: Whether to page output
-    :param str project: GitHub project name
-    :param str host: Hostname to connect to
+    Args:
+        ctx (click.Context): Current command context
+        pager (bool): Whether to page output
+        project (str): GitHub project name
+        host (str): Hostname to connect to
     """
     ctx.obj = utils.setup_environment(project, host_url)
     ctx.obj.update({
@@ -517,8 +518,8 @@ def report_bug(globs):
 def main():
     """Main command-line entry point.
 
-    :rtype: ``int``
-    :return: Exit code
+    Returns:
+        int: Exit code
     """
     try:
         cli()
