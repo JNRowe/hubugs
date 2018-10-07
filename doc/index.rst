@@ -2,8 +2,8 @@
 
 .. module:: hubugs
 
-:mod:`hubugs`
-=============
+``hubugs``
+==========
 
 .. warning::
 
@@ -37,11 +37,13 @@ Contents
    faq
    alternatives
    release
+   todo
    api/index
    appendix
+   glossary
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
