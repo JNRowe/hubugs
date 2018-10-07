@@ -1,5 +1,10 @@
 #
-"""hubugs - Simple client for GitHub issues."""
+"""hubugs - Simple client for GitHub issues.
+
+``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
+
+.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
+"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Ben Griffiths
 #
@@ -22,22 +27,8 @@ from . import _version
 
 __version__ = _version.dotted
 __date__ = _version.date
-__author__ = 'James Rowe <jnrowe@gmail.com>'
 __copyright__ = '2010-2016  James Rowe'
-__license__ = 'GNU General Public License Version 3'
-__credits__ = 'Ben Griffiths, Matt Leighton'
-__history__ = 'See git repository'
 
-from email.utils import parseaddr
-
-__doc__ += """.
-
-``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
-
-.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
-
-.. moduleauthor:: `{} <mailto:{}>`__
-""".format(*parseaddr(__author__))
 
 # This is here to workaround UserWarning messages caused by path fiddling in
 # dependencies
