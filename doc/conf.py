@@ -31,7 +31,8 @@ if not on_rtd:
     import sphinx_rtd_theme
 
 extensions = \
-    [f'sphinx.ext.{ext}' for ext in ['autodoc', 'extlinks', 'intersphinx']]
+    [f'sphinx.ext.{ext}' for ext in ['autodoc', 'extlinks', 'intersphinx',
+                                     'todo']]
 
 master_doc = 'index'
 source_suffix = '.rst'
@@ -75,3 +76,6 @@ intersphinx_mapping = {
         'jnrbase': 'https://jnrbase.readthedocs.io/en/latest/',
         'python': 'https://docs.python.org/3/',
 }.items()}
+
+# todo extension settings
+todo_include_todos = True
