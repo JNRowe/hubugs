@@ -40,6 +40,7 @@ Contents
    todo
    api/index
    appendix
+   glossary
 
 Indices and tables
 ------------------
