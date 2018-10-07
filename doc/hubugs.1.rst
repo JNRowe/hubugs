@@ -13,7 +13,7 @@ Simple client for GitHub issues
 SYNOPSIS
 --------
 
-    hubugs [option]... <command>
+    hubugs [option]… <command>
 
 DESCRIPTION
 -----------
