@@ -1,10 +1,10 @@
-*.egg-info/
-build/
-dist/
-doc/.build/
+/.pytest_cache/
+/build/
+/dist/
+/hubugs.egg-info/
+
+__pycache__/
 
 *.html
-*.py[co]
 
-.coverage
-.noseids
+/.coverage
