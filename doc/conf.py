@@ -32,7 +32,8 @@ if not on_rtd:
 
 extensions = \
     [f'sphinx.ext.{ext}' for ext in ['autodoc', 'extlinks', 'intersphinx',
-                                     'napoleon', 'todo']]
+                                     'napoleon', 'todo']] \
+    + ['sphinx_autodoc_typehints', ]
 
 master_doc = 'index'
 source_suffix = '.rst'
