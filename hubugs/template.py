@@ -1,5 +1,5 @@
 #
-"""template - Template utilities for hubugs"""
+"""template - Template utilities for hubugs."""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -132,7 +132,7 @@ def html2text(html, width=80, ascii_replacements=False):
 
 @jinja_filter
 def markdown(text):
-    """Markdown to HTML renderer
+    """Markdown to HTML renderer.
 
     :param str text: Text to process
     :rtype: ``str``
