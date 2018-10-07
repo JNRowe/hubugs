@@ -1,4 +1,4 @@
-.. currentmodule:: hubugs.models
+.. module:: hubugs.models
 
 ``models``
 ==========

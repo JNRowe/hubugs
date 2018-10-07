@@ -1,4 +1,4 @@
-.. currentmodule:: hubugs.utils
+.. module:: hubugs.utils
 
 Utilities
 =========

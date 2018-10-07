@@ -1,4 +1,4 @@
-.. currentmodule:: hubugs
+.. module:: hubugs
 
 Command line
 ============
