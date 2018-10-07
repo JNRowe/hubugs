@@ -20,6 +20,8 @@ import collections
 import contextlib
 import datetime
 
+from typing import Dict, Optional
+
 from jnrbase.iso_8601 import parse_datetime
 
 # We used to use tight, explicit bindings for API objects but the desire to
@@ -30,38 +32,40 @@ from jnrbase.iso_8601 import parse_datetime
 # becomes available or I free up a little more itch-scratching time
 
 
-def object_hook(d, name='unknown'):
+def object_hook(__d: Dict[str, str], __name: Optional[str] = 'unknown'):
     """JSON object hook to create dot-accessible objects.
 
-    :param dict d: Dictionary to operate on
-    :param str name: Fallback name, if dict has no ``type`` key
+    Args:
+        __d: Dictionary to operate on
+        name: Fallback name, if dict has no ``type`` key
     """
     # FIXME: Dump _links attributes for the time being
-    if '_links' in d:
-        d.pop('_links')
-    for k, v in d.items():
+    if '_links' in __d:
+        __d.pop('_links')
+    for k, v in __d.items():
         with contextlib.suppress(TypeError, ValueError):
-            d[k] = parse_datetime(v).replace(tzinfo=None)
-    return collections.namedtuple(d.get('type', name), d.keys())(**d)
+            __d[k] = parse_datetime(v).replace(tzinfo=None)
+    return collections.namedtuple(__d.get('type', __name), __d.keys())(**__d)
 
 
-def _v2_conv_timestamp(s):
+def _v2_conv_timestamp(__s: str):
     """Parse API v2 style timestamps.
 
-    :param str s: Timestamp to parse
+    Args:
+        __s: Timestamp to parse
     """
-    stamp = parse_datetime(s).astimezone(datetime.timezone.utc)
+    stamp = parse_datetime(__s).astimezone(datetime.timezone.utc)
     return stamp.isoformat()[:-6] + 'Z'
 
 
-def from_search(obj):
+def from_search(__obj):
     """Support legacy API search results as API v3 issues(-ish).
 
     This is an awful hack to workaround the lack of search support in API
     v3.  It needs to be removed at the first possible opportunity.
 
-    :rtype: ``Issue``
-    :returns: API v2 issue mangled to look like a API v3 result
+    Returns:
+        Issue: API v2 issue mangled to look like a API v3 result
     """
 
     avatar_url = ('https://secure.gravatar.com/avatar/{}?d='
@@ -69,29 +73,29 @@ def from_search(obj):
                   'images%2Fgravatars%2Fgravatar-140.png')
     label_url = 'https://api.github.com/repos/{}/{}/labels/{}'
 
-    owner, project = obj.html_url.split('/')[3:5]
+    owner, project = __obj.html_url.split('/')[3:5]
 
-    d = obj.__dict__
+    d = __obj.__dict__
     d['id'] = '<from search>'
     d['user'] = {
-        'avatar_url': avatar_url.format(obj.gravatar_id),
-        'gravatar_id': obj.gravatar_id,
-        'login': obj.user,
-        'url': 'https://api.github.com/users/{}'.format(obj.user),
+        'avatar_url': avatar_url.format(__obj.gravatar_id),
+        'gravatar_id': __obj.gravatar_id,
+        'login': __obj.user,
+        'url': 'https://api.github.com/users/{}'.format(__obj.user),
     }
-    if 'closed_by' in obj._fields:
+    if 'closed_by' in __obj._fields:
         d['closed_by'] = {
-            'avatar_url': avatar_url.format(obj.closed_by),
-            'gravatar_id': obj.gravatar_id,
-            'login': obj.user,
-            'url': 'https://api.github.com/users/{}'.format(obj.user),
+            'avatar_url': avatar_url.format(__obj.closed_by),
+            'gravatar_id': __obj.gravatar_id,
+            'login': __obj.user,
+            'url': 'https://api.github.com/users/{}'.format(__obj.user),
         }
-        d['closed_at'] = _v2_conv_timestamp(obj.closed_at)
-    d['created_at'] = _v2_conv_timestamp(obj.created_at)
-    d['updated_at'] = _v2_conv_timestamp(obj.updated_at)
-    if 'labels' in obj._fields:
+        d['closed_at'] = _v2_conv_timestamp(__obj.closed_at)
+    d['created_at'] = _v2_conv_timestamp(__obj.created_at)
+    d['updated_at'] = _v2_conv_timestamp(__obj.updated_at)
+    if 'labels' in __obj._fields:
         labels = []
-        for name in obj.labels:
+        for name in __obj.labels:
             labels.append({
                 'color': '000000',
                 'name': name,
