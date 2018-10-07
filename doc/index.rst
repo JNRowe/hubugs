@@ -2,8 +2,8 @@
 
 .. module:: hubugs
 
-:mod:`hubugs`
-=============
+``hubugs``
+==========
 
 .. warning::
 

@@ -1,4 +1,4 @@
-.. currentmodule:: hubugs.template
+.. module:: hubugs.template
 
 Template
 ========
