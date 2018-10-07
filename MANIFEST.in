@@ -11,9 +11,6 @@ include extra/doap.rdf
 include extra/requirements*.txt
 
 include hubugs.py
-include hubugs/locale/hubugs.pot
-include hubugs/locale/*/LC_MESSAGES/*.mo
-include hubugs/locale/*/LC_MESSAGES/*.po
 include hubugs/templates/*/*/*.mkd
 include hubugs/templates/*/*/*.txt
 
