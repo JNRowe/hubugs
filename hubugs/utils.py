@@ -30,7 +30,6 @@ from urllib.parse import urlencode
 import click
 import httplib2
 
-from jnrbase import i18n
 from jnrbase.attrdict import AttrDict
 from jnrbase.colourise import warn
 from jnrbase.xdg_basedir import user_cache
@@ -42,9 +41,6 @@ try:
     CA_CERTS = ca_certs_locater.get()
 except ImportError:
     CA_CERTS = None
-
-
-_, _N = i18n.setup(_version)
 
 
 class HttpClientError(ValueError):
@@ -163,7 +159,7 @@ def get_repo():
                 data = conf.get('paths', 'default')
 
     if not data:
-        raise RepoError(_('Unable to guess project from repository'))
+        raise RepoError('Unable to guess project from repository')
 
     match = re.match(
         r"""
@@ -179,8 +175,8 @@ def get_repo():
     if match:
         return match.groups()[0]
     else:
-        raise RepoError(_('Invalid project configuration, specify with '
-                          "`--project' option"))
+        raise RepoError('Invalid project configuration, specify with '
+                        "`--project' option")
 
 
 def pager(text, pager=False):
@@ -217,8 +213,8 @@ def setup_environment(project, host_url):
                     model=None, is_json=True, token=True):
         lheaders = base_headers.copy()
         if token and 'Authorization' not in lheaders:
-            raise EnvironmentError(_('No hubugs authorisation token found!  '
-                                     "Run 'hubugs setup' to create a token"))
+            raise EnvironmentError('No hubugs authorisation token found!  '
+                                   "Run 'hubugs setup' to create a token")
         if headers:
             lheaders.update(headers)
         if not isinstance(url, str) or not url.startswith('http'):
@@ -245,7 +241,7 @@ def setup_environment(project, host_url):
                            model='Repo')
         if not c.has_issues:
             raise RepoError(
-                _("Issues aren't enabled for {:!r}").format(project))
+                "Issues aren't enabled for {:!r}".format(project))
     env['repo_obj'] = repo_obj
     return env
 
@@ -263,10 +259,10 @@ def sync_labels(globs, add, create):
 
     for label in add:
         if label not in label_names:
-            raise ValueError(_('No such label {!r}').format(label))
+            raise ValueError('No such label {!r}'.format(label))
     for label in create:
         if label in label_names:
-            warn(_('{!r} label already exists').format(label))
+            warn('{!r} label already exists'.format(label))
         else:
             data = {'name': label, 'color': '000000'}
             globs.req_post(labels_url, body=data, model='Label')
