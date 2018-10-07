@@ -51,7 +51,19 @@ _arguments '--help[show help message and exit]' \
     "--no-pager[do not pass output through pager]" \
     '--project=[GitHub project to operate on]:select project:__list_projects' \
     '--host-url=[GitHub Enterprise host to connect to]:select host:__list_hosts' \
-    ':hubugs command:(close comment edit label list milestone milestones open reopen search show)' \
+    ':hubugs command:((
+        close\:"Closing bugs."
+        comment\:"ommenting on bugs."
+        edit\:"Editing bugs."
+        label\:"Labelling bugs."
+        list\:"Listing bugs."
+        milestone\:"Issue milestones."
+        milestones\:"Repository milestones."
+        open\:"Opening new bugs."
+        reopen\:"Reopening closed bugs."
+        search\:"Searching bugs."
+        show\:"Displaying bugs."
+    ))' \
     '*::subcmd:->subcmd' && return 0
 
 ### DGEN_TAG: Generated from hubugs/__init__.py {{{
