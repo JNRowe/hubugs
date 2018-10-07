@@ -68,7 +68,16 @@ def get_github_api():
     :rtype: ``httplib2.Http``
     :return: GitHub HTTP session
     """
-    return httplib2.Http(user_cache('hubugs'), ca_certs=CA_CERTS)
+    cache_dir = user_cache('hubugs')
+    with open('{}/CACHEDIR.TAG'.format(cache_dir), 'w') as f:
+        f.writelines([
+            'Signature: 8a477f597d28d172789f06886806bc55\n',
+            '# This file is a cache directory tag created by hubugs.\n',
+            '# For information about cache directory tags, see:\n',
+            '#   http://www.brynosaurus.com/cachedir/\n',
+            ])
+    raise ValueError(cache_dir)
+    return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
 
 
 def get_git_config_val(key, default=None, local_only=False):
