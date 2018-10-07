@@ -42,7 +42,7 @@ Contents
    appendix
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

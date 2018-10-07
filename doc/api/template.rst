@@ -12,7 +12,7 @@ Template
 .. autofunction:: get_template
 
 Jinja filter support
-''''''''''''''''''''
+--------------------
 
 .. autofunction:: jinja_filter
 .. autofunction:: colourise
@@ -20,7 +20,7 @@ Jinja filter support
 .. autofunction:: html2text
 
 User interface support
-''''''''''''''''''''''
+----------------------
 
 .. autofunction:: display_bugs
 .. autofunction:: edit_text
