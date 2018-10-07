@@ -76,12 +76,12 @@ def get_github_api():
     return httplib2.Http(cache_dir, ca_certs=CA_CERTS)
 
 
-def get_git_config_val(key: str, default: Optional[str] = None,
+def get_git_config_val(__key: str, default: Optional[str] = None,
                        local_only: Optional[bool] = False) -> str:
     """Fetch a git configuration value.
 
     Args:
-        key: Configuration value to fetch
+        __key: Configuration value to fetch
         default: Default value to use, if key isn’t set
         local_only: Fetch configuration values from repo config only
 
@@ -91,7 +91,7 @@ def get_git_config_val(key: str, default: Optional[str] = None,
     cmd = ['git', 'config', ]
     if local_only:
         cmd.append('--local')
-    cmd.extend(['--get', key])
+    cmd.extend(['--get', __key])
     try:
         output = subprocess.check_output(cmd).decode().strip()
     except subprocess.CalledProcessError:
@@ -106,19 +106,19 @@ def get_git_config_val(key: str, default: Optional[str] = None,
     return output
 
 
-def set_git_config_val(key: str, value: str,
+def set_git_config_val(__key: str, __value: str,
                        local_only: Optional[bool] = False):
     """Set a git configuration value.
 
     Args:
-        key: Configuration value to fetch
-        value: Value to set
+        __key: Configuration value to fetch
+        __value: Value to set
         local_only: Set configuration values from repo config only
     """
     cmd = ['git', 'config', ]
     if not local_only:
         cmd.append('--global')
-    cmd.extend([key, value])
+    cmd.extend([__key, value])
     subprocess.check_output(cmd, stderr=subprocess.STDOUT)
 
 
@@ -184,25 +184,25 @@ def get_repo() -> str:
                         "‘--project’ option")
 
 
-def pager(text: str, pager: Optional[bool] = False):
+def pager(__text: str, pager: Optional[bool] = False):
     """Pass output through pager.
 
     Args:
-        text: Text to page
+        __text: Text to page
         pager: Pager to use
     """
     if pager:
-        click.echo_via_pager(text)
+        click.echo_via_pager(__text)
     else:
-        click.echo(text)
+        click.echo(__text)
 
 
-def setup_environment(project, host_url):
+def setup_environment(__project, __host_url):
     """Configure execution environment for commands dispatch."""
     env = AttrDict()
 
-    if not project:
-        project = get_repo()
+    if not __project:
+        __project = get_repo()
 
     http = get_github_api()
 
@@ -215,7 +215,7 @@ def setup_environment(project, host_url):
     if token:
         base_headers['Authorization'] = 'token {}'.format(token)
 
-    def http_method(url, method='GET', params=None, body=None, headers=None,
+    def http_method(__url, method='GET', params=None, body=None, headers=None,
                     model=None, is_json=True, token=True):
         lheaders = base_headers.copy()
         if token and 'Authorization' not in lheaders:
@@ -223,18 +223,19 @@ def setup_environment(project, host_url):
                                    "Run ‘hubugs setup’ to create a token")
         if headers:
             lheaders.update(headers)
-        if not isinstance(url, str) or not url.startswith('http'):
-            url = '{}/repos/{}/issues{}{}'.format(host_url, project,
-                                                  '/' if url else '', url)
+        if not isinstance(__url, str) or not __url.startswith('http'):
+            __url = '{}/repos/{}/issues{}{}'.format(__host_url, __project,
+                                                    '/' if __url else '',
+                                                    __url)
         if params:
-            url += '?' + urlencode(params)
+            __url += '?' + urlencode(params)
         if is_json and body:
             body = json.dumps(body)
-        r, c = http.request(url, method=method, body=body, headers=lheaders)
+        r, c = http.request(__url, method=method, body=body, headers=lheaders)
         if is_json:
             c = json.loads(c.decode('utf-8'),
                            object_hook=partial(models.object_hook,
-                                               name=model))
+                                               __name=model))
         if str(r.status)[0] == '4':
             raise HttpClientError(str(r.status), r, c)
         return r, c
@@ -243,16 +244,16 @@ def setup_environment(project, host_url):
     env['req_post'] = partial(http_method, method='POST')
 
     def repo_obj():
-        r, c = http_method('{}/repos/{}'.format(host_url, project),
+        r, c = http_method('{}/repos/{}'.format(__host_url, __project),
                            model='Repo')
         if not c.has_issues:
             raise RepoError(
-                "Issues aren’t enabled for {:!r}".format(project))
+                "Issues aren’t enabled for {:!r}".format(__project))
     env['repo_obj'] = repo_obj
     return env
 
 
-def sync_labels(globs: AttrDict, add, create) -> List[str]:
+def sync_labels(__globs: AttrDict, __add, __create) -> List[str]:
     """Manage labels for a project.
 
     Args:
@@ -261,14 +262,14 @@ def sync_labels(globs: AttrDict, add, create) -> List[str]:
     Returns:
         List of project’s label names
     """
-    labels_url = '{}/repos/{}/labels'.format(globs.host_url, globs.project)
+    labels_url = '{}/repos/{}/labels'.format(__globs.host_url, __globs.project)
     r, c = globs.req_get(labels_url, model='Label')
     label_names = [label.name for label in c]
 
-    for label in add:
+    for label in __add:
         if label not in label_names:
             raise ValueError('No such label {!r}'.format(label))
-    for label in create:
+    for label in __create:
         if label in label_names:
             warn('{!r} label already exists'.format(label))
         else:
