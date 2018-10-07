@@ -61,8 +61,8 @@ class RepoError(ValueError):
 def get_github_api():
     """Create a GitHub API instance.
 
-    :rtype: ``httplib2.Http``
-    :return: GitHub HTTP session
+    Returns:
+        httplib2.Http: GitHub HTTP session
     """
     cache_dir = user_cache('hubugs')
     with open('{}/CACHEDIR.TAG'.format(cache_dir), 'w') as f:
@@ -78,11 +78,13 @@ def get_github_api():
 def get_git_config_val(key, default=None, local_only=False):
     """Fetch a git configuration value.
 
-    :param str key: Configuration value to fetch
-    :param str default: Default value to use, if key isn’t set
-    :param bool local_only: Fetch configuration values from repo config only
-    :rtype: ``str``
-    :return: Git config value, if set
+    Args:
+        key (str): Configuration value to fetch
+        default (str): Default value to use, if key isn’t set
+        local_only (bool): Fetch configuration values from repo config only
+
+    Return:
+        str: Git config value, if set
     """
     cmd = ['git', 'config', ]
     if local_only:
@@ -105,9 +107,10 @@ def get_git_config_val(key, default=None, local_only=False):
 def set_git_config_val(key, value, local_only=False):
     """Set a git configuration value.
 
-    :param str key: Configuration value to fetch
-    :param str value: Value to set
-    :param bool local_only: Set configuration values from repo config only
+    Args:
+        key (str): Configuration value to fetch
+        value (str): Value to set
+        local_only (bool): Set configuration values from repo config only
     """
     cmd = ['git', 'config', ]
     if not local_only:
@@ -121,8 +124,8 @@ def get_editor():
 
     See :manpage:`git-var(1)` for details.
 
-    :rtype: ``list`` of ``str``
-    :return: Users chosen editor, or ``vi`` if not set
+    Return:
+        ``list`` of ``str``: Users chosen editor, or ``vi`` if not set
     """
     output = subprocess.check_output(['git', 'var', 'GIT_EDITOR'])
     return output.decode().strip().split()
@@ -135,8 +138,8 @@ def get_repo():
     ``remote.origin.url``.  If both of these fail we check a mercurial root, to
     satisfy the ``hg-git`` users.
 
-    :rtype: ``str``
-    :return: GitHub project name, including user
+    Returns:
+        str: GitHub project name, including user
     """
     data = get_git_config_val('hubugs.project', local_only=True)
     if data:
@@ -181,8 +184,9 @@ def get_repo():
 def pager(text, pager=False):
     """Pass output through pager.
 
-    :param str text: Text to page
-    :param bool pager: Pager to use
+    Args:
+        text (str): Text to page
+        pager (bool): Pager to use
     """
     if pager:
         click.echo_via_pager(text)
@@ -248,9 +252,11 @@ def setup_environment(project, host_url):
 def sync_labels(globs, add, create):
     """Manage labels for a project.
 
-    :param AttrDict globs: Global argument configuration
-    :rtype: ``list``
-    :return: List of project’s label names
+    Args:
+        globs (AttrDict): Global argument configuration
+
+    Returns:
+        list: List of project’s label names
     """
     labels_url = '{}/repos/{}/labels'.format(globs.host_url, globs.project)
     r, c = globs.req_get(labels_url, model='Label')

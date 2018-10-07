@@ -33,8 +33,9 @@ from jnrbase.iso_8601 import parse_datetime
 def object_hook(d, name='unknown'):
     """JSON object hook to create dot-accessible objects.
 
-    :param dict d: Dictionary to operate on
-    :param str name: Fallback name, if dict has no ``type`` key
+    Args:
+        d (dict): Dictionary to operate on
+        name (str): Fallback name, if dict has no ``type`` key
     """
     # FIXME: Dump _links attributes for the time being
     if '_links' in d:
@@ -48,7 +49,8 @@ def object_hook(d, name='unknown'):
 def _v2_conv_timestamp(s):
     """Parse API v2 style timestamps.
 
-    :param str s: Timestamp to parse
+    Args:
+        s (str): Timestamp to parse
     """
     stamp = parse_datetime(s).astimezone(datetime.timezone.utc)
     return stamp.isoformat()[:-6] + 'Z'
@@ -60,8 +62,8 @@ def from_search(obj):
     This is an awful hack to workaround the lack of search support in API
     v3.  It needs to be removed at the first possible opportunity.
 
-    :rtype: ``Issue``
-    :returns: API v2 issue mangled to look like a API v3 result
+    Returns:
+        Issue: API v2 issue mangled to look like a API v3 result
     """
 
     avatar_url = ('https://secure.gravatar.com/avatar/{}?d='

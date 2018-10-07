@@ -32,7 +32,7 @@ if not on_rtd:
 
 extensions = \
     [f'sphinx.ext.{ext}' for ext in ['autodoc', 'extlinks', 'intersphinx',
-                                     'todo']]
+                                     'napoleon', 'todo']]
 
 master_doc = 'index'
 source_suffix = '.rst'
@@ -77,5 +77,12 @@ intersphinx_mapping = {
         'python': 'https://docs.python.org/3/',
 }.items()}
 
+extlinks = {
+    'pypi': ('https://pypi.org/project/%s/', ''),
+}
+
 # todo extension settings
 todo_include_todos = True
+
+# napoleon extension settings
+napoleon_numpy_docstring = False
