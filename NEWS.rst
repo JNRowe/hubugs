@@ -151,7 +151,7 @@ User-visible changes
 * Support for editing an existing bug’s title and/or summary
 * Support for re-opening closed bugs
 * GitHub authorisation values can be read from the environment using
-  ``GITHUB_USER`` and ``GITHUB_TOKEN``
+  ``$GITHUB_USER`` and ``$GITHUB_TOKEN``
 * Labels are now included in list output
 * argh_ is now required
 
@@ -168,8 +168,8 @@ User-visible changes
 * Renamed to ``gh_bugs``
 * Support for different ordering methods in list and search output
 * Add or remove multiple labels by repeating ``-add` or ``-remove`` option
-* Templates are searched for in ``XDG_DATA_HOME/gh_bugs/``, any ``gh_bugs``
-  directory in ``XDG_DATA_DIRS`` and finally the Python package directory
+* Templates are searched for in ``$XDG_DATA_HOME/gh_bugs/``, any ``gh_bugs``
+  directory in ``$XDG_DATA_DIRS`` and finally the Python package directory
 * Jinja_ is now required
 * If termcolor_ is installed coloured output is produced
 * Addition of a distutils_ ``setup.py``
