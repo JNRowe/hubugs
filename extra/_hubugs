@@ -18,7 +18,7 @@
 
 # Most of this file is generated from hubugs/__init__.py, but feel free to
 # customise it!  If you make improvements, open a pull request against
-# `JNRowe/hubugs' with your super changes attached.
+# ‘JNRowe/hubugs’ with your super changes attached.
 
 (( $+functions[__list_projects] )) ||
 __list_projects() {
@@ -46,7 +46,7 @@ __list_hosts() {
 }
 
 _arguments '--help[show help message and exit]' \
-    "--version[show program's version number and exit]" \
+    "--version[show program’s version number and exit]" \
     "--pager=[pass output through a pager]:select pager:_command_names -e" \
     "--no-pager[do not pass output through pager]" \
     '--project=[GitHub project to operate on]:select project:__list_projects' \
