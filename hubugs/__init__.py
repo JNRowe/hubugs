@@ -83,7 +83,7 @@ class ProjectNameParamType(click.ParamType):
             user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user'))
             if not user:
-                self.fail('No GitHub user setting!')
+                raise click.BadParameter('No GitHub user setting!')
             value = '/'.join([user, value])
         return value
 
