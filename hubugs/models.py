@@ -20,6 +20,8 @@ import collections
 import contextlib
 import datetime
 
+from typing import Dict, Optional
+
 from jnrbase.iso_8601 import parse_datetime
 
 # We used to use tight, explicit bindings for API objects but the desire to
@@ -30,12 +32,12 @@ from jnrbase.iso_8601 import parse_datetime
 # becomes available or I free up a little more itch-scratching time
 
 
-def object_hook(d, name='unknown'):
+def object_hook(d: Dict[str, str], name: Optional[str] = 'unknown'):
     """JSON object hook to create dot-accessible objects.
 
     Args:
-        d (dict): Dictionary to operate on
-        name (str): Fallback name, if dict has no ``type`` key
+        d: Dictionary to operate on
+        name: Fallback name, if dict has no ``type`` key
     """
     # FIXME: Dump _links attributes for the time being
     if '_links' in d:
@@ -46,11 +48,11 @@ def object_hook(d, name='unknown'):
     return collections.namedtuple(d.get('type', name), d.keys())(**d)
 
 
-def _v2_conv_timestamp(s):
+def _v2_conv_timestamp(s: str):
     """Parse API v2 style timestamps.
 
     Args:
-        s (str): Timestamp to parse
+        : Timestamp to parse
     """
     stamp = parse_datetime(s).astimezone(datetime.timezone.utc)
     return stamp.isoformat()[:-6] + 'Z'
