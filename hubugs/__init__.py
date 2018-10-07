@@ -33,7 +33,7 @@ __copyright__ = '2010-2016  James Rowe'
 # This is here to workaround UserWarning messages caused by path fiddling in
 # dependencies
 try:
-    import pkg_resources  # NOQA
+    import pkg_resources  # NOQA: F401
 except ImportError:
     pass
 
@@ -43,7 +43,7 @@ import getpass
 import logging
 import os
 # Used by raw_input, when imported
-import readline  # NOQA
+import readline  # NOQA: F401
 import sys
 
 from base64 import b64encode
@@ -495,7 +495,7 @@ def report_bug(globs):
     local = globs.project == 'JNRowe/hubugs'
     globs.project = 'JNRowe/hubugs'
 
-    import html2text, jinja2, pygments  # NOQA
+    import html2text, jinja2, pygments  # NOQA: E401
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
                      for m in (click, html2text, httplib2, jinja2, pygments)])
     data = {
