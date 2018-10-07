@@ -71,7 +71,7 @@ autodoc_default_flags = ['members', ]
 intersphinx_mapping = {
     k: (v, os.getenv(f'SPHINX_{k.upper()}_OBJECTS'))
     for k, v in {
-        'click': 'http://click.pocoo.org/6/',
+        'click': 'https://click.palletsprojects.com/en/6.x/',
         'jinja': 'http://jinja.pocoo.org/docs/',
         'jnrbase': 'https://jnrbase.readthedocs.io/en/latest/',
         'python': 'https://docs.python.org/3/',
