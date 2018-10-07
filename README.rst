@@ -1,8 +1,7 @@
 hubugs - Simple client for GitHub issues
 ========================================
 
-.. image:: https://secure.travis-ci.org/JNRowe/hubugs.png?branch=master
-   :target: http://travis-ci.org/JNRowe/hubugs
+|status| |travis| |coveralls| |pypi| |pyvers| |readthedocs| |develop|
 
 .. warning::
 
@@ -92,3 +91,29 @@ reproduce the problem, or even better a patch!
 .. _GitHub settings: https://github.com/settings/applications/
 .. _mail: jnrowe@gmail.com
 .. _issue: http://github.com/JNRowe/hubugs/issues
+
+.. |travis| image:: https://img.shields.io/travis/JNRowe/hubugs.png
+   :target: https://travis-ci.org/JNRowe/hubugs
+   :alt: Test state on master
+
+.. |develop| image:: https://img.shields.io/github/commits-since/JNRowe/hubugs/latest.png
+   :target: https://github.com/JNRowe/hubugs
+   :alt: Recent developments
+
+.. |pyvers| image:: https://img.shields.io/pypi/pyversions/hubugs.png
+   :alt: Supported Python versions
+
+.. |status| image:: https://img.shields.io/pypi/status/hubugs.png
+   :alt: Development status
+
+.. |coveralls| image:: https://img.shields.io/coveralls/github/JNRowe/hubugs/master.png
+   :target: https://coveralls.io/repos/JNRowe/hubugs
+   :alt: Coverage state on master
+
+.. |pypi| image:: https://img.shields.io/pypi/v/hubugs.png
+   :target: https://pypi.org/project/hubugs/
+   :alt: Current PyPI release
+
+.. |readthedocs| image:: https://img.shields.io/readthedocs/hubugs/stable.png
+   :target: https://hubugs.readthedocs.io/
+   :alt: Documentation
