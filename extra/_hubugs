@@ -18,7 +18,7 @@
 
 # Most of this file is generated from hubugs/__init__.py, but feel free to
 # customise it!  If you make improvements, open a pull request against
-# `JNRowe/hubugs' with your super changes attached.
+# ‘JNRowe/hubugs’ with your super changes attached.
 
 (( $+functions[__list_projects] )) ||
 __list_projects() {
@@ -46,12 +46,24 @@ __list_hosts() {
 }
 
 _arguments '--help[show help message and exit]' \
-    "--version[show program's version number and exit]" \
+    "--version[show program’s version number and exit]" \
     "--pager=[pass output through a pager]:select pager:_command_names -e" \
     "--no-pager[do not pass output through pager]" \
     '--project=[GitHub project to operate on]:select project:__list_projects' \
     '--host-url=[GitHub Enterprise host to connect to]:select host:__list_hosts' \
-    ':hubugs command:(close comment edit label list milestone milestones open reopen search show)' \
+    ':hubugs command:((
+        close\:"Closing bugs."
+        comment\:"ommenting on bugs."
+        edit\:"Editing bugs."
+        label\:"Labelling bugs."
+        list\:"Listing bugs."
+        milestone\:"Issue milestones."
+        milestones\:"Repository milestones."
+        open\:"Opening new bugs."
+        reopen\:"Reopening closed bugs."
+        search\:"Searching bugs."
+        show\:"Displaying bugs."
+    ))' \
     '*::subcmd:->subcmd' && return 0
 
 ### DGEN_TAG: Generated from hubugs/__init__.py {{{

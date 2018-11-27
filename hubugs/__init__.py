@@ -1,5 +1,10 @@
 #
-"""hubugs - Simple client for GitHub issues"""
+"""hubugs - Simple client for GitHub issues.
+
+``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
+
+.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
+"""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #           © 2012  Ben Griffiths
 #
@@ -22,27 +27,13 @@ from . import _version
 
 __version__ = _version.dotted
 __date__ = _version.date
-__author__ = 'James Rowe <jnrowe@gmail.com>'
 __copyright__ = '2010-2016  James Rowe'
-__license__ = 'GNU General Public License Version 3'
-__credits__ = 'Ben Griffiths, Matt Leighton'
-__history__ = 'See git repository'
 
-from email.utils import parseaddr
-
-__doc__ += """.
-
-``hubugs`` is a very simple client for working with `GitHub’s issue tracker`_.
-
-.. _GitHub’s issue tracker: http://github.com/blog/411-github-issue-tracker
-
-.. moduleauthor:: `{} <mailto:{}>`__
-""".format(*parseaddr(__author__))
 
 # This is here to workaround UserWarning messages caused by path fiddling in
 # dependencies
 try:
-    import pkg_resources  # NOQA
+    import pkg_resources  # NOQA: F401
 except ImportError:
     pass
 
@@ -52,7 +43,7 @@ import getpass
 import logging
 import os
 # Used by raw_input, when imported
-import readline  # NOQA
+import readline  # NOQA: F401
 import sys
 
 from base64 import b64encode
@@ -83,7 +74,7 @@ class ProjectNameParamType(click.ParamType):
             user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user'))
             if not user:
-                self.fail('No GitHub user setting!')
+                raise click.BadParameter('No GitHub user setting!')
             value = '/'.join([user, value])
         return value
 
@@ -504,7 +495,7 @@ def report_bug(globs):
     local = globs.project == 'JNRowe/hubugs'
     globs.project = 'JNRowe/hubugs'
 
-    import html2text, jinja2, pygments  # NOQA
+    import html2text, jinja2, pygments  # NOQA: E401
     versions = dict([(m.__name__, getattr(m, '__version__', 'No version info'))
                      for m in (click, html2text, httplib2, jinja2, pygments)])
     data = {

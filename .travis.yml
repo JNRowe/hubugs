@@ -10,3 +10,6 @@ script:
   - pytest tests
 after_success:
   - coveralls
+branches:
+  except:
+    - /^play\/.*$/

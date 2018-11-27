@@ -147,7 +147,7 @@ Commands
 
 ::
 
-    hubugs show [-h] [-f] [-p] bugs [bugs ...]
+    hubugs show [-h] [-f] [-p] bugs [bugs …]
 
 .. option:: -f, --full
 
@@ -189,7 +189,7 @@ Commands
 
 ::
 
-    hubugs comment [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
+    hubugs comment [-h] [--stdin] [-m MESSAGE] bugs [bugs …]
 
 .. option:: --stdin
 
@@ -206,7 +206,7 @@ Commands
 
 ::
 
-    hubugs edit [-h] [--stdin] [title] [body] bugs [bugs ...]
+    hubugs edit [-h] [--stdin] [title] [body] bugs [bugs …]
 
 .. option:: --stdin
 
@@ -219,7 +219,7 @@ Commands
 
 ::
 
-    hubugs close [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
+    hubugs close [-h] [--stdin] [-m MESSAGE] bugs [bugs …]
 
 .. option:: --stdin
 
@@ -236,7 +236,7 @@ Commands
 
 ::
 
-    reopen [-h] [--stdin] [-m MESSAGE] bugs [bugs ...]
+    reopen [-h] [--stdin] [-m MESSAGE] bugs [bugs …]
 
 .. option:: --stdin
 
@@ -253,7 +253,7 @@ Commands
 
 ::
 
-    hubugs label [-h] [-a label] [-r label] bugs [bugs ...]
+    hubugs label [-h] [-a label] [-r label] bugs [bugs …]
 
 .. option:: -a <label>, --add=<label>
 
@@ -270,7 +270,7 @@ Commands
 
 ::
 
-    hubugs milestone [-h] milestone [bugs [bugs ...]]
+    hubugs milestone [-h] milestone [bugs [bugs …]]
 
 ``milestones`` - Manage repository milestones
 '''''''''''''''''''''''''''''''''''''''''''''

@@ -1,5 +1,5 @@
 #
-"""models - GitHub models for hubugs"""
+"""models - GitHub models for hubugs."""
 # Copyright © 2010-2016  James Rowe <jnrowe@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
