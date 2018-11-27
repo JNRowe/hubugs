@@ -1,8 +1,11 @@
 Frequently Asked Questions
---------------------------
+==========================
+
+.. contents::
+   :local:
 
 Do you accept template contributions?
-'''''''''''''''''''''''''''''''''''''
+-------------------------------------
 
 Yes, if they are somewhat general.  And, it is a great way to have me maintain
 template compatibility for you in case something changes in a future version.
@@ -13,7 +16,7 @@ Either open an issue_ or push them to a fork on GitHub_.
 .. _GitHub: https://github.com/JNRowe/hubugs/
 
 Why is the wrapping broken in comments I make?
-''''''''''''''''''''''''''''''''''''''''''''''
+----------------------------------------------
 
 Unfortunately, GitHub have crippled the newline behaviour of Markdown.  If you
 wrap your comments for readability then you’ll be creating new paragraphs with
@@ -24,7 +27,7 @@ editor for template files.  The files ``hubugs`` creates are easy to match for
 automating this within your editor, just use ``$TMPDIR/hubugs-*.mkd``.
 
 How do I create headlines when lines beginning with ``#`` are scrubbed?
-'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+-----------------------------------------------------------------------
 
 Markdown syntax supports two different heading formats, and only one of them
 requires a ``#`` at the start of a line.  Using the alternative setext_ format
@@ -47,7 +50,7 @@ may not work correctly with it set to a non-default value.
 .. _setext: http://docutils.sourceforge.net/mirror/setext.html
 
 I don’t like your choice of template language
-'''''''''''''''''''''''''''''''''''''''''''''
+---------------------------------------------
 
 [It isn’t really a question, but it has come up a couple of times.]
 

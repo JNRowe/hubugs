@@ -1,4 +1,4 @@
-.. currentmodule:: hubugs.utils
+.. module:: hubugs.utils
 
 Utilities
 =========
@@ -12,13 +12,13 @@ Utilities
 .. autofunction:: setup_environment
 
 Convenience functions
-'''''''''''''''''''''
+---------------------
 
 .. autofunction:: get_editor
 .. autofunction:: pager
 
 Git/GitHub support
-''''''''''''''''''
+------------------
 
 .. autofunction:: get_github_api
 .. autofunction:: get_git_config_val

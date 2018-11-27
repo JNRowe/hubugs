@@ -1,11 +1,11 @@
 Installation
-------------
+============
 
 You can install :mod:`hubugs` either via :abbr:`PyPI (Python Package Index)` or
 from source.
 
 Using :abbr:`PyPI (Python Package Index)`
-'''''''''''''''''''''''''''''''''''''''''
+-----------------------------------------
 
 To install using :pypi:`pip`::
 
@@ -17,7 +17,7 @@ To install using :pypi:`easy_install <setuptools>`::
     $ easy_install hubugs
 
 From source
-'''''''''''
+-----------
 
 If you have downloaded a source tarball you can install it with the following
 steps::
