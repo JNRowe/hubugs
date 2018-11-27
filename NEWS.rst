@@ -3,6 +3,20 @@ User-visible changes
 
 .. contents::
 
+0.19.0 - 2018-10-07
+-------------------
+
+* Python 2 is no longer supported, and 3.5 or newer is required
+* Switch to click_, and ``aaargh`` is no longer required
+* jnrbase_ is required
+* ``configobj`` is no longer required to ease Python 3 support
+* pytest_ is required for running tests
+* ``gettext`` based l18n is no longer supported
+
+.. _click: http://click.pocoo.org/
+.. _jnrbase: https://pypi.org/projects/jnrbase/
+.. _pytest: https://pypi.org/project/pytest/
+
 0.18.0 - 2016-05-16
 -------------------
 
