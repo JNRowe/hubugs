@@ -58,6 +58,7 @@ Bug reports
 '''''''''''
 
 * Brandon Cady
+* Delphine Beauchemin
 * Sorin Ionescu
 
 Ideas
