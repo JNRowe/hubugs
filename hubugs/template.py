@@ -21,6 +21,8 @@ import operator
 import os
 import sys
 
+from typing import Callable, Dict, List, Optional
+
 import click
 import html2text as html2
 import jinja2
@@ -53,138 +55,159 @@ class EmptyMessageError(ValueError):
     pass
 
 
-def get_template(group, name):
+def get_template(__group: str, __name: str) -> jinja2.environment.Template:
     """Fetch a Jinja template instance.
 
-    :param str group: Template group identifier
-    :param str name: Template name
-    :rtype: ``jinja2.environment.Template``
-    :return: Jinja template instance
+    Args:
+        __group: Template group identifier
+        __name: Template name
+
+    Returns:
+        Jinja template instance
     """
     template_set = utils.get_git_config_val('hubugs.templates', 'default')
-    return ENV.get_template('/'.join([template_set, group, name]))
+    return ENV.get_template('/'.join([template_set, __group, __name]))
 
 
-def jinja_filter(func):
+def jinja_filter(__func: Callable) -> Callable:
     """Simple decorator to add a new filter to Jinja environment.
 
-    :param func func: Function to add to Jinja environment
-    :rtype: ``func``
-    :returns: Unmodified function
-    """
-    ENV.filters[func.__name__] = func
+    Args:
+        __func: Function to add to Jinja environment
 
-    return func
+    Returns:
+        Unmodified function
+    """
+    ENV.filters[__func.__name__] = __func
+
+    return __func
 
 
 @jinja_filter
-def colourise(text, fg=None, bg=None, **kwargs):
+def colourise(__text: str, fg: Optional[str] = None, bg: Optional[str] = None,
+              **kwargs)-> str:
     """Colourise text.
 
     Returns text untouched if colour output is not enabled
 
-    :param str text: Text to colourise
-    :param str fg: Foreground colour
-    :param str bg: Background colour
-    :param dict kwargs: Formatting to apply to text
-    :rtype: ``str``
-    :return: Colourised text, when possible
+    Args:
+        __text: Text to colourise
+        fg: Foreground colour
+        bg: Background colour
+        kwargs: Formatting to apply to text
+
+    Returns:
+        Colourised text, when possible
     """
-    return click.style(text, fg, bg, **kwargs)
+    return click.style(__text, fg, bg, **kwargs)
 # American spelling, just for Brandon Cady ;)
 ENV.filters['colorize'] = ENV.filters['colourise']
 
 
 @jinja_filter
-def highlight(text, lexer='diff', formatter='terminal'):
+def highlight(__text: str, lexer: Optional[str] = 'diff',
+              formatter: Optional[str] = 'terminal') -> str:
     """Highlight text with pygments.
 
     Returns text untouched if colour output is not enabled
 
-    :param str text: Text to highlight
-    :param str lexer: Jinja lexer to use
-    :param str formatter: Jinja formatter to use
-    :rtype: ``str``
-    :return: Syntax highlighted output, when possible
+    Args:
+        __text: Text to highlight
+        lexer: Jinja lexer to use
+        formatter: Jinja formatter to use
+
+    Returns:
+        Syntax highlighted output, when possible
     """
     if sys.stdout.isatty():
         lexer = get_lexer_by_name(lexer)
         formatter = get_formatter_by_name(formatter)
-        return pyg_highlight(text, lexer, formatter)
+        return pyg_highlight(__text, lexer, formatter)
     else:
-        return text
+        return __text
 
 
 @jinja_filter
-def html2text(html, width=80, ascii_replacements=False):
+def html2text(__html: str, width: Optional[int] = 80,
+              ascii_replacements: Optional[bool] = False) -> str:
     """HTML to plain text renderer.
 
-    :param str text: Text to process
-    :param int width: Paragraph width
-    :param bool ascii_replacements: Use psuedo-ascii replacements for Unicode
-    :rtype: ``str``
-    :return: Rendered text
+    Args:
+        __html: Text to process
+        width: Paragraph width
+        ascii_replacements: Use psuedo-ascii replacements for Unicode
+
+    Returns:
+        Rendered text
     """
     html2.BODY_WIDTH = width
     html2.UNICODE_SNOB = ascii_replacements
-    return html2.html2text(html).strip()
+    return html2.html2text(__html).strip()
 
 
 @jinja_filter
-def markdown(text):
+def markdown(__text: str) -> str:
     """Markdown to HTML renderer.
 
-    :param str text: Text to process
-    :rtype: ``str``
-    :return: Rendered HTML
+    Args:
+        __text: Text to process
+
+    Returns:
+        Rendered HTML
     """
     extensions = misaka.EXT_AUTOLINK | misaka.EXT_FENCED_CODE
-    return misaka.html(text, extensions, misaka.HTML_SKIP_HTML)
+    return misaka.html(__text, extensions, misaka.HTML_SKIP_HTML)
 
 
-def display_bugs(bugs, order, **extras):
+def display_bugs(__bugs: List[Dict[str, str]], __order: str, **extras) -> str:
     """Display bugs to users.
 
-    :type bugs: ``list` of ``models.Issue``
-    :param bugs: Bugs to display
-    :param str order: Sorting order for displaying bugs
-    :param dict extras: Additional values to pass to templates
-    :rtype: ``str``
-    :return: Rendered template output
+    Args:
+        __bugs: Bugs to display
+        __order: Sorting order for displaying bugs
+        extras: Additional values to pass to templates
+
+    Returns:
+        Rendered template output
     """
-    if not bugs:
+    if not __bugs:
         return success('No bugs found!')
 
     # Match ordering method to bug attribute
-    if order == 'updated':
+    if __order == 'updated':
         attr = 'updated_at'
     else:
-        attr = order
+        attr = __order
 
-    bugs = sorted(bugs, key=operator.attrgetter(attr))
+    __bugs = sorted(__bugs, key=operator.attrgetter(attr))
 
     # Default to 80 columns, when stdout is not a tty
     columns = click.get_terminal_size()[0]
 
     template = get_template('view', 'list.txt')
 
-    max_id = max(i.number for i in bugs)
+    max_id = max(i.number for i in __bugs)
     id_len = len(str(max_id))
     spacer = ' ' * (id_len - 2)
 
-    return template.render(bugs=bugs, spacer=spacer, id_len=id_len,
+    return template.render(bugs=__bugs, spacer=spacer, id_len=id_len,
                            max_title=columns - id_len - 2, **extras)
 
 
-def edit_text(edit_type='default', data=None):
+def edit_text(edit_type: Optional[str] = 'default',
+              data: Optional[str] = None) -> str:
     """Edit data with external editor.
 
-    :param str edit_type: Template to use in editor
-    :param dict data: Information to pass to template
-    :rtype: ``str``
-    :return: User supplied text
-    :raise EmptyMessageError: No message given
-    :raise EmptyMessageError: Message not edited
+    Args:
+        edit_type: Template to use in editor
+        data: Information to pass to template
+
+    Returns:
+        User supplied text
+
+    Raises:
+        EmptyMessageError: No message given
+        EmptyMessageError: Message not edited
     """
     template = get_template('edit', '{}.mkd'.format(edit_type))
     comment_char = utils.get_git_config_val('core.commentchar', '#')

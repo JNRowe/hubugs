@@ -18,6 +18,7 @@
 
 from collections import namedtuple
 from datetime import (datetime, timedelta)
+from typing import Dict, Optional
 
 from html2text import __version__ as h2t_version
 from mock import patch
@@ -32,7 +33,8 @@ from hubugs import template
     (None, 'blue', {}, '\x1b[44m'),
     (None, None, {'bold': True}, '\x1b[1m'),
 ])
-def test_Colourise_color(fg, bg, attributes, expected):
+def test_Colourise_color(fg: str, bg: Optional[str],
+                         attributes: Dict[str, bool], expected: str):
     output = template.colourise('s', fg, bg, **attributes)
     assert expected in output
 
@@ -113,7 +115,7 @@ def test_Html2Text_width():
     ('edit', 'default.mkd'),
     ('view', 'issue.txt'),
 ])
-def test_get_template(group, name):
+def test_get_template(group: str, name: str):
     t = template.get_template(group, name)
     assert t.filename.endswith('/templates/default/%s/%s' % (group, name))
 

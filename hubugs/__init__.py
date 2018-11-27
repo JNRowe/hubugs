@@ -47,10 +47,12 @@ import readline  # NOQA: F401
 import sys
 
 from base64 import b64encode
+from typing import Callable, List, Optional
 
 import click
 import httplib2
 
+from jnrbase.attrdict import AttrDict
 from jnrbase.colourise import fail, success, warn
 
 
@@ -68,15 +70,16 @@ class ProjectNameParamType(click.ParamType):
 
     name = 'project'
 
-    def convert(self, value, param, ctx):
+    def convert(self, __value: str, __param: Optional[click.Argument],
+                __ctx: Optional[click.Context]) -> str:
         """Set fully qualified GitHub project name."""
-        if '/' not in value:
+        if '/' not in __value:
             user = os.getenv('GITHUB_USER',
                              utils.get_git_config_val('github.user'))
             if not user:
                 raise click.BadParameter('No GitHub user setting!')
-            value = '/'.join([user, value])
-        return value
+            __value = '/'.join([user, __value])
+        return __value
 
 
 @click.group(help='Simple client for GitHub issues.',
@@ -93,13 +96,14 @@ class ProjectNameParamType(click.ParamType):
                                                'https://api.github.com'),
               help='GitHub Enterprise host to connect to.')
 @click.pass_context
-def cli(ctx, pager, project, host_url):
+def cli(ctx: click.Context, pager: bool, project: str, host_url: str):
     """Main command entry point.
 
-    :param click.Context ctx: Current command context
-    :param bool pager: Whether to page output
-    :param str project: GitHub project name
-    :param str host: Hostname to connect to
+    Args:
+        ctx: Current command context
+        pager: Whether to page output
+        project: GitHub project name
+        host: Hostname to connect to
     """
     ctx.obj = utils.setup_environment(project, host_url)
     ctx.obj.update({
@@ -110,51 +114,51 @@ def cli(ctx, pager, project, host_url):
 
 
 # Convenience wrappers for defining command arguments
-def bugs_parser(f):
-    f = click.argument('bugs', nargs=-1, type=click.INT)(f)
-    return f
+def bugs_parser(__f: Callable) -> Callable:
+    __f = click.argument('bugs', nargs=-1, type=click.INT)(__f)
+    return __f
 
 
-def message_parser(f):
-    f = click.option('-m', '--message', help='Comment text.')(f)
-    return f
+def message_parser(__f: Callable) -> Callable:
+    __f = click.option('-m', '--message', help='Comment text.')(__f)
+    return __f
 
 
-def attrib_parser(f):
-    f = click.option('-o', '--order', default='number',
-                     type=click.Choice(['number', 'updated']),
-                     help='Sort order for listing bugs.')(f)
-    f = click.option('-s', '--state', default='open',
-                     type=click.Choice(['open', 'closed', 'all']),
-                     help='State of bugs to operate on.')(f)
-    return f
+def attrib_parser(__f: Callable) -> Callable:
+    __f = click.option('-o', '--order', default='number',
+                       type=click.Choice(['number', 'updated']),
+                       help='Sort order for listing bugs.')(__f)
+    __f = click.option('-s', '--state', default='open',
+                       type=click.Choice(['open', 'closed', 'all']),
+                       help='State of bugs to operate on.')(__f)
+    return __f
 
 
-def stdin_parser(f):
-    f = click.option('--stdin', is_flag=True,
-                     help='Read message from standard input.')(f)
-    return f
+def stdin_parser(__f: Callable) -> Callable:
+    __f = click.option('--stdin', is_flag=True,
+                       help='Read message from standard input.')(__f)
+    return __f
 
 
-def text_parser(f):
-    f = click.option('--title')(f)
-    f = click.option('--body')(f)
-    return f
+def text_parser(__f: Callable) -> Callable:
+    __f = click.option('--title')(__f)
+    __f = click.option('--body')(__f)
+    return __f
 
 
-def label_parser(f):
-    f = click.option('-a', '--add', multiple=True,
-                     help='Add label to issue.')(f)
-    f = click.option('-c', '--create', multiple=True,
-                     help='Create new label and add to issue.')(f)
-    return f
+def label_parser(__f: Callable) -> Callable:
+    __f = click.option('-a', '--add', multiple=True,
+                       help='Add label to issue.')(__f)
+    __f = click.option('-c', '--create', multiple=True,
+                       help='Create new label and add to issue.')(__f)
+    return __f
 
 
 @cli.command()
 @click.option('--local/--no-local',
               help='Set access token for local repository only.')
 @click.pass_obj
-def setup(globs, local):
+def setup(globs: AttrDict, local: bool):
     """Setup GitHub access token."""
     if not utils.SYSTEM_CERTS:
         warn('Falling back on bundled certificates')
@@ -198,7 +202,8 @@ def setup(globs, local):
               help='List only pull requests.')
 @attrib_parser
 @click.pass_obj
-def list_bugs(globs, label, page, pull_requests, order, state):
+def list_bugs(globs: AttrDict, label: List[str], page: int,
+              pull_requests: bool, order: str, state: str):
     """Listing bugs."""
     bugs = []
     params = {}
@@ -229,7 +234,7 @@ def list_bugs(globs, label, page, pull_requests, order, state):
 @attrib_parser
 @click.argument('term')
 @click.pass_obj
-def search(globs, order, state, term):
+def search(globs: AttrDict, order: str, state: str, term: str):
     """Searching bugs."""
     search_url = '{}/search/issues'.format(globs.host_url)
     states = ['open', 'closed'] if state == 'all' else [state, ]
@@ -258,7 +263,8 @@ def search(globs, order, state, term):
               help='Open bug in web browser.')
 @bugs_parser
 @click.pass_obj
-def show(globs, full, patch, patch_only, browse, bugs):
+def show(globs: AttrDict, full: bool, patch: bool, patch_only: bool,
+         browse: bool, bugs: List[int]):
     """Displaying bugs."""
     results = []
     tmpl = template.get_template('view', '/issue.txt')
@@ -294,7 +300,8 @@ def show(globs, full, patch, patch_only, browse, bugs):
 @stdin_parser
 @text_parser
 @click.pass_obj
-def open_bug(globs, add, create, stdin, title, body):
+def open_bug(globs: AttrDict, add: List[str], create: List[str], stdin: bool,
+             title: str, body: str):
     """Opening new bugs."""
     utils.sync_labels(globs, add, create)
     if stdin:
@@ -317,7 +324,7 @@ def open_bug(globs, add, create, stdin, title, body):
 @stdin_parser
 @bugs_parser
 @click.pass_obj
-def comment(globs, message, stdin, bugs):
+def comment(globs: AttrDict, message: str, stdin: bool, bugs: List[int]):
     """Commenting on bugs."""
     if stdin:
         message = click.get_text_stream().read()
@@ -335,7 +342,7 @@ def comment(globs, message, stdin, bugs):
 @text_parser
 @bugs_parser
 @click.pass_obj
-def edit(globs, stdin, title, body, bugs):
+def edit(globs: AttrDict, stdin: bool, title: str, body:str, bugs: List[int]):
     """Editing bugs."""
     if (title or stdin) and len(bugs) > 1:
         raise ValueError('Can not use --stdin or command line title/body '
@@ -363,7 +370,7 @@ def edit(globs, stdin, title, body, bugs):
 @message_parser
 @bugs_parser
 @click.pass_obj
-def close(globs, stdin, message, bugs):
+def close(globs: AttrDict, stdin: bool, message: str, bugs: List[int]):
     """Closing bugs."""
     if stdin:
         message = click.get_text_stream().read()
@@ -387,7 +394,7 @@ def close(globs, stdin, message, bugs):
 @message_parser
 @bugs_parser
 @click.pass_obj
-def reopen(globs, stdin, message, bugs):
+def reopen(globs: AttrDict, stdin: bool, message: str, bugs: List[int]):
     """Reopening closed bugs."""
     if stdin:
         message = click.get_text_stream().read()
@@ -411,7 +418,8 @@ def reopen(globs, stdin, message, bugs):
 @click.option('-l', '--list', is_flag=True, help='List available labels.')
 @click.argument('bugs', nargs=-1, required=False, type=click.INT)
 @click.pass_obj
-def label(globs, add, create, remove, list, bugs):
+def label(globs: AttrDict, add: List[str], create: List[str],
+          remove: List[str], list: bool, bugs: List[int]):
     """Labelling bugs."""
     label_names = utils.sync_labels(globs, add, create)
 
@@ -433,7 +441,7 @@ def label(globs, add, create, remove, list, bugs):
 @click.argument('milestone')
 @click.argument('bugs', nargs=-1, required=False, type=click.INT)
 @click.pass_obj
-def milestone(globs, milestone, bugs):
+def milestone(globs: AttrDict, milestone: str, bugs: List[int]):
     """Issue milestones."""
     milestones_url = '{}/repos/{}/milestones'.format(globs.host_url,
                                                      globs.project)
@@ -462,7 +470,8 @@ def milestone(globs, milestone, bugs):
 @click.option('-l', '--list', is_flag=True,
               help='List available milestones.')
 @click.pass_obj
-def milestones(globs, order, state, create, list):
+def milestones(globs: AttrDict, order: str, state: str, create: str,
+               list: bool):
     """Repository milestones."""
     if not list and not create:
         fail('No action specified!')
@@ -490,7 +499,7 @@ def milestones(globs, order, state, create, list):
 
 @cli.command()
 @click.pass_obj
-def report_bug(globs):
+def report_bug(globs: AttrDict):
     """Report a new bug against hubugs."""
     local = globs.project == 'JNRowe/hubugs'
     globs.project = 'JNRowe/hubugs'
@@ -514,11 +523,11 @@ def report_bug(globs):
     success('Bug {:d} opened against hubugs, thanks!'.format(bug.number))
 
 
-def main():
+def main() -> int:
     """Main command-line entry point.
 
-    :rtype: ``int``
-    :return: Exit code
+    Returns:
+        Exit code
     """
     try:
         cli()
