@@ -41,7 +41,8 @@ master_doc = 'index'
 source_suffix = '.rst'
 
 project = 'hubugs'
-copyright = '2010-2016  James Rowe'
+author = 'James Rowe'
+copyright = f'2010-2016  {author}'
 
 release = hubugs._version.dotted
 version = release.rsplit('.', 1)[0]
@@ -62,13 +63,17 @@ with suppress(CalledProcessError):
                stdout=PIPE)
     html_last_updated_fmt = proc.stdout.decode()
 
+html_baseurl = 'https://hubugs.readthedocs.io/'
+
 man_pages = [
     ('hubugs.1', 'hubugs', 'hubugs Documentation', ['James Rowe', ], 1)
 ]
 
 # Autodoc extension settings
 autoclass_content = 'init'
-autodoc_default_flags = ['members', ]
+autodoc_default_options = {
+    'members': None,
+}
 
 # intersphinx extension settings
 intersphinx_mapping = {
