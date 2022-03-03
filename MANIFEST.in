@@ -1,4 +1,3 @@
-include .travis.yml
 include COPYING
 include *.rst
 include .coveragerc

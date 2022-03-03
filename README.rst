@@ -1,7 +1,7 @@
 hubugs - Simple client for GitHub issues
 ========================================
 
-|status| |travis| |coveralls| |pypi| |pyvers| |readthedocs| |develop|
+|status| |actions| |coveralls| |pypi| |pyvers| |readthedocs| |develop|
 
 .. warning::
 
@@ -93,10 +93,6 @@ reproduce the problem, or even better a patch!
 .. _mail: jnrowe@gmail.com
 .. _issue: http://github.com/JNRowe/hubugs/issues
 
-.. |travis| image:: https://img.shields.io/travis/JNRowe/hubugs.png
-   :target: https://travis-ci.org/JNRowe/hubugs
-   :alt: Test state on master
-
 .. |develop| image:: https://img.shields.io/github/commits-since/JNRowe/hubugs/latest.png
    :target: https://github.com/JNRowe/hubugs
    :alt: Recent developments
@@ -118,3 +114,6 @@ reproduce the problem, or even better a patch!
 .. |readthedocs| image:: https://img.shields.io/readthedocs/hubugs/stable.png
    :target: https://hubugs.readthedocs.io/
    :alt: Documentation
+
+.. |actions| image:: https://img.shields.io/github/workflow/status/JNRowe/hubugs/Test%20with%20pytest
+   :alt: Test state on master
