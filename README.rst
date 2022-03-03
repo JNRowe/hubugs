@@ -103,9 +103,9 @@ reproduce the problem, or even better a patch!
 .. |status| image:: https://img.shields.io/pypi/status/hubugs.png
    :alt: Development status
 
-.. |coveralls| image:: https://img.shields.io/coveralls/github/JNRowe/hubugs/master.png
+.. |coveralls| image:: https://img.shields.io/coveralls/github/JNRowe/hubugs/main.png
    :target: https://coveralls.io/repos/JNRowe/hubugs
-   :alt: Coverage state on master
+   :alt: Coverage state on main
 
 .. |pypi| image:: https://img.shields.io/pypi/v/hubugs.png
    :target: https://pypi.org/project/hubugs/
@@ -116,4 +116,4 @@ reproduce the problem, or even better a patch!
    :alt: Documentation
 
 .. |actions| image:: https://img.shields.io/github/workflow/status/JNRowe/hubugs/Test%20with%20pytest
-   :alt: Test state on master
+   :alt: Test state on main
